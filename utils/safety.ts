@@ -1,4 +1,4 @@
-import { ParserSafetyError } from "../errors";
+import { ParserSafetyError } from "@/errors";
 // TODO: Replace with zod
 
 export const genericParse = <T>(parse: (_: any) => T, input: any): T => {
