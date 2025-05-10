@@ -7,6 +7,10 @@ const message = Object.freeze({
 	FORBIDDEN: "Forbidden",
 	INTERNAL_SERVER_ERROR: "Internal Server Error",
 	SERVICE_UNAVAILABLE: "Service Unavailable",
+	HEALTHY_API: "API is healthy",
+	HEALTHY_DB: "DB is healthy",
+	DB_CONNECTION_ERROR: "Unable to connect to database",
+	HEARTBEAT: "Heartbeat success",
 });
 
 const status = Object.freeze({

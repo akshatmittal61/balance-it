@@ -1,7 +1,7 @@
 import { jwtSecret } from "@/config";
 import { Logger } from "@/log";
 import { authRepo } from "@/repo";
-import { AuthResponse, IAuthMapping, User } from "@/types";
+import { AuthResponse, Cookie, IAuthMapping, Tokens, User } from "@/types";
 import { genericParse, getNonEmptyString } from "@/utils";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
 
@@ -49,7 +49,7 @@ export class AuthService {
 	public static async getAuthenticatedUser({
 		accessToken,
 		refreshToken,
-	}: Omit<AuthResponse, "user">): Promise<AuthResponse | null> {
+	}: Tokens): Promise<(AuthResponse & Tokens) | null> {
 		try {
 			const decodedAccessToken: any = jwt.verify(
 				accessToken,
@@ -65,10 +65,12 @@ export class AuthService {
 				await AuthService.getUserByAuthMappingId(authMappingId);
 			if (!user) return null;
 			Logger.debug("Found user", user);
+			const tokens: Tokens = { accessToken, refreshToken };
+			const cookies = AuthService.getCookies(tokens);
 			return {
 				user,
-				accessToken,
-				refreshToken,
+				cookies,
+				...tokens,
 			};
 		} catch (error) {
 			if (!(error instanceof TokenExpiredError)) {
@@ -92,10 +94,15 @@ export class AuthService {
 			Logger.debug("Found user", user);
 			const newAccessToken =
 				AuthService.generateAccessToken(authMappingId);
-			return {
-				user,
+			const tokens: Tokens = {
 				accessToken: newAccessToken,
 				refreshToken,
+			};
+			const cookies = AuthService.getCookies(tokens);
+			return {
+				user,
+				cookies,
+				...tokens,
 			};
 		} catch {
 			return null;
@@ -119,5 +126,44 @@ export class AuthService {
 			refreshToken: AuthService.generateRefreshToken(id),
 			accessToken: AuthService.generateAccessToken(id),
 		};
+	}
+	public static getCookies({
+		accessToken,
+		refreshToken,
+		logout,
+	}: {
+		accessToken: string | null;
+		refreshToken: string | null;
+		logout?: boolean;
+	}): Array<Cookie> {
+		const cookiesToSet: Array<Cookie> = [];
+		if (logout) {
+			cookiesToSet.push({
+				name: "accessToken",
+				value: "",
+				maxAge: -1,
+			});
+			cookiesToSet.push({
+				name: "refreshToken",
+				value: "",
+				maxAge: -1,
+			});
+			return cookiesToSet;
+		}
+		if (accessToken) {
+			cookiesToSet.push({
+				name: "accessToken",
+				value: accessToken,
+				maxAge: 1 * 60 * 1000,
+			});
+		}
+		if (refreshToken) {
+			cookiesToSet.push({
+				name: "refreshToken",
+				value: refreshToken,
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+		}
+		return cookiesToSet;
 	}
 }

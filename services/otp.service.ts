@@ -8,7 +8,7 @@ import {
 import { ApiError } from "@/errors";
 import { Logger } from "@/log";
 import { otpRepo, userRepo } from "@/repo";
-import { IUser, Otp } from "@/types";
+import { AuthResponse, Otp } from "@/types";
 import otpGenerator from "otp-generator";
 import { AuthService } from "./auth.service";
 import { sendEmailTemplate } from "./email";
@@ -38,12 +38,7 @@ export class OtpService {
 	public static async verifyOtpWithEmail(
 		email: string,
 		otp: string
-	): Promise<{
-		accessToken: string;
-		refreshToken: string;
-		user: IUser;
-		isNew: boolean;
-	}> {
+	): Promise<AuthResponse> {
 		const foundOtp = await otpRepo.findOne({ email });
 		if (!foundOtp) {
 			throw new ApiError(
@@ -79,10 +74,9 @@ export class OtpService {
 			currentUser.id
 		);
 		Logger.debug("Auth mapping found or created", authMapping);
-		const { accessToken, refreshToken } = AuthService.generateTokens(
-			`${authMapping.id}`
-		);
-		return { accessToken, refreshToken, user: currentUser, isNew };
+		const tokens = AuthService.generateTokens(`${authMapping.id}`);
+		const cookies = AuthService.getCookies(tokens);
+		return { cookies, user: currentUser, isNew };
 	}
 	public static generate(): string {
 		return otpGenerator.generate(6, {
