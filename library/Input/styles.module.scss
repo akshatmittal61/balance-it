@@ -1,0 +1,147 @@
+@import "@/styles/config/mixins";
+@import "@/styles/config/typography";
+
+.input {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-flow: column;
+	gap: 4px;
+	position: relative;
+
+	&__label {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		color: var(--theme-fg);
+		position: relative;
+	}
+
+	&:has(input:required) &__label {
+		&::after {
+			content: "*";
+			color: var(--material-red);
+			margin-left: 5px;
+		}
+	}
+
+	&__input {
+		all: unset;
+		box-sizing: border-box;
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		padding: 0.5rem;
+		border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+		transition: all var(--transition-time) ease-in-out;
+
+		@include _theme(dark) {
+			border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+		}
+
+		&:hover {
+			border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+		}
+
+		&:active,
+		&:focus {
+			border-color: var(--accent-color);
+
+			@include _theme(dark) {
+				border-color: var(--accent-color);
+			}
+
+			& + label {
+				color: var(--accent-color);
+			}
+		}
+
+		&:disabled,
+		&:disabled:active,
+		&:disabled:focus {
+			border-bottom: 2px solid var(--transparent);
+		}
+
+		&:invalid {
+			border-bottom: 2px solid var(--material-red);
+		}
+
+		&::placeholder {
+			color: var(--theme-light-grey);
+		}
+
+		&-container {
+			width: 100%;
+			position: relative;
+		}
+	}
+
+	&__dropdown {
+		@include dropdown;
+
+		&__option {
+			@include dropdown-option;
+			@include typography($size: s);
+		}
+	}
+
+	&__icon {
+		width: 1.25rem;
+		height: 1.25rem;
+		position: absolute;
+		cursor: pointer;
+		user-select: none;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		opacity: 0.25;
+
+		&--dropdown {
+			svg path {
+				&:first-child {
+					fill: var(--theme-light-grey);
+					stroke: var(--theme-light-grey);
+				}
+
+				&:last-child {
+					fill: var(--theme-black);
+					stroke: var(--theme-black);
+				}
+			}
+		}
+	}
+
+	&__icon--left {
+		top: 50%;
+		left: 0;
+		transform: translate(50%, -50%);
+	}
+
+	&__icon--right {
+		top: 50%;
+		right: 0;
+		transform: translate(-50%, -50%);
+	}
+
+	&:has(input:active) &__icon,
+	&:has(input:focus) &__icon {
+		opacity: 1;
+	}
+
+	&:has(.input__icon--left) &__input {
+		padding-left: 2.5rem;
+	}
+
+	&:has(.input__icon--right) &__input,
+	&:has(.input__icon--dropdown) &__input {
+		padding-right: 2.5rem;
+	}
+
+	&:has(input:active) &__dropdown,
+	&:has(input:focus) &__dropdown {
+		display: flex;
+	}
+}

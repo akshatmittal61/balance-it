@@ -1,0 +1,236 @@
+@import "@/styles/config/mixins";
+@import "@/styles/config/typography";
+
+.btn {
+	all: unset;
+	box-sizing: border-box;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	gap: 6px;
+	border-radius: 500px;
+	border: 1px solid transparent;
+	white-space: nowrap;
+	flex: 0 0 auto;
+	cursor: pointer;
+	user-select: none;
+	transition: all 0.2s ease-in-out;
+	color: var(--white);
+	border: 1px solid transparent;
+
+	&--theme {
+		&--default {
+			--button-theme: var(--accent-color);
+		}
+
+		&--success {
+			--button-theme: var(--material-green);
+		}
+
+		&--error {
+			--button-theme: var(--material-red);
+		}
+
+		&--warning {
+			--button-theme: var(--material-yellow);
+		}
+
+		&--info {
+			--button-theme: var(--material-blue);
+		}
+	}
+
+	&--variant {
+		&--filled {
+			background-color: var(--button-theme);
+			color: var(--white);
+		}
+
+		&--outlined {
+			background-color: transparent;
+			color: var(--button-theme);
+			border-color: var(--button-theme);
+
+			svg path {
+				stroke: var(--button-theme);
+			}
+		}
+
+		&--text {
+			background-color: transparent;
+			color: var(--button-theme);
+		}
+	}
+
+	&--size {
+		&--small {
+			padding: 4px 8px;
+			@include typography($size: sm, $weight: regular);
+		}
+
+		&--medium {
+			padding: 8px 16px;
+			@include typography($size: s, $weight: regular);
+		}
+
+		&--large {
+			padding: 12px 24px;
+			@include typography($size: md, $weight: regular);
+		}
+	}
+
+	&__icon {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&--size {
+		&--medium {
+			.btn__icon {
+				svg,
+				img {
+					width: 18px;
+					height: 18px;
+				}
+			}
+		}
+
+		&--small {
+			.btn__icon {
+				svg,
+				img {
+					width: 16px;
+					height: 16px;
+				}
+			}
+		}
+
+		&--large {
+			.btn__icon {
+				svg,
+				img {
+					width: 20px;
+					height: 20px;
+				}
+			}
+		}
+	}
+
+	&__loader {
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		display: flex;
+		flex: 0 0 auto;
+		border: 3px solid transparent;
+		animation: spin 1s linear infinite;
+		border-right-color: var(--color-white);
+		border-bottom-color: var(--color-white);
+	}
+
+	&--size--small &__loader {
+		width: 17px;
+		height: 17px;
+	}
+
+	&--size--medium &__loader {
+		width: 19px;
+		height: 19px;
+	}
+
+	&--size--large &__loader {
+		width: 23px;
+		height: 23px;
+	}
+
+	&--disabled {
+		cursor: not-allowed;
+		opacity: 0.4;
+	}
+
+	&--loading {
+		cursor: not-allowed;
+	}
+}
+
+.icon-btn {
+	@include init-button();
+	width: 2.5rem;
+	height: 2.5rem;
+	position: relative;
+	padding: 1rem;
+	border-radius: 500px;
+	color: var(--tcolor);
+
+	.material-symbols-outlined {
+		font-size: 1.5rem;
+	}
+
+	&--size {
+		&--small {
+			width: 2rem;
+			height: 2rem;
+			padding: 0.5rem;
+
+			.material-symbols-outlined {
+				font-size: 1rem;
+			}
+		}
+
+		&--medium {
+			width: 2.5rem;
+			height: 2.5rem;
+			padding: 1rem;
+
+			.material-symbols-outlined {
+				font-size: 1.5rem;
+			}
+		}
+
+		&--large {
+			width: 3rem;
+			height: 3rem;
+			padding: 1.5rem;
+
+			.material-symbols-outlined {
+				font-size: 2rem;
+			}
+		}
+	}
+
+	&:hover {
+		background-color: var(--back-shadow-light);
+	}
+
+	span {
+		z-index: 5;
+	}
+
+	svg {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 100%;
+		height: 100%;
+		z-index: 2;
+
+		path {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	&:hover {
+		svg {
+			transform: translate(-50%, -50%) rotate(-90deg);
+		}
+	}
+}
+
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}

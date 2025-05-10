@@ -1,0 +1,42 @@
+import { IUser } from "./client";
+
+type ServerSideProps<T = any> = {
+	props: T;
+};
+
+type ServerSideRedirect = {
+	redirect: {
+		destination: string;
+		permanent: boolean;
+	};
+};
+
+export type ServerSideResult<T = any> =
+	| ServerSideProps<T | { error: string }>
+	| ServerSideRedirect;
+
+export type ServerSideAuthInterceptor = <
+	T extends ServerSideResult,
+	U extends ServerSideResult,
+	V extends ServerSideResult,
+>(
+	_: any,
+	__: {
+		onLoggedInAndOnboarded: (_: IUser, __?: any) => T | Promise<T>;
+		onLoggedInAndNotOnboarded: (_: IUser, __?: any) => U | Promise<U>;
+		onLoggedOut: () => V;
+	}
+) => Promise<T | U | V>;
+
+export type ServerSideAdminInterceptor = <
+	T extends ServerSideResult,
+	U extends ServerSideResult,
+	V extends ServerSideResult,
+>(
+	_: any,
+	__: {
+		onAdmin: (_: IUser, __?: any) => T | Promise<T>;
+		onNonAdmin: (_: IUser, __?: any) => U | Promise<U>;
+		onLoggedOut: () => V;
+	}
+) => Promise<T | U | V>;

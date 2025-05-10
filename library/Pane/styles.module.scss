@@ -1,0 +1,171 @@
+@import "@/styles/config/animations";
+@import "@/styles/config/mixins";
+@import "@/styles/config/shadows";
+
+.modal-pane {
+	position: fixed;
+	z-index: 998;
+	min-width: min(95vw, 400px);
+	background-color: var(--theme-bg);
+	overflow-y: auto;
+	@include shadow(4);
+	@include hide-scrollbar();
+
+	&[data-direction="left"] {
+		top: 0;
+		right: 0;
+		height: 100vh;
+		border-radius: 32px 0 0 32px;
+		animation: slide-left 0.3s ease-in-out forwards;
+	}
+
+	&[data-direction="right"] {
+		top: 0;
+		left: 0;
+		height: 100vh;
+		border-radius: 0 32px 32px 0;
+		animation: slide-right 0.3s ease-in-out forwards;
+	}
+
+	&[data-direction="top"] {
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 80vh;
+		border-radius: 0 0 32px 32px;
+		animation: slide-top 0.3s ease-in-out forwards;
+	}
+
+	&[data-direction="bottom"] {
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 80vh;
+		border-radius: 32px 32px 0 0;
+		animation: slide-bottom 0.3s ease-in-out forwards;
+	}
+
+	&--closing {
+		&[data-direction="left"] {
+			animation: slide-left-out 0.3s ease-in-out forwards;
+		}
+
+		&[data-direction="right"] {
+			animation: slide-right-out 0.3s ease-in-out forwards;
+		}
+
+		&[data-direction="top"] {
+			animation: slide-top-out 0.3s ease-in-out forwards;
+		}
+
+		&[data-direction="bottom"] {
+			animation: slide-bottom-out 0.3s ease-in-out forwards;
+		}
+	}
+
+	&-header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 20px;
+		padding: 20px 30px;
+		border-bottom: 0.5px solid var(--light-grey-400);
+		position: sticky;
+		top: 0;
+		left: 0;
+		z-index: 6;
+		background-color: var(--theme-bg);
+
+		& > *:first-child {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 8px;
+
+			svg {
+				width: 20px;
+				height: 20px;
+			}
+		}
+
+		&-actions {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: 8px;
+		}
+
+		&-edit,
+		&-delete,
+		&-close {
+			@include init-button();
+			width: 24px;
+			height: 24px;
+		}
+
+		&-edit,
+		&-delete {
+			padding: 2px;
+		}
+	}
+
+	&--info &-header {
+		& > *:first-child {
+			path {
+				fill: var(--blue-400);
+			}
+		}
+	}
+
+	&--success &-header {
+		& > *:first-child {
+			path {
+				fill: var(--green-400);
+			}
+		}
+	}
+
+	&--warning &-header {
+		& > *:first-child {
+			path {
+				fill: var(--orange-400);
+			}
+		}
+	}
+
+	&--danger &-header {
+		& > *:first-child {
+			path {
+				fill: var(--red-400);
+			}
+		}
+	}
+
+	&-body {
+		width: 100%;
+		padding: 20px;
+		display: flex;
+		flex: 1 1 0;
+
+		@include responsive(phone) {
+			padding: 4px;
+		}
+	}
+
+	&-overlay {
+		width: 100%;
+		height: 100vh;
+		position: fixed;
+		top: 0;
+		left: 0;
+		background: rgba(0, 0, 0, 0.6);
+		z-index: 997;
+	}
+
+	&:active,
+	&:focus {
+		border: none;
+		outline: none;
+	}
+}
