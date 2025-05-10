@@ -1,9 +1,9 @@
+import { Seo } from "@/components/Seo";
 import { AppSeo } from "@/constants";
 import { useAuthStore, useUiStore } from "@/store";
 import { IUser } from "@/types";
 import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import { Seo } from "../Seo";
 
 interface WrapperProps {
 	children: React.ReactNode;
