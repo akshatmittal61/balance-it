@@ -15,7 +15,7 @@ export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 	try {
 		const headers = { cookie: req.headers.cookie };
 		const cacheKey = Cache.getKey(cacheParameter.USER, {
-			token: cookies.accessToken,
+			id: cookies.accessToken,
 		});
 		const { data: user } = await Cache.fetch(cacheKey, () =>
 			AuthApi.verify(headers)
