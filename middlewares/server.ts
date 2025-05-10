@@ -18,10 +18,10 @@ export class ServerMiddleware {
 				return next(req, res);
 			} catch (error) {
 				Logger.error(error);
-				return new ApiFailure(res).send(
-					HTTP.message.UNAUTHORIZED,
-					HTTP.status.UNAUTHORIZED
-				);
+				return new ApiFailure(res)
+					.status(HTTP.status.UNAUTHORIZED)
+					.message(HTTP.message.UNAUTHORIZED)
+					.send();
 			}
 		};
 	}
@@ -37,10 +37,10 @@ export class ServerMiddleware {
 				return next(req, res);
 			} catch (error) {
 				Logger.error(error);
-				return new ApiFailure(res).send(
-					HTTP.message.FORBIDDEN,
-					HTTP.status.FORBIDDEN
-				);
+				return new ApiFailure(res)
+					.status(HTTP.status.FORBIDDEN)
+					.message(HTTP.message.FORBIDDEN)
+					.send();
 			}
 		};
 	}
