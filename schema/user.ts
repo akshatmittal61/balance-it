@@ -1,4 +1,5 @@
-import { USER_ROLE } from "@/constants";
+import { fallbackAssets, USER_ROLE, USER_STATUS } from "@/constants";
+import mongoose from "mongoose";
 
 export const UserSchema = {
 	name: {
@@ -12,6 +13,27 @@ export const UserSchema = {
 			unique: true,
 			sparse: true,
 		},
+	},
+	phone: {
+		type: String,
+		index: {
+			unique: true,
+			sparse: true,
+		},
+	},
+	avatar: {
+		type: String,
+		default: fallbackAssets.avatar,
+	},
+	status: {
+		type: String,
+		enum: Object.values(USER_STATUS),
+		default: USER_STATUS.JOINED,
+	},
+	invitedBy: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "User",
+		sparse: true,
 	},
 	role: {
 		type: String,
