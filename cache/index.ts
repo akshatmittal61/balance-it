@@ -74,10 +74,30 @@ class CacheService {
 		data: CachePayloadGenerator<T>
 	): string {
 		if (parameter === cacheParameter.USER) {
-			if ("token" in data) {
-				return `user:${data.token}`;
+			if ("id" in data) {
+				return `user:${data.id}`;
 			}
 			throw new Error("Invalid data: token is missing");
+		} else if (parameter === cacheParameter.EXPENSE) {
+			if ("id" in data) {
+				return `expense:${data.id}`;
+			}
+			throw new Error("Invalid data: id is missing");
+		} else if (parameter === cacheParameter.GROUP) {
+			if ("id" in data) {
+				return `group:${data.id}`;
+			}
+			throw new Error("Invalid data: id is missing");
+		} else if (parameter === cacheParameter.MEMBER) {
+			if ("id" in data) {
+				return `member:${data.id}`;
+			}
+			throw new Error("Invalid data: id is missing");
+		} else if (parameter === cacheParameter.USER_GROUPS) {
+			if ("userId" in data) {
+				return `user-groups:${data.userId}`;
+			}
+			throw new Error("Invalid data: userId is missing");
 		} else {
 			return `cache:${parameter}:${JSON.stringify(data)}`;
 		}
