@@ -13,6 +13,7 @@ abstract class ApiBaseResponse<T> {
 		};
 	}
 	public status(status: number): this {
+		this.payload.status = status;
 		this.res.status(status);
 		return this;
 	}
@@ -21,6 +22,7 @@ abstract class ApiBaseResponse<T> {
 			...this.payload,
 			message,
 		};
+		this.payload.message = message;
 		this.res.json(payload);
 		return this;
 	}
