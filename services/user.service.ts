@@ -330,7 +330,7 @@ export class UserService {
 		];
 		Logger.debug("authorsOfSplits", allUsers);
 		// Get distinct users since the collection can have several duplicates
-		// Also filter out the current user, since friendship can't be with oneself
+		// Also filter out the current user, since friendship can't be with oneself - sad life
 		return UserService.getDistinctFriends(allUsers).filter(
 			(a) => a.id !== userId
 		);
