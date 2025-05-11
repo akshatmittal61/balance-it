@@ -1,4 +1,5 @@
 import { T_COMPONENT_THEME } from "@/types";
+import React from "react";
 
 export type PillProps = {
 	size?: "small" | "medium" | "large";

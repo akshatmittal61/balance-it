@@ -1,5 +1,6 @@
 import { Error } from "@/components";
-import { frontendBaseUrl } from "@/constants";
+import { frontendBaseUrl, routes } from "@/constants";
+import { useAuthStore } from "@/store";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -15,6 +16,7 @@ const PageNotFound: React.FC<PageNotFoundProps> = ({
 	image = `${frontendBaseUrl}/vectors/not-found.svg`,
 }) => {
 	const router = useRouter();
+	const { isLoggedIn } = useAuthStore({ syncOnMount: true });
 	return (
 		<Error
 			title={title}
@@ -22,7 +24,9 @@ const PageNotFound: React.FC<PageNotFoundProps> = ({
 			image={image}
 			button={{
 				label: "Let's get you home",
-				action: () => router.push("/"),
+				action: () => {
+					router.push(isLoggedIn ? routes.HOME : routes.ROOT);
+				},
 			}}
 		/>
 	);
