@@ -1,0 +1,49 @@
+@import "@/styles/config/mixins";
+
+.header {
+	width: calc(100% - var(--side-width));
+	height: var(--head-height);
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 0.5rem;
+	position: fixed;
+	top: 0;
+	left: var(--side-width);
+	z-index: 60;
+	background-color: var(--theme-bg);
+	border-right: 1px solid var(--grey-600);
+	box-shadow: -4px 0px 4px -4px rgba(0, 0, 0, 0.1);
+	padding: 0.5rem;
+
+	@include responsive(phone) {
+		left: 0;
+		width: 100%;
+		border-right: 0;
+		box-shadow: none;
+	}
+
+	&-button {
+		@include init-button;
+		border-radius: 0.5rem;
+		width: 1.5rem;
+		height: 1.5rem;
+		padding: 0.25rem;
+
+		svg {
+			width: 0.875rem;
+			height: 0.875rem;
+		}
+
+		&:hover {
+			background-color: var(--back-shadow-light);
+		}
+	}
+
+	&-divider {
+		width: 1px;
+		height: 90%;
+		margin: auto 0;
+		background-color: var(--back-shadow);
+	}
+}

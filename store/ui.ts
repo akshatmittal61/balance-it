@@ -1,5 +1,5 @@
-import { appTheme } from "@/constants";
-import { AppNetworkStatus, AppTheme } from "@/types";
+import { appTheme, sideBarLinks } from "@/constants";
+import { AppNetworkStatus, AppTheme, Navigation } from "@/types";
 import { hexToRgb, Notify } from "@/utils";
 import { useEffect } from "react";
 import { create } from "zustand";
@@ -10,6 +10,8 @@ type State = {
 	theme: AppTheme;
 	accentColor: string;
 	networkStatus: AppNetworkStatus;
+	isSidebarExpanded: boolean;
+	sideBarLinks: Array<Navigation>;
 };
 
 type Getter<T extends keyof State> = () => State[T];
@@ -20,32 +22,44 @@ type Action = {
 	getTheme: Getter<"theme">;
 	getAccentColor: Getter<"accentColor">;
 	getNetworkStatus: Getter<"networkStatus">;
+	getIsSidebarExpanded: Getter<"isSidebarExpanded">;
+	getSideBarLinks: Getter<"sideBarLinks">;
 	setVh: Setter<"vh">;
 	setTheme: Setter<"theme">;
 	setAccentColor: Setter<"accentColor">;
 	setNetworkStatus: Setter<"networkStatus">;
+	setIsSidebarExpanded: Setter<"isSidebarExpanded">;
+	setSideBarLinks: Setter<"sideBarLinks">;
 };
 
 type Store = State & Action;
 
 const store = create<Store>((set, get) => {
 	return {
+		// state
 		vh: 0,
 		theme: appTheme?.light || "light",
 		accentColor: "0, 0, 0",
 		networkStatus: "online",
+		isSidebarExpanded: true,
+		sideBarLinks: sideBarLinks,
+		// getters
 		getVh: () => get().vh,
 		getTheme: () => get().theme,
 		getAccentColor: () => get().accentColor,
 		getNetworkStatus: () => get().networkStatus,
+		getIsSidebarExpanded: () => get().isSidebarExpanded,
+		getSideBarLinks: () => get().sideBarLinks,
+		// setters
 		setVh: (vh) => set({ vh }),
 		setTheme: (theme) => {
 			set({ theme });
 			document.body.dataset.theme = theme;
-			localStorage.setItem("theme", theme);
 		},
 		setAccentColor: (accentColor) => set({ accentColor }),
 		setNetworkStatus: (networkStatus) => set({ networkStatus }),
+		setIsSidebarExpanded: (isSidebarExpanded) => set({ isSidebarExpanded }),
+		setSideBarLinks: (sideBarLinks) => set({ sideBarLinks }),
 	};
 });
 
@@ -59,6 +73,8 @@ type ReturnType = Store & {
 	sync: () => void;
 	syncNetworkStatus: () => void;
 	toggleTheme: () => void;
+	toggleSidebar: () => void;
+	setOpenSidebar: (_: boolean) => void;
 };
 
 type UiStoreHook = (_?: Options) => ReturnType;
@@ -100,10 +116,42 @@ export const useUiStore: UiStoreHook = (options = {}) => {
 
 	const toggleTheme = () => {
 		if (store.theme === appTheme.light) {
+			localStorage.setItem("theme", appTheme.dark);
 			store.setTheme(appTheme.dark);
 		} else {
+			localStorage.setItem("theme", appTheme.light);
 			store.setTheme(appTheme.light);
 		}
+	};
+
+	const setOpenSidebar = (state: boolean) => {
+		if (state === true) {
+			document.body.style.setProperty(
+				"--side-width",
+				"var(--side-width-expanded)"
+			);
+		} else {
+			document.body.style.setProperty(
+				"--side-width",
+				"var(--side-width-collapsed)"
+			);
+		}
+		store.setIsSidebarExpanded(state);
+	};
+
+	const toggleSidebar = () => {
+		if (store.isSidebarExpanded) {
+			document.body.style.setProperty(
+				"--side-width",
+				"var(--side-width-collapsed)"
+			);
+		} else {
+			document.body.style.setProperty(
+				"--side-width",
+				"var(--side-width-expanded)"
+			);
+		}
+		store.setIsSidebarExpanded(!store.isSidebarExpanded);
 	};
 
 	useEffect(() => {
@@ -118,5 +166,7 @@ export const useUiStore: UiStoreHook = (options = {}) => {
 		sync,
 		syncNetworkStatus,
 		toggleTheme,
+		toggleSidebar,
+		setOpenSidebar,
 	};
 };
