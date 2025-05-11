@@ -3,15 +3,15 @@
 .loader-bar {
 	width: 100vw;
 	margin: 0 auto;
-	height: 6px;
-	background-color: rgba(179, 64, 56, 0.2);
+	height: 4px;
+	background-color: var(--back-shadow);
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 20;
+	z-index: 80;
 
 	@include responsive(phone) {
-		height: 4px;
+		height: 2px;
 	}
 
 	&-line {
@@ -21,7 +21,7 @@
 		display: inline-flex;
 		width: 50%;
 		height: 100%;
-		background-color: var(--accent-color-heavy);
+		background-color: var(--accent-color);
 		animation: move 1s linear infinite;
 
 		@include _theme(dark) {

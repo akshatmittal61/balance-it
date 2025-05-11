@@ -44,7 +44,7 @@ const SideBar: React.FC<ISideBarProps> = () => {
 	};
 	useEffect(() => {
 		setExpandOptionsMenu(false);
-	}, [router.asPath]);
+	}, [router.pathname]);
 
 	return (
 		<>

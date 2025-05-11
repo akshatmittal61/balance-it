@@ -1,11 +1,11 @@
-import { Header, Seo, SideBar } from "@/components";
+import { Header, Loader, Seo, SideBar } from "@/components";
 import { AppSeo, routes } from "@/constants";
 import { useDevice } from "@/hooks";
 import { useAuthStore, useUiStore } from "@/store";
 import { IUser } from "@/types";
 import { stylesConfig } from "@/utils";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import styles from "./styles.module.scss";
 
@@ -18,6 +18,7 @@ const classes = stylesConfig(styles, "wrapper");
 
 export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 	const router = useRouter();
+	const [showLoader, setShowLoader] = useState(false);
 	const { setUser } = useAuthStore({ syncOnMount: true });
 	const {
 		setOpenSidebar,
@@ -32,6 +33,20 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 		routes.CALENDAR,
 		routes.PROFILE,
 	];
+
+	// only show router when route is changing
+	useEffect(() => {
+		router.events.on("routeChangeStart", () => {
+			setShowLoader(true);
+		});
+		router.events.on("routeChangeComplete", () => {
+			setShowLoader(false);
+		});
+		router.events.on("routeChangeError", () => {
+			setShowLoader(false);
+		});
+	}, [router.events]);
+
 	useEffect(() => {
 		if (user) {
 			setUser(user);
@@ -67,6 +82,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 					<SideBar />
 				</>
 			) : null}
+			{showLoader ? <Loader.Bar /> : null}
 			<main
 				className={
 					pagesSupportingContainer.includes(router.pathname)
