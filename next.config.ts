@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 import path from "path";
+const runtimeCaching = require("next-pwa/cache");
 
-const nextConfig: NextConfig = {
+const withPWA = require("next-pwa")({
+	dest: "public",
+	register: true,
+	skipWaiting: true,
+	runtimeCaching,
+	buildExcludes: [/middleware-manifest.json$/],
+});
+
+const nextConfig: NextConfig = withPWA({
 	/* config options here */
 	reactStrictMode: true,
 	images: {
@@ -25,6 +34,6 @@ const nextConfig: NextConfig = {
 			"mixed-decls",
 		],
 	},
-};
+});
 
 export default nextConfig;
