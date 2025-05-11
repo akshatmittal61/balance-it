@@ -17,7 +17,13 @@ const nextConfig: NextConfig = {
 	sassOptions: {
 		includePaths: [path.join(process.cwd(), "styles")],
 		quiteDeps: true,
-		silenceDeprecations: ["legacy-js-api", "import"],
+		silenceDeprecations: [
+			"legacy-js-api",
+			"import",
+			"color-functions",
+			"global-builtin",
+			"mixed-decls",
+		],
 	},
 };
 
