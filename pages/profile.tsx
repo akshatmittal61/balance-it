@@ -1,6 +1,6 @@
 import { Seo } from "@/components";
 import { authRouterInterceptor } from "@/connections";
-import { fallbackAssets, routes } from "@/constants";
+import { AppSeo, fallbackAssets, routes } from "@/constants";
 import { Responsive } from "@/layouts";
 import { Avatar, Button, Input, Typography } from "@/library";
 import { useAuthStore } from "@/store";
@@ -46,7 +46,7 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 
 	return (
 		<>
-			<Seo title={`${user.name} - Profile | Settle It`} />
+			<Seo title={`${user.name} - Profile | ${AppSeo.title}`} />
 			<main className={classes("")}>
 				<div className={classes("-banner")}>
 					<button

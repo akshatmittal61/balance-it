@@ -1,4 +1,5 @@
 import {
+	AppSeo,
 	emailTemplates,
 	HTTP,
 	OTP_STATUS,
@@ -89,7 +90,7 @@ export class OtpService {
 	public static async send(email: string, otp: string) {
 		await sendEmailTemplate(
 			email,
-			"OTP requested for Login | Balance It",
+			`OTP requested for Login | ${AppSeo.title}`,
 			emailTemplates.OTP,
 			{ otp }
 		);

@@ -1,4 +1,5 @@
 import { googleEmailConfig } from "@/config";
+import { AppSeo } from "@/constants";
 import { T_EMAIL_TEMPLATE } from "@/types";
 import { createTransport } from "nodemailer";
 import { getEmailTemplate } from "./template";
@@ -18,7 +19,7 @@ export const sendEmailService = async (
 	const smtpTransport = createTransport(transportOptions);
 	const mailOptions = {
 		from: {
-			name: "Balance It!",
+			name: AppSeo.title || "",
 			address: googleEmailConfig.email,
 		},
 		to,
