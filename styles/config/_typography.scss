@@ -4,7 +4,7 @@
 // $size: size of the font (xxs, xs, sm, md, lg, xl, xxl, xxxl)
 // $weight: weight of the font (light, regular, medium, semi-bold, bold)
 
-$font-families: ("poppins", "montserrat");
+$font-families: ("poppins", "montserrat", "alice");
 
 $font-sizes: (
 	"xxs",
@@ -30,6 +30,8 @@ $font-weights: ("light", "regular", "medium", "semi-bold", "bold");
 		font-family: var(--font-montserrat);
 	} @else if $name == "Poppins" or $name == "poppins" or $name == "p" {
 		font-family: var(--font-poppins);
+	} @else if $name == "Alice" or $name == "alice" or $name == "a" {
+		font-family: var(--font-alice);
 	} @else {
 		font-family: var(--font-poppins);
 	}

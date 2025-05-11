@@ -166,4 +166,22 @@ export class AuthService {
 		}
 		return cookiesToSet;
 	}
+	public static getUpdatedCookies(old: Tokens, newTokens: Tokens) {
+		const cookiesToSet = [];
+		if (old.accessToken !== newTokens.accessToken) {
+			cookiesToSet.push({
+				name: "accessToken",
+				value: newTokens.accessToken,
+				maxAge: 1 * 60 * 1000,
+			});
+		}
+		if (old.refreshToken !== newTokens.refreshToken) {
+			cookiesToSet.push({
+				name: "refreshToken",
+				value: newTokens.refreshToken,
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+		}
+		return cookiesToSet;
+	}
 }

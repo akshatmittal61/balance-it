@@ -1,7 +1,7 @@
 import { apiMethods, dbUri, HTTP } from "@/constants";
 import { ApiError, DbConnectionError, ParserSafetyError } from "@/errors";
 import { Logger } from "@/log";
-import { ServerMiddleware } from "@/middlewares";
+import { ServerMiddleware } from "@/server";
 import {
 	ApiController,
 	ApiControllers,
@@ -13,7 +13,7 @@ import {
 } from "@/types";
 import { ApiFailure } from "@/utils";
 import { NextApiHandler } from "next";
-import { DatabaseManager } from ".";
+import { DatabaseManager } from "../connections";
 
 export class ApiRoute {
 	// Options for API Wrapper

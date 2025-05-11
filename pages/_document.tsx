@@ -19,6 +19,10 @@ export default function Document() {
 					rel="stylesheet"
 				/>
 				<link
+					href="https://fonts.googleapis.com/css2?family=Alice&display=swap"
+					rel="stylesheet"
+				/>
+				<link
 					href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional"
 					rel="stylesheet"
 				/>

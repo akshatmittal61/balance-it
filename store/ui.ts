@@ -79,7 +79,7 @@ export const useUiStore: UiStoreHook = (options = {}) => {
 			}
 		}
 		const accentColor = getComputedStyle(document.documentElement)
-			.getPropertyValue("--accent-color-heavy")
+			.getPropertyValue("--accent-color")
 			.trim();
 		const accentColorRgb = hexToRgb(accentColor);
 		store.setAccentColor(accentColorRgb);

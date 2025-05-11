@@ -3,13 +3,20 @@
 :root::after {
 	--transition-time: 0.3s;
 
-	--font-poppins: Poppins, system-ui, -apple-system, BlinkMacSystemFont,
-		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	--font-montserrat: "Montserrat", system-ui, -apple-system,
-		BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-		sans-serif;
+	--font-poppins:
+		Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-montserrat:
+		"Montserrat", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, sans-serif;
+	--font-alice:
+		"Alice", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, serif;
 
-	--accent-color: #3f51b5;
+	--accent-color: #685752;
+	--accent-color-secondary: #997c70;
+	--accent-color-tertiary: #8eb486;
+	--accent-color-light: #fdf7f4;
 	--theme-bg: #fff;
 	--theme-fg: var(--accent-color);
 
