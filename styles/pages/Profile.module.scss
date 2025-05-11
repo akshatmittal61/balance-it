@@ -1,0 +1,85 @@
+@import "@/styles/config/mixins";
+
+.profile-page {
+	width: 100%;
+	min-height: 100vh;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-direction: column;
+	position: relative;
+	z-index: 1;
+	padding: 0 5%;
+
+	&-banner {
+		width: 100%;
+		min-height: 20vh;
+		background-image: url("/images/banner.png");
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		transform: translateY(45px);
+		background-blend-mode: lighten;
+		background-color: rgba(255, 255, 255, 0.5);
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		flex: 0 0 auto;
+		padding: 36px 24px;
+		border-radius: 0.5rem;
+
+		@include responsive(phone) {
+			height: unset;
+			aspect-ratio: 2 / 1;
+			padding: 1rem;
+		}
+
+		&-btn {
+			@include init-button;
+			border-radius: 500px;
+			padding: 8px;
+			color: var(--theme-white);
+
+			&--flat {
+				border-radius: 8px;
+				padding: 12px 16px;
+				gap: 12px;
+			}
+
+			svg {
+				width: 20px;
+				height: 20px;
+				color: var(--theme-white);
+			}
+
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.25);
+			}
+		}
+	}
+
+	&-meta {
+		width: 100%;
+		z-index: 5;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&-form {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 24px;
+
+		@include responsive(phone) {
+			width: 100%;
+		}
+
+		&-col {
+			padding: 12px;
+		}
+	}
+}

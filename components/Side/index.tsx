@@ -6,7 +6,7 @@ import { getUserDetails, stylesConfig } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	FiChevronDown,
 	FiMoon,
@@ -42,6 +42,10 @@ const SideBar: React.FC<ISideBarProps> = () => {
 		setIsSyncing(false);
 		syncUiState();
 	};
+	useEffect(() => {
+		setExpandOptionsMenu(false);
+	}, [router.asPath]);
+
 	return (
 		<>
 			<aside

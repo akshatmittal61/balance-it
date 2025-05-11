@@ -1,5 +1,5 @@
 import { UserService } from "@/services";
-import { ApiRequest, ApiResponse, UpdateUser } from "@/types";
+import { ApiRequest, ApiResponse, IUser, UpdateUser } from "@/types";
 import {
 	ApiFailure,
 	ApiSuccess,
@@ -14,9 +14,11 @@ export class UserController {
 	public static async updateUserProfile(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
 		const name = safeParse(getString, req.body.name);
+		const phone = safeParse(getString, req.body.phone);
 		const avatar = safeParse(getString, req.body.avatar);
 		const body: UpdateUser = {};
 		if (name !== null) body["name"] = name;
+		if (phone != null) body["phone"] = phone;
 		if (avatar !== null) body["avatar"] = avatar;
 		if (Object.keys(body).length === 0) {
 			return new ApiFailure(res).send(
@@ -24,7 +26,7 @@ export class UserController {
 			);
 		}
 		const user = await UserService.updateUserProfile(userId, body);
-		return new ApiSuccess(res).send(user);
+		return new ApiSuccess<IUser>(res).send(user);
 	}
 	public static async inviteUser(req: ApiRequest, res: ApiResponse) {
 		const loggedInUserId = genericParse<string>(

@@ -1,4 +1,5 @@
-import { AuthApi } from "@/api";
+import { AuthApi, UserApi } from "@/api";
+import { useHttpClient } from "@/hooks";
 import { IUser } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
@@ -38,6 +39,9 @@ type Options = {
 type ReturnType = Store & {
 	sync: () => Promise<void>;
 	isLoading: boolean;
+	isUpdating: boolean;
+	update: (_: Partial<IUser>) => Promise<void>;
+	logout: () => Promise<void>;
 };
 
 type AuthStoreHook = (_?: Options) => ReturnType;
@@ -45,6 +49,7 @@ type AuthStoreHook = (_?: Options) => ReturnType;
 export const useAuthStore: AuthStoreHook = (options = {}) => {
 	const store = useStore();
 	const [isLoading, setIsLoading] = useState(false);
+	const { loading: isUpdating, call: updateApi } = useHttpClient<IUser>();
 
 	const sync = async () => {
 		try {
@@ -60,6 +65,17 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 		}
 	};
 
+	const updateProfile = async (body: Partial<IUser>) => {
+		const updated = await updateApi(UserApi.updateUser, body);
+		store.setUser(updated);
+	};
+
+	const logout = async () => {
+		await AuthApi.logout();
+		store.setUser(null);
+		store.setIsLoggedIn(false);
+	};
+
 	useEffect(() => {
 		if (options.syncOnMount) {
 			sync();
@@ -70,6 +86,9 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 	return {
 		...store,
 		isLoading,
+		isUpdating,
 		sync,
+		update: updateProfile,
+		logout,
 	};
 };

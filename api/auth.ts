@@ -6,6 +6,10 @@ export class AuthApi {
 		const res = await http.get("/auth/verify", { headers });
 		return res.data;
 	}
+	public static async logout(headers?: any): Promise<ApiRes<null>> {
+		const response = await http.get("/auth/logout", { headers });
+		return response.data;
+	}
 	public static async requestOtpWithEmail(
 		email: string
 	): Promise<{ message: string }> {
