@@ -61,8 +61,12 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 				twitter={AppSeo.twitter}
 				og={AppSeo.og}
 			/>
-			<Header />
-			<SideBar />
+			{pagesSupportingContainer.includes(router.pathname) ? (
+				<>
+					<Header />
+					<SideBar />
+				</>
+			) : null}
 			<main
 				className={
 					pagesSupportingContainer.includes(router.pathname)

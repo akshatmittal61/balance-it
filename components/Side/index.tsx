@@ -1,7 +1,7 @@
 import { appTheme, routes } from "@/constants";
 import { useOnClickOutside } from "@/hooks";
 import { Avatar, Typography } from "@/library";
-import { useAuthStore, useUiStore } from "@/store";
+import { useAuthStore, useUiStore, useWalletStore } from "@/store";
 import { getUserDetails, stylesConfig } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,7 +22,8 @@ const classes = stylesConfig(styles, "side-bar");
 
 const SideBar: React.FC<ISideBarProps> = () => {
 	const router = useRouter();
-	const { user, isLoading, isLoggedIn, sync: syncAuthState } = useAuthStore();
+	const { user, isLoggedIn, sync: syncAuthState } = useAuthStore();
+	const { sync: syncWalletState } = useWalletStore();
 	const {
 		theme,
 		setOpenSidebar,
@@ -33,9 +34,12 @@ const SideBar: React.FC<ISideBarProps> = () => {
 	} = useUiStore();
 	const bottomContainerRef = useRef<HTMLDivElement>(null);
 	const [expandOptionsMenu, setExpandOptionsMenu] = useState(false);
+	const [isSyncing, setIsSyncing] = useState(false);
 	useOnClickOutside(bottomContainerRef, () => setExpandOptionsMenu(false));
 	const sync = async () => {
-		await syncAuthState();
+		setIsSyncing(true);
+		await Promise.all([syncAuthState(), syncWalletState(), syncUiState()]);
+		setIsSyncing(false);
 		syncUiState();
 	};
 	return (
@@ -100,7 +104,7 @@ const SideBar: React.FC<ISideBarProps> = () => {
 							<div className={classes("-option")} onClick={sync}>
 								<FiRefreshCw
 									className={classes("-option-icon", {
-										"-option-icon--loading": isLoading,
+										"-option-icon--loading": isSyncing,
 									})}
 								/>
 								<Typography
