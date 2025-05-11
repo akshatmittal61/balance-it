@@ -1,5 +1,6 @@
 import { Cache } from "@/cache";
 import {
+	AppSeo,
 	cacheParameter,
 	emailTemplates,
 	HTTP,
@@ -80,7 +81,7 @@ export class UserService {
 	public static async invite(email: string, invitedByUser: IUser) {
 		await sendEmailTemplate(
 			email,
-			"Invite to Balance It",
+			`Invite to ${AppSeo.title}`,
 			emailTemplates.USER_INVITED,
 			{
 				invitedBy: {
@@ -132,7 +133,7 @@ export class UserService {
 		);
 		await sendBulkEmailTemplate(
 			emails,
-			"Invite to Balance It",
+			`Invite to ${AppSeo.title}`,
 			emailTemplates.USER_INVITED,
 			{
 				invitedBy: {
