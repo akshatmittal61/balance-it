@@ -1,7 +1,7 @@
 import { HTTP } from "@/constants";
 import { Logger } from "@/log";
 import { ExpenseService } from "@/services";
-import { ApiRequest, ApiResponse } from "@/types";
+import { ApiRequest, ApiResponse, ExpenseSpread } from "@/types";
 import {
 	ApiSuccess,
 	genericParse,
@@ -14,7 +14,7 @@ export class WalletController {
 	public static async getExpensesForUser(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
 		const expenses = await ExpenseService.getUserExpenses(userId);
-		return new ApiSuccess(res).send(expenses);
+		return new ApiSuccess<Array<ExpenseSpread>>(res).send(expenses);
 	}
 	public static async getExpensesSummary(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
@@ -35,7 +35,7 @@ export class WalletController {
 			splits || []
 		);
 		Logger.debug("Created expense", created);
-		return new ApiSuccess(res).send(
+		return new ApiSuccess<ExpenseSpread>(res).send(
 			created,
 			HTTP.message.SUCCESS,
 			HTTP.status.CREATED
@@ -48,6 +48,6 @@ export class WalletController {
 			expenseId,
 			loggedInUserId: userId,
 		});
-		return new ApiSuccess(res).send(data);
+		return new ApiSuccess<boolean>(res).send(data);
 	}
 }

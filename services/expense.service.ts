@@ -339,6 +339,12 @@ export class ExpenseService {
 		if (!foundExpense) {
 			throw new ApiError(HTTP.status.NOT_FOUND, "Expense not found");
 		}
+		Logger.debug(
+			foundExpense,
+			loggedInUserId,
+			typeof foundExpense.author.id,
+			typeof loggedInUserId
+		);
 		// the user can only delete expense if it is paid by the user or is a personal expense
 		if (foundExpense.author.id !== loggedInUserId) {
 			throw new ApiError(HTTP.status.FORBIDDEN, "You cannot delete this");

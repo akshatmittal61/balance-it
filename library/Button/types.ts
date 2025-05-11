@@ -33,3 +33,21 @@ export type IconButtonProps = React.DetailedHTMLProps<
 	size?: ButtonSize;
 	icon: React.ReactNode;
 };
+
+export type FabButtonProps = React.DetailedHTMLProps<
+	React.ButtonHTMLAttributes<HTMLButtonElement>,
+	HTMLButtonElement
+> & {
+	className?: string;
+	icon?: React.ReactNode;
+	label?: string;
+	variant?: ButtonVariant;
+	theme?: ButtonTheme;
+	size?: ButtonSize;
+	options?: Array<{
+		id: string;
+		icon: React.ReactNode;
+		label?: string;
+		onSelect: (_: string) => void;
+	}>;
+};

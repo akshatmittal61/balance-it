@@ -273,3 +273,45 @@ export const getImageUrlFromDriveLink = (link: string): string => {
 		return link;
 	}
 };
+
+/**
+ * Converts an enumeration value to a readable string format with every word capitalized.
+ * For example, USER_STATUS_JUST_JOINED would be converted to "User Status Just Joined".
+ * @param {string} text The enumeration value to convert.
+ * @returns {string} The converted string.
+ */
+export const runningCase = (text: string): string => {
+	return text
+		.split("_")
+		.map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
+		.join(" ");
+};
+
+/**
+ * Simplifies a given fraction by dividing both the numerator and the denominator by
+ * all of their common divisors until the fraction cannot be simplified further.
+ * @param {string} fraction The fraction to simplify, given as a string in the
+ * format "numerator/denominator".
+ * @returns {string} The simplified fraction, or the original fraction if it
+ * cannot be simplified further.
+ */
+export const simplifyFraction = (fraction: string) => {
+	let splitted = fraction.split("/");
+	if (splitted.length !== 2 || isNaN(+splitted[0]) || isNaN(+splitted[1])) {
+		return fraction;
+	}
+	const numerator = +splitted[0];
+	const denominator = +splitted[1];
+	const divisors = [];
+	for (let i = 2; i <= Math.min(numerator, denominator); i++) {
+		if (denominator % i === 0) {
+			divisors.push(i);
+		}
+	}
+	for (let i = divisors.length - 1; i >= 0; i--) {
+		if (numerator % divisors[i] === 0) {
+			return `${numerator / divisors[i]}/${denominator / divisors[i]}`;
+		}
+	}
+	return fraction;
+};
