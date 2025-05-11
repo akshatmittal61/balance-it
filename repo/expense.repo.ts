@@ -35,7 +35,6 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 				.filter(getNonNullValue) || [];
 		res.splits = splits.map(getNonNullValue);
 		res.author = getObjectFromMongoResponse<IUser>(res.author)!;
-		console.log(res.author, res.author.id, typeof res.author.id);
 		return res;
 	}
 	public async findOne(

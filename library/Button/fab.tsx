@@ -74,7 +74,6 @@ const FabButton: React.ForwardRefRenderFunction<
 				disabled={disabled}
 				onClick={(() => {
 					if (options && options.length > 0) {
-						// console.log("I will open!");
 						return () => setOpenOptions((p) => !p);
 					} else return onClick;
 				})()}
