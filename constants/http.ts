@@ -3,7 +3,7 @@ const message = Object.freeze({
 	ERROR: "Error",
 	NOT_FOUND: "Not Found",
 	BAD_REQUEST: "Bad Request",
-	UNAUTHORIZED: "Unauthorized",
+	UNAUTHORIZED: "Please login to continue",
 	FORBIDDEN: "Forbidden",
 	INTERNAL_SERVER_ERROR: "Internal Server Error",
 	SERVICE_UNAVAILABLE: "Service Unavailable",

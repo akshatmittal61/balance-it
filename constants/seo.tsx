@@ -2,16 +2,17 @@ import { SeoProps } from "@/types";
 import { frontendBaseUrl } from "./variables";
 
 export class AppSeo {
-	static title: SeoProps["title"] = "NextJS Boilerplate";
+	static title: SeoProps["title"] = "Balance It";
 	static description: SeoProps["description"] =
-		"NextJS Boilerplate with TypeScript, ESLint, Prettier, SASS, Tailwind, and more.";
+		"Manage all your money in one place. Get summaries and reports to help you make better decisions.";
 	static image: SeoProps["image"] = `${frontendBaseUrl}/og-image.png`;
 	static canonical: SeoProps["canonical"] = frontendBaseUrl;
 	static author: SeoProps["author"];
 	static url: SeoProps["url"];
 	static type: SeoProps["type"];
 	static siteName: SeoProps["siteName"];
-	static themeColor: SeoProps["themeColor"] = "#3f51b5";
+	static themeColor: SeoProps["themeColor"] = "#685752";
+	static fullLogo: string = `${frontendBaseUrl}/logo-full.png`;
 	static icons: SeoProps["icons"] = [
 		"icon",
 		"shortcut icon",

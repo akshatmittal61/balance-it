@@ -1,0 +1,108 @@
+@import "@/styles/config/mixins";
+
+.auth {
+	max-width: 400px;
+	height: 100vh;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: column;
+	overflow: hidden;
+	text-align: center;
+	margin: 0 auto;
+	padding: 60px 0;
+
+	section {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 24px;
+
+		button {
+			width: 100%;
+		}
+	}
+
+	&-logo {
+		width: 60%;
+		height: auto;
+		max-height: 150px;
+		object-fit: contain;
+	}
+
+	&-footer {
+		width: 100%;
+		padding: 0 7.5%;
+	}
+
+	@include responsive(phone) {
+		padding: 20px;
+	}
+
+	&-divider {
+		width: 92%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		position: relative;
+		margin: 0 auto;
+
+		&::before,
+		&::after {
+			content: "";
+			position: absolute;
+			top: 50%;
+			width: 40%;
+			height: 1px;
+			background: var(--theme-black);
+
+			@include _theme(light) {
+				background: var(--theme-black);
+			}
+
+			@include _theme(dark) {
+				background: var(--theme-white);
+			}
+		}
+
+		&::before {
+			right: 50%;
+			transform: translateX(-4ch);
+		}
+
+		&::after {
+			left: 50%;
+			transform: translateX(4ch);
+		}
+	}
+}
+
+.oauth {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&-loader {
+		width: 25vh;
+		height: 25vh;
+		object-fit: contain;
+		perspective: 150rem;
+		animation: rotate 2s linear infinite;
+		user-select: none;
+	}
+}
+
+@keyframes rotate {
+	from {
+		transform: rotateY(0deg);
+	}
+
+	to {
+		transform: rotateY(360deg);
+	}
+}

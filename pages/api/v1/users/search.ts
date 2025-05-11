@@ -1,4 +1,4 @@
-import { ApiRoute } from "@/connections";
+import { ApiRoute } from "@/server";
 import { UserController } from "@/controllers";
 
 const apiRoute = new ApiRoute(
