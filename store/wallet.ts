@@ -1,13 +1,7 @@
 import { WalletApi } from "@/api";
 import { initialExpensesSummary } from "@/constants";
 import { useHttpClient } from "@/hooks";
-import {
-	CreateExpense,
-	Expense,
-	ExpenseSpread,
-	ExpensesSummary,
-	Split,
-} from "@/types";
+import { CreateExpense, ExpenseSpread, ExpensesSummary, Split } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
