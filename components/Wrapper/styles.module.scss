@@ -1,0 +1,24 @@
+@import "@/styles/config/mixins";
+
+.wrapper {
+	position: fixed;
+	top: var(--head-height);
+	left: var(--side-width);
+	width: calc(100% - var(--side-width));
+	height: calc(100vh - var(--head-height));
+	height: 100vh;
+	background-color: var(--theme-bg);
+	overflow-y: auto;
+	overflow-x: hidden;
+	z-index: 50;
+	border-right: 1px solid var(--grey-600);
+	box-shadow: -4px 0px 4px -4px rgba(0, 0, 0, 0.1);
+
+	@include responsive(phone) {
+		left: 0;
+		width: 100%;
+		height: calc(100vh - var(--head-height));
+		border-right: 0;
+		box-shadow: none;
+	}
+}

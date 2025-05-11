@@ -36,7 +36,7 @@ type Options = {
 };
 
 type ReturnType = Store & {
-	sync: () => void;
+	sync: () => Promise<void>;
 	isLoading: boolean;
 };
 
