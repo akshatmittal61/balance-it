@@ -1,7 +1,8 @@
-import { Seo } from "@/components";
+import { AddExpenseWizard, Home, Placeholder, Seo } from "@/components";
+import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { AppSeo, routes } from "@/constants";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useGodownStore, useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
@@ -14,13 +15,24 @@ type HomePageProps = {
 const classes = stylesConfig(styles, "home");
 
 const HomePage: React.FC<HomePageProps> = () => {
+	const { expenses, isLoading } = useWalletStore({
+		syncOnMount: true,
+	});
+	useGodownStore({ syncOnMount: true });
 	const { user } = useAuthStore();
 	return (
 		<>
 			<Seo title={`${user?.name} - Home | ${AppSeo.title}`} />
 			<main className={classes("")}>
-				<pre>{JSON.stringify(user, null, 2)}</pre>
+				{isLoading ? (
+					<ExpenseTableSkeleton />
+				) : expenses.length > 0 ? (
+					<Home.Body />
+				) : (
+					<Placeholder />
+				)}
 			</main>
+			{user ? <AddExpenseWizard /> : null}
 		</>
 	);
 };

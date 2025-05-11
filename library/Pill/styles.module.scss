@@ -1,0 +1,210 @@
+@import "@/styles/config/mixins";
+@import "@/styles/config/shadows";
+@import "@/styles/config/variables";
+
+.pill {
+	display: inline-flex;
+	justify-content: flex-start;
+	align-items: center;
+	position: relative;
+	z-index: 5;
+	padding: 4px 10px;
+	border-radius: 500px;
+	gap: 6px;
+	backdrop-filter: blur(10px);
+	cursor: pointer;
+	user-select: none;
+
+	&__size {
+		&--small {
+			padding: 4px 8px;
+		}
+
+		&--medium {
+			padding: 4px 10px;
+		}
+
+		&--large {
+			padding: 6px 14px;
+		}
+	}
+
+	&-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+
+		&--loading {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background-color: var(--grey-400);
+			animation: pulse 1.5s infinite ease-in-out;
+
+			@include _theme(light) {
+				background-color: var(--grey-400);
+			}
+
+			@include _theme(dark) {
+				background-color: var(--grey-400);
+			}
+
+			@keyframes pulse {
+				0% {
+					opacity: 0.15;
+				}
+
+				50% {
+					opacity: 1;
+				}
+
+				100% {
+					opacity: 0.15;
+				}
+			}
+		}
+	}
+
+	&__theme--metal.pill {
+		background-color: lighten($notion-background-color-green, 0%);
+		color: var(--grey-700);
+
+		@include _theme(light) {
+			background-color: lighten($notion-background-color-green, 0%);
+			color: var(--grey-700);
+		}
+
+		@include _theme(dark) {
+			background-color: var(--grey-700);
+			color: lighten($notion-background-color-green, 0%);
+		}
+	}
+
+	&__theme--success.pill {
+		background-color: var(--green-100);
+		color: var(--green-700);
+
+		@include _theme(light) {
+			background-color: var(--green-100);
+			color: var(--green-700);
+		}
+
+		@include _theme(dark) {
+			background-color: var(--green-700);
+			color: var(--green-100);
+		}
+	}
+
+	&__theme--error.pill {
+		background-color: $notion-background-color-red;
+		color: $notion-color-red;
+
+		@include _theme(light) {
+			background-color: $notion-background-color-red;
+			color: $notion-color-red;
+		}
+
+		@include _theme(dark) {
+			background-color: $notion-color-red;
+			color: $notion-background-color-red;
+		}
+	}
+
+	&__theme--warning.pill {
+		background-color: $notion-background-color-yellow;
+		color: $notion-color-orange;
+
+		@include _theme(light) {
+			background-color: $notion-background-color-yellow;
+			color: $notion-color-orange;
+		}
+
+		@include _theme(dark) {
+			background-color: $notion-color-orange;
+			color: $notion-background-color-yellow;
+		}
+	}
+
+	&__theme--info.pill {
+		background-color: var(--blue-100);
+		color: var(--blue-700);
+
+		@include _theme(light) {
+			background-color: var(--blue-100);
+			color: var(--blue-700);
+		}
+
+		@include _theme(dark) {
+			background-color: var(--blue-700);
+			color: var(--blue-100);
+		}
+	}
+
+	&__theme--custom.pill {
+		background-color: var(--purple-100);
+		color: var(--purple-700);
+
+		@include _theme(light) {
+			background-color: var(--purple-100);
+			color: var(--purple-700);
+		}
+
+		@include _theme(dark) {
+			background-color: var(--purple-700);
+			color: var(--purple-100);
+		}
+	}
+
+	&--dropdown {
+		min-width: 100%;
+		width: fit-content;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+		flex-flow: column;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		border-radius: 8px;
+		z-index: 15;
+		overflow: hidden;
+		max-height: 230px;
+		overflow-y: auto;
+		@include shadow(2);
+		background-color: #fff;
+
+		&__item {
+			width: 100%;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 8px;
+			padding: 8px 12px;
+			cursor: pointer;
+			user-select: none;
+			transition: all 0.2s ease-in-out;
+
+			&-current {
+				background-color: #ebf2f5;
+			}
+
+			svg {
+				width: 12px;
+				height: 12px;
+			}
+
+			&--danger svg {
+				width: 16px;
+				height: 16px;
+
+				path {
+					fill: var(--color-red);
+				}
+			}
+
+			&:hover {
+				background-color: #ebf2f5;
+			}
+		}
+	}
+}

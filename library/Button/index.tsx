@@ -1,29 +1,10 @@
 import { stylesConfig } from "@/utils";
 import React, { forwardRef } from "react";
+import { BUTON_SIZES, BUTTON_THEMES, BUTTON_VARIANTS } from "./assets";
 import styles from "./styles.module.scss";
-import { ButtonSize, ButtonTheme, ButtonVariant, IButtonProps } from "./types";
+import { IButtonProps } from "./types";
 
 const classNames = stylesConfig(styles);
-
-const BUTON_SIZES: Record<ButtonSize, string> = {
-	small: "btn--size--small",
-	medium: "btn--size--medium",
-	large: "btn--size--large",
-};
-
-const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-	filled: "btn--variant--filled",
-	outlined: "btn--variant--outlined",
-	text: "btn--variant--text",
-};
-
-const BUTTON_THEMES: Record<ButtonTheme, string> = {
-	default: "btn--theme--default",
-	success: "btn--theme--success",
-	error: "btn--theme--error",
-	warning: "btn--theme--warning",
-	info: "btn--theme--info",
-};
 
 const Button: React.ForwardRefRenderFunction<
 	HTMLButtonElement,

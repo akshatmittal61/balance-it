@@ -4,31 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-	--background: #ffffff;
-	--foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
-	}
-}
-
-body {
-	color: var(--foreground);
-	background: var(--background);
-	font-family: Arial, Helvetica, sans-serif;
-}
-
 ::-webkit-scrollbar {
 	width: 1.5px;
 	height: 1.5px;
 	background: transparent;
 
 	&-thumb {
-		background: rgba(0, 0, 0, 0.5);
+		background: transparent;
 		border-radius: 500px;
 	}
 

@@ -1,7 +1,10 @@
 export * as Auth from "./Auth";
+export * from "./Confirmation";
 export { default as Error } from "./Error";
+export * from "./Expenses";
 export { default as Header } from "./Header";
 export * as Home from "./Home";
+export * as Loader from "./Loader";
 export * from "./Seo";
 export { default as SideBar } from "./Side";
 export * from "./Wrapper";

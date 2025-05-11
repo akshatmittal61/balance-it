@@ -31,7 +31,7 @@ const SideBar: React.FC<ISideBarProps> = () => {
 		toggleTheme,
 		sync: syncUiState,
 	} = useUiStore();
-	const bottomContainerRef = useRef<any>(null);
+	const bottomContainerRef = useRef<HTMLDivElement>(null);
 	const [expandOptionsMenu, setExpandOptionsMenu] = useState(false);
 	useOnClickOutside(bottomContainerRef, () => setExpandOptionsMenu(false));
 	const sync = async () => {
