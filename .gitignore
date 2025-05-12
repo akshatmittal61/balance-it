@@ -56,3 +56,7 @@ next-env.d.ts
 /.obsidian
 /.idea
 .DS_Store
+
+# service workers
+public/sw.js
+public/workbox-*.js
