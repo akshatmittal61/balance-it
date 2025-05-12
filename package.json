@@ -16,7 +16,7 @@
 		"start": "next start",
 		"lint": "next lint",
 		"test": "echo \"Error: no test specified\" && exit 0",
-		"clean": "rm -rf .next/ && rm -rf dist/ && rm -rf .cache/ && rm -rf .yarn/ && rm -rf coverage/",
+		"clean": "rm -rf .next/ && rm -rf dist/ && rm -rf .cache/ && rm -rf .yarn/ && rm -rf coverage/ && rm public/sw.js && rm public/workbox-*.js",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"prepare": "husky"
