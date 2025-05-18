@@ -2,27 +2,25 @@ import { http } from "@/connections";
 import { ApiRes, IUser } from "@/types";
 
 export class AuthApi {
-	public static async verify(headers?: any): Promise<ApiRes<IUser>> {
-		const res = await http.get("/auth/verify", { headers });
+	public static async verify(headers?: any) {
+		const res = await http.get<ApiRes<IUser>>("/auth/verify", { headers });
 		return res.data;
 	}
-	public static async logout(headers?: any): Promise<ApiRes<null>> {
-		const response = await http.get("/auth/logout", { headers });
-		return response.data;
-	}
-	public static async requestOtpWithEmail(
-		email: string
-	): Promise<{ message: string }> {
-		const response = await http.post("/auth/otp/request", {
-			email,
+	public static async logout(headers?: any) {
+		const response = await http.get<ApiRes<null>>("/auth/logout", {
+			headers,
 		});
 		return response.data;
 	}
-	public static async verifyOtpWithEmail(
-		email: string,
-		otp: string
-	): Promise<ApiRes<IUser>> {
-		const response = await http.post("/auth/otp/verify", {
+	public static async requestOtpWithEmail(email: string) {
+		const response = await http.post<ApiRes<null>, { email: string }>(
+			"/auth/otp/request",
+			{ email }
+		);
+		return response.data;
+	}
+	public static async verifyOtpWithEmail(email: string, otp: string) {
+		const response = await http.post<ApiRes<IUser>>("/auth/otp/verify", {
 			email,
 			otp,
 		});

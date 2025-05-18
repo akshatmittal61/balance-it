@@ -1,9 +1,9 @@
 {
-	"name": "next-ts-full-stack-template",
+	"name": "balance-it",
 	"version": "0.1.0",
 	"private": false,
 	"license": "MIT",
-	"repository": "https://github.com/akshatmittal61/next-ts-full-stack-template.git",
+	"repository": "https://github.com/akshatmittal61/balance-it.git",
 	"author": "Akshat Mittal <akshatmittal2506@gmail.com>",
 	"engines": {
 		"node": ">=18.0.0",

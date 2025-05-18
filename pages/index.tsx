@@ -20,18 +20,10 @@ export default HomePage;
 
 export const getServerSideProps = (context: any): Promise<ServerSideResult> => {
 	return authRouterInterceptor(context, {
-		onLoggedInAndOnboarded() {
+		onLoggedIn() {
 			return {
 				redirect: {
 					destination: routes.HOME,
-					permanent: false,
-				},
-			};
-		},
-		onLoggedInAndNotOnboarded() {
-			return {
-				redirect: {
-					destination: routes.ONBOARDING,
 					permanent: false,
 				},
 			};

@@ -94,6 +94,7 @@ export class ApiRoute {
 	 * @return {ApiController} The wrapped controller with the applied middleware.
 	 */
 	private wrapper(controller: ApiController): ApiController {
+		controller = ServerMiddleware.responseBodyPopulator(controller);
 		if (this.isAdmin) {
 			return ServerMiddleware.adminRoute(controller);
 		} else if (this.isAuthenticated) {
@@ -101,6 +102,33 @@ export class ApiRoute {
 		} else {
 			return controller;
 		}
+	}
+	/**
+	 * Logs the details of the request and response, including method, URI, headers, body, and execution time.
+	 *
+	 * @param {ApiRequest} req - The API request object.
+	 * @param {ApiResponse} res - The API response object.
+	 * @param {number} startTime - The start time of the request execution.
+	 */
+	private log(req: ApiRequest, res: ApiResponse, startTime: number): void {
+		const executionTime = Date.now() - startTime;
+		const request = {
+			method: req.method,
+			uri: req.url,
+			body: req.body,
+			headers: req.headers,
+		};
+		const response = {
+			status: res.statusCode,
+			body: res.locals?.body,
+			headers: res.getHeaders ? res.getHeaders() : {}, // Assuming `getHeaders` exists
+			time: executionTime,
+		};
+		Logger.info(
+			`${request.method} ${response.status} ${request.uri} - ${response.time}ms`
+		);
+		Logger.debug("Request", request);
+		Logger.debug("Response", response);
 	}
 
 	/**
@@ -114,6 +142,7 @@ export class ApiRoute {
 			req: ApiRequest,
 			res: ApiResponse
 		) => {
+			const startTime = Date.now();
 			try {
 				if (this.useDatabase) {
 					await this.dbContainer.db.connect();
@@ -126,24 +155,29 @@ export class ApiRoute {
 
 				const { method } = req;
 				// We need the handler to run by async/await to catch errors
+				let result: ApiResponse;
+
 				if (method === apiMethods.GET && this.GET) {
-					return await this.wrapper(this.GET)(req, res);
+					result = await this.wrapper(this.GET)(req, res);
 				} else if (method === apiMethods.POST && this.POST) {
-					Logger.debug("About to", req.body, this.POST.name);
-					return await this.wrapper(this.POST)(req, res);
+					result = await this.wrapper(this.POST)(req, res);
 				} else if (method === apiMethods.PUT && this.PUT) {
-					return await this.wrapper(this.PUT)(req, res);
+					result = await this.wrapper(this.PUT)(req, res);
 				} else if (method === apiMethods.PATCH && this.PATCH) {
-					return await this.wrapper(this.PATCH)(req, res);
+					result = await this.wrapper(this.PATCH)(req, res);
 				} else if (method === apiMethods.DELETE && this.DELETE) {
-					return await this.wrapper(this.DELETE)(req, res);
+					result = await this.wrapper(this.DELETE)(req, res);
 				} else {
-					res.setHeader("Allow", this.allowedMethods);
-					return res
+					return new ApiFailure(res)
+						.headers("Allow", this.allowedMethods)
 						.status(HTTP.status.METHOD_NOT_ALLOWED)
-						.send(`Method ${method} Not Allowed`);
+						.message(`Method ${method} Not Allowed`)
+						.send();
 				}
+				this.log(req, res, startTime);
+				return result;
 			} catch (error: any) {
+				this.log(req, res, startTime);
 				if (error instanceof ApiError) {
 					return new ApiFailure(res).send(
 						error.message,
@@ -151,7 +185,7 @@ export class ApiRoute {
 					);
 				} else if (error instanceof DbConnectionError) {
 					return new ApiFailure(res).send(
-						error.message || "Unable to connect to database",
+						error.message || HTTP.message.DB_CONNECTION_ERROR,
 						HTTP.status.SERVICE_UNAVAILABLE
 					);
 				} else if (error instanceof ParserSafetyError) {

@@ -5,7 +5,7 @@ import { ServerSideAuthInterceptor } from "@/types";
 
 export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 	context: any,
-	{ onLoggedInAndNotOnboarded, onLoggedInAndOnboarded, onLoggedOut }
+	{ onLoggedIn, onLoggedOut }
 ) => {
 	const { req } = context;
 	const cookies = req.cookies;
@@ -20,11 +20,7 @@ export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 		const { data: user } = await Cache.fetch(cacheKey, () =>
 			AuthApi.verify(headers)
 		);
-		if (user.name) {
-			return onLoggedInAndOnboarded(user, headers);
-		} else {
-			return onLoggedInAndNotOnboarded(user, headers);
-		}
+		return onLoggedIn(user, headers);
 	} catch (error: any) {
 		return onLoggedOut();
 	}

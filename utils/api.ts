@@ -17,6 +17,10 @@ abstract class ApiBaseResponse<T> {
 		this.res.status(status);
 		return this;
 	}
+	public headers(key: string, value: any): this {
+		this.res.setHeader(key, value);
+		return this;
+	}
 	public message(message: string): this {
 		const payload = {
 			...this.payload,

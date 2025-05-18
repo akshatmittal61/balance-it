@@ -3,7 +3,7 @@ import { Logger } from "@/log";
 import { authRepo } from "@/repo";
 import { AuthResponse, Cookie, IAuthMapping, Tokens, User } from "@/types";
 import { genericParse, getNonEmptyString } from "@/utils";
-import jwt, { TokenExpiredError } from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
 export class AuthService {
 	public static async findOrCreateAuthMapping(
@@ -73,7 +73,10 @@ export class AuthService {
 				...tokens,
 			};
 		} catch (error) {
-			if (!(error instanceof TokenExpiredError)) {
+			if (
+				!(error instanceof TokenExpiredError) &&
+				!(error instanceof JsonWebTokenError)
+			) {
 				return null;
 			}
 		}

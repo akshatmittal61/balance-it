@@ -17,16 +17,14 @@ export type ServerSideResult<T = any> =
 
 export type ServerSideAuthInterceptor = <
 	T extends ServerSideResult,
-	U extends ServerSideResult,
 	V extends ServerSideResult,
 >(
 	_: any,
 	__: {
-		onLoggedInAndOnboarded: (_: IUser, __?: any) => T | Promise<T>;
-		onLoggedInAndNotOnboarded: (_: IUser, __?: any) => U | Promise<U>;
+		onLoggedIn: (_: IUser, __?: any) => T | Promise<T>;
 		onLoggedOut: () => V;
 	}
-) => Promise<T | U | V>;
+) => Promise<T | V>;
 
 export type ServerSideAdminInterceptor = <
 	T extends ServerSideResult,

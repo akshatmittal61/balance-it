@@ -1,5 +1,5 @@
 import { Header, Loader, Seo, SideBar } from "@/components";
-import { AppSeo, routes } from "@/constants";
+import { AppSeo, routesSupportingContainer } from "@/constants";
 import { useDevice } from "@/hooks";
 import { useAuthStore, useUiStore } from "@/store";
 import { IUser } from "@/types";
@@ -19,20 +19,11 @@ const classes = stylesConfig(styles, "wrapper");
 export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 	const router = useRouter();
 	const [showLoader, setShowLoader] = useState(false);
-	const { setUser } = useAuthStore({ syncOnMount: true });
-	const {
-		setOpenSidebar,
-		syncNetworkStatus,
-		sync: syncUiState,
-	} = useUiStore();
+	const { sync: syncAuth, setUser } = useAuthStore({ syncOnMount: true });
+	const { setOpenSidebar, syncNetworkStatus } = useUiStore({
+		syncOnMount: true,
+	});
 	const { device } = useDevice();
-	const pagesSupportingContainer: Array<string> = [
-		routes.HOME,
-		routes.SUMMARY,
-		routes.FRIENDS,
-		routes.CALENDAR,
-		routes.PROFILE,
-	];
 
 	// only show router when route is changing
 	useEffect(() => {
@@ -51,7 +42,6 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 		if (user) {
 			setUser(user);
 		}
-		syncUiState();
 		setInterval(() => {
 			syncNetworkStatus();
 		}, 5000);
@@ -62,8 +52,10 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 		if (device === "mobile") {
 			setOpenSidebar(false);
 		}
+		syncAuth();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [device, router.pathname]);
+
 	return (
 		<>
 			<Seo
@@ -76,7 +68,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 				twitter={AppSeo.twitter}
 				og={AppSeo.og}
 			/>
-			{pagesSupportingContainer.includes(router.pathname) ? (
+			{routesSupportingContainer.includes(router.pathname) ? (
 				<>
 					<Header />
 					<SideBar />
@@ -85,7 +77,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 			{showLoader ? <Loader.Bar /> : null}
 			<main
 				className={
-					pagesSupportingContainer.includes(router.pathname)
+					routesSupportingContainer.includes(router.pathname)
 						? classes("")
 						: ""
 				}

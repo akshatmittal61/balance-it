@@ -1,19 +1,25 @@
 import { AuthApi, UserApi } from "@/api";
 import { useHttpClient } from "@/hooks";
 import { IUser } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
 
 type State = {
 	user: IUser | null;
+	isLoading: boolean;
 	isLoggedIn: boolean;
 };
 
+type Getter<T extends keyof State> = () => State[T];
 type Setter<T extends keyof State> = (_: State[T]) => void;
 
 type Action = {
+	getUser: Getter<"user">;
+	getIsLoading: Getter<"isLoading">;
+	getIsLoggedIn: Getter<"isLoggedIn">;
 	setUser: Setter<"user">;
+	setIsLoading: Setter<"isLoading">;
 	setIsLoggedIn: Setter<"isLoggedIn">;
 };
 
@@ -22,10 +28,13 @@ type Store = State & Action;
 const store = create<Store>((set, get) => {
 	return {
 		user: null,
+		isLoading: false,
 		isLoggedIn: false,
 		getUser: () => get().user,
+		getIsLoading: () => get().isLoading,
 		getIsLoggedIn: () => get().isLoggedIn,
 		setUser: (user) => set({ user }),
+		setIsLoading: (isLoading) => set({ isLoading }),
 		setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
 	};
 });
@@ -48,12 +57,11 @@ type AuthStoreHook = (_?: Options) => ReturnType;
 
 export const useAuthStore: AuthStoreHook = (options = {}) => {
 	const store = useStore();
-	const [isLoading, setIsLoading] = useState(false);
 	const { loading: isUpdating, call: updateApi } = useHttpClient<IUser>();
 
 	const sync = async () => {
 		try {
-			setIsLoading(true);
+			store.setIsLoading(true);
 			const res = await AuthApi.verify();
 			store.setUser(res.data);
 			store.setIsLoggedIn(true);
@@ -61,7 +69,7 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 			store.setUser(null);
 			store.setIsLoggedIn(false);
 		} finally {
-			setIsLoading(false);
+			store.setIsLoading(false);
 		}
 	};
 
@@ -85,7 +93,6 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 
 	return {
 		...store,
-		isLoading,
 		isUpdating,
 		sync,
 		update: updateProfile,

@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import {
 	FiChevronDown,
+	FiLogOut,
 	FiMoon,
 	FiRefreshCw,
 	FiSun,
@@ -22,7 +23,7 @@ const classes = stylesConfig(styles, "side-bar");
 
 const SideBar: React.FC<ISideBarProps> = () => {
 	const router = useRouter();
-	const { user, isLoggedIn, sync: syncAuthState } = useAuthStore();
+	const { user, isLoggedIn, sync: syncAuthState, logout } = useAuthStore();
 	const { sync: syncWalletState } = useWalletStore();
 	const {
 		theme,
@@ -42,6 +43,12 @@ const SideBar: React.FC<ISideBarProps> = () => {
 		setIsSyncing(false);
 		syncUiState();
 	};
+
+	const logoutUser = async () => {
+		await logout();
+		router.push(routes.LOGIN);
+	};
+
 	useEffect(() => {
 		setExpandOptionsMenu(false);
 	}, [router.pathname]);
@@ -140,18 +147,34 @@ const SideBar: React.FC<ISideBarProps> = () => {
 										: "Light Mode"}
 								</Typography>
 							</div>
+							{router.pathname !== routes.PROFILE ? (
+								<div
+									className={classes("-option")}
+									onClick={() => {
+										router.push(routes.PROFILE);
+									}}
+								>
+									<FiUser
+										className={classes("-option-icon")}
+									/>
+									<Typography
+										size="sm"
+										className={classes("-option-title")}
+									>
+										My profile
+									</Typography>
+								</div>
+							) : null}
 							<div
 								className={classes("-option")}
-								onClick={() => {
-									router.push(routes.PROFILE);
-								}}
+								onClick={logoutUser}
 							>
-								<FiUser className={classes("-option-icon")} />
+								<FiLogOut className={classes("-option-icon")} />
 								<Typography
 									size="sm"
 									className={classes("-option-title")}
 								>
-									My profile
+									Logout
 								</Typography>
 							</div>
 						</>

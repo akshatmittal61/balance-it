@@ -31,9 +31,15 @@ export class ServerMiddleware {
 					refreshToken,
 				});
 				if (!authReponse) {
+					const cookies = AuthService.getCookies({
+						accessToken: null,
+						refreshToken: null,
+						logout: true,
+					});
 					return new ApiFailure(res)
 						.status(HTTP.status.UNAUTHORIZED)
 						.message(HTTP.message.UNAUTHORIZED)
+						.cookies(cookies)
 						.send();
 				}
 				Logger.debug("Authenticated user", authReponse);
@@ -57,9 +63,15 @@ export class ServerMiddleware {
 				return next(req, res);
 			} catch (error) {
 				Logger.error(error);
+				const cookies = AuthService.getCookies({
+					accessToken: null,
+					refreshToken: null,
+					logout: true,
+				});
 				return new ApiFailure(res)
 					.status(HTTP.status.UNAUTHORIZED)
 					.message(HTTP.message.UNAUTHORIZED)
+					.cookies(cookies)
 					.send();
 			}
 		};
@@ -80,6 +92,60 @@ export class ServerMiddleware {
 					.status(HTTP.status.FORBIDDEN)
 					.message(HTTP.message.FORBIDDEN)
 					.send();
+			}
+		};
+	}
+	public static responseBodyPopulator(next: ApiController): ApiController {
+		return async (req: ApiRequest, res: ApiResponse) => {
+			try {
+				const oldJSON = res.json;
+				Logger.debug("Beginning response data interception");
+				res.json = (data) => {
+					// For Async call, handle the promise and then set the data to `oldJson`
+					Logger.debug(
+						"Attempting interception for response data",
+						data
+					);
+					if (data && data.then != undefined) {
+						Logger.debug("Intercepted Response data", data);
+						// Resetting json to original to avoid cyclic call.
+						return data
+							.then((responseData: any) => {
+								// Custom logic/code.
+								res.json = oldJSON;
+								if (res.locals) {
+									res.locals.body = responseData;
+								} else {
+									res.locals = { body: responseData };
+								}
+								Logger.debug(
+									"Populated Response data",
+									responseData
+								);
+								return oldJSON.call(res, responseData);
+							})
+							.catch((error: any) => {
+								Logger.error(error);
+								return oldJSON.call(res, data);
+							});
+					} else {
+						// For non-async interceptor functions
+						// Resetting json to original to avoid cyclic call.
+						// Custom logic/code.
+						Logger.debug("Non-Async Response data", data);
+						res.json = oldJSON;
+						if (res.locals) {
+							res.locals.body = data;
+						} else {
+							res.locals = { body: data };
+						}
+						return oldJSON.call(res, data);
+					}
+				};
+				return next(req, res);
+			} catch (error) {
+				Logger.error(error);
+				return next(req, res);
 			}
 		};
 	}

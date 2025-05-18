@@ -19,14 +19,10 @@ const GoogleOAuthRedirectedPage: GoogleOAuthRedirectedPageProps = (props) => {
 		try {
 			const res = await AuthApi.continueOAuthWithGoogle(props.token);
 			setUser(res.data);
-			if (res.data.name) {
-				router.push(routes.HOME);
-			} else {
-				router.push(routes.ONBOARDING);
-			}
+			router.push(routes.HOME);
 		} catch {
 			Notify.error("Something went wrong, please try again");
-			router.push(routes.HOME);
+			router.push(routes.LOGIN);
 		}
 	};
 	useEffect(() => {

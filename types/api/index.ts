@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { IUser } from "./client";
+import { IUser } from "../client";
 
 export type ApiRequest = NextApiRequest & { user?: IUser };
-export type ApiResponse = NextApiResponse & {};
+export type ApiResponse = NextApiResponse & { locals?: { body?: any } };
 
 export type ApiRes<T> = { message: string; data: T };
 

@@ -1,29 +1,25 @@
 import { Seo } from "@/components";
-import { authRouterInterceptor } from "@/connections";
-import { AppSeo, fallbackAssets, routes } from "@/constants";
+import { AppSeo, routes } from "@/constants";
 import { Responsive } from "@/layouts";
 import { Avatar, Button, Input, Typography } from "@/library";
 import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Profile.module.scss";
-import { IUser, ServerSideResult } from "@/types";
-import { Notify, stylesConfig } from "@/utils";
+import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiArrowLeft, FiLogOut } from "react-icons/fi";
 
 const classes = stylesConfig(styles, "profile-page");
 
-interface IProfilePageProps {
-	user: IUser;
-}
+interface IProfilePageProps {}
 
-const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
+const ProfilePage: React.FC<IProfilePageProps> = () => {
 	const router = useRouter();
-	const { logout, update, isUpdating } = useAuthStore();
+	const { user, logout, update, isUpdating, isLoggedIn } = useAuthStore();
 	const [fields, setFields] = useState({
-		name: user.name || user.name || "",
-		phone: user.phone || user.phone || "",
-		avatar: user.avatar || user.avatar || "",
+		name: "",
+		phone: "",
+		avatar: "",
 	});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,9 +40,19 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 		router.push(routes.LOGIN);
 	};
 
+	useEffect(() => {
+		if (user) {
+			setFields({
+				name: user.name || "",
+				phone: user.phone || "",
+				avatar: user.avatar || "",
+			});
+		}
+	}, [user]);
+
 	return (
 		<>
-			<Seo title={`${user.name} - Profile | ${AppSeo.title}`} />
+			<Seo title={`${user?.name} - Profile | ${AppSeo.title}`} />
 			<main className={classes("")}>
 				<div className={classes("-banner")}>
 					<button
@@ -64,11 +70,15 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 					</button>
 				</div>
 				<div className={classes("-meta")}>
-					<Avatar
-						src={user.avatar || fallbackAssets.avatar}
-						alt={user.name || user.email}
-						size={160}
-					/>
+					{user ? (
+						<Avatar
+							src={getUserDetails(user).avatar || ""}
+							alt={getUserDetails(user).name || ""}
+							size={160}
+						/>
+					) : (
+						<div className="size-40 rounded-full bg-gray-200 animate-pulse"></div>
+					)}
 				</div>
 				<form className={classes("-form")} onSubmit={handleSubmit}>
 					<Responsive.Row>
@@ -80,15 +90,19 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 							xsm={100}
 							className={classes("-form-col")}
 						>
-							<Input
-								label="Name"
-								name="name"
-								type="text"
-								required
-								placeholder="Name"
-								value={fields.name}
-								onChange={handleChange}
-							/>
+							{isLoggedIn ? (
+								<Input
+									label="Name"
+									name="name"
+									type="text"
+									required
+									placeholder="Name"
+									value={fields.name}
+									onChange={handleChange}
+								/>
+							) : (
+								<div className="w-full h-10 bg-gray-200 animate-pulse"></div>
+							)}
 						</Responsive.Col>
 						<Responsive.Col
 							xlg={50}
@@ -98,15 +112,19 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 							xsm={100}
 							className={classes("-form-col")}
 						>
-							<Input
-								label="Phone"
-								name="phone"
-								type="tel"
-								required
-								placeholder="Phone"
-								value={fields.phone}
-								onChange={handleChange}
-							/>
+							{isLoggedIn ? (
+								<Input
+									label="Phone"
+									name="phone"
+									type="tel"
+									required
+									placeholder="Phone"
+									value={fields.phone}
+									onChange={handleChange}
+								/>
+							) : (
+								<div className="w-full h-10 bg-gray-200 animate-pulse"></div>
+							)}
 						</Responsive.Col>
 						<Responsive.Col
 							xlg={100}
@@ -116,15 +134,19 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 							xsm={100}
 							className={classes("-form-col")}
 						>
-							<Input
-								label="Avatar"
-								name="avatar"
-								type="url"
-								required
-								placeholder="Avatar"
-								value={fields.avatar}
-								onChange={handleChange}
-							/>
+							{isLoggedIn ? (
+								<Input
+									label="Avatar"
+									name="avatar"
+									type="url"
+									required
+									placeholder="Avatar"
+									value={fields.avatar}
+									onChange={handleChange}
+								/>
+							) : (
+								<div className="w-full h-10 bg-gray-200 animate-pulse"></div>
+							)}
 						</Responsive.Col>
 						<Responsive.Col
 							xlg={100}
@@ -134,14 +156,16 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 							xsm={100}
 							className={classes("-form-col", "-form-col--btn")}
 						>
-							<Button
-								type="submit"
-								loading={isUpdating}
-								className={classes("-form-btn")}
-								size="large"
-							>
-								Save
-							</Button>
+							{isLoggedIn ? (
+								<Button
+									type="submit"
+									loading={isUpdating}
+									className={classes("-form-btn")}
+									size="large"
+								>
+									Save
+								</Button>
+							) : null}
 						</Responsive.Col>
 					</Responsive.Row>
 				</form>
@@ -151,31 +175,3 @@ const ProfilePage: React.FC<IProfilePageProps> = ({ user }) => {
 };
 
 export default ProfilePage;
-
-export const getServerSideProps = (
-	context: any
-): Promise<ServerSideResult<IProfilePageProps>> => {
-	return authRouterInterceptor(context, {
-		async onLoggedInAndOnboarded(user) {
-			return {
-				props: { user },
-			};
-		},
-		onLoggedInAndNotOnboarded() {
-			return {
-				redirect: {
-					destination: routes.ONBOARDING + "?redirect=/me",
-					permanent: false,
-				},
-			};
-		},
-		onLoggedOut() {
-			return {
-				redirect: {
-					destination: routes.LOGIN + "?redirect=/me",
-					permanent: false,
-				},
-			};
-		},
-	});
-};

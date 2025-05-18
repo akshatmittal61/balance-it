@@ -1,17 +1,16 @@
-import { Auth as Components } from "@/components";
 import { AuthApi, UserApi } from "@/api";
+import { Auth as Components, Seo } from "@/components";
 import { authRouterInterceptor } from "@/connections";
 import { AppSeo, routes } from "@/constants";
-import { Seo } from "@/components";
 import { Typography } from "@/library";
 import { Logger } from "@/log";
+import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Auth.module.scss";
-import { IUser, ServerSideResult } from "@/types";
+import { ServerSideResult } from "@/types";
 import { Notify, stylesConfig } from "@/utils";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { useAuthStore } from "@/store";
+import React, { useEffect, useState } from "react";
 
 const classes = stylesConfig(styles, "auth");
 
@@ -19,11 +18,10 @@ type T_Auth_Frame = "input" | "otp-verification" | "onboarding";
 
 interface LoginPageProps {
 	frame: T_Auth_Frame;
-	user?: IUser;
 }
 
 const LoginPage: React.FC<LoginPageProps> = (props) => {
-	const { setUser } = useAuthStore();
+	const { user, setUser } = useAuthStore();
 	const router = useRouter();
 	const [authFrame, setAuthFrame] = useState<T_Auth_Frame>(props.frame);
 	const [email, setEmail] = useState("");
@@ -77,6 +75,14 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 			setUpdatingUserDetails(false);
 		}
 	};
+
+	useEffect(() => {
+		if (user) {
+			if (!user.name) {
+				setAuthFrame("onboarding");
+			}
+		}
+	}, [user]);
 
 	return (
 		<>
@@ -140,7 +146,7 @@ export const getServerSideProps = (
 	context: any
 ): Promise<ServerSideResult<LoginPageProps>> => {
 	return authRouterInterceptor(context, {
-		onLoggedInAndOnboarded() {
+		onLoggedIn() {
 			const { redirect } = context.query;
 			return {
 				redirect: {
@@ -149,18 +155,10 @@ export const getServerSideProps = (
 				},
 			};
 		},
-		onLoggedInAndNotOnboarded(user) {
-			return {
-				props: {
-					frame: "onboarding",
-					user,
-				},
-			};
-		},
 		onLoggedOut() {
 			return {
 				props: {
-					frame: "input",
+					frame: "input" as T_Auth_Frame,
 				},
 			};
 		},
