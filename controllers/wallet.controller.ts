@@ -1,7 +1,7 @@
 import { HTTP } from "@/constants";
 import { Logger } from "@/log";
 import { ExpenseService } from "@/services";
-import { ApiRequest, ApiResponse, ExpenseSpread } from "@/types";
+import { ApiRequest, ApiRequests, ApiResponse, ApiResponses } from "@/types";
 import {
 	ApiSuccess,
 	genericParse,
@@ -14,14 +14,19 @@ export class WalletController {
 	public static async getExpensesForUser(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
 		const expenses = await ExpenseService.getUserExpenses(userId);
-		return new ApiSuccess<Array<ExpenseSpread>>(res).send(expenses);
+		return new ApiSuccess<ApiResponses.GetUserExpenses>(res).send(expenses);
 	}
 	public static async getExpensesSummary(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
 		const summary = await ExpenseService.getExpensesSummary(userId);
-		return new ApiSuccess(res).send(summary);
+		return new ApiSuccess<ApiResponses.GetExpensesSummary>(res).send(
+			summary
+		);
 	}
-	public static async createExpense(req: ApiRequest, res: ApiResponse) {
+	public static async createExpense(
+		req: ApiRequest<ApiRequests.CreateExpense>,
+		res: ApiResponse
+	) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
 		const payload = req.body;
 		Logger.debug("Creating expense", payload);
@@ -35,7 +40,7 @@ export class WalletController {
 			splits || []
 		);
 		Logger.debug("Created expense", created);
-		return new ApiSuccess<ExpenseSpread>(res).send(
+		return new ApiSuccess<ApiResponses.CreateExpense>(res).send(
 			created,
 			HTTP.message.SUCCESS,
 			HTTP.status.CREATED
@@ -48,6 +53,6 @@ export class WalletController {
 			expenseId,
 			loggedInUserId: userId,
 		});
-		return new ApiSuccess<boolean>(res).send(data);
+		return new ApiSuccess<ApiResponses.DeleteExpense>(res).send(data);
 	}
 }

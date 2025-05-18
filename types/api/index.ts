@@ -1,7 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { IUser } from "../client";
 
-export type ApiRequest = NextApiRequest & { user?: IUser };
+export * as ApiRequests from "./requests";
+export * as ApiResponses from "./responses";
+
+export type ApiRequest<T = any> = Omit<NextApiRequest, "body"> & {
+	body: T;
+	user?: IUser;
+};
 export type ApiResponse = NextApiResponse & { locals?: { body?: any } };
 
 export type ApiRes<T> = { message: string; data: T };
