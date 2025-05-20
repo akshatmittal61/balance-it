@@ -6,6 +6,7 @@ export const routes = Object.freeze({
 	SUMMARY: "/summary",
 	FRIENDS: "/friends",
 	CALENDAR: "/calendar",
+	ADD_EXPENSE: "/add-expense",
 	LOGIN: "/login",
 	ERROR: "/500",
 	PROFILE: "/profile",
@@ -18,6 +19,7 @@ export const protectedRoutes: Array<string> = [
 	routes.SUMMARY,
 	routes.FRIENDS,
 	routes.CALENDAR,
+	routes.ADD_EXPENSE,
 ];
 
 export const nonProtectedRoutes: Array<string> = [
@@ -35,6 +37,7 @@ export const routesSupportingContainer: Array<string> = [
 	routes.SUMMARY,
 	routes.FRIENDS,
 	routes.CALENDAR,
+	routes.ADD_EXPENSE,
 ];
 
 export const redirectToLogin = (currentPath: string) => {

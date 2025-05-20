@@ -1,4 +1,4 @@
-import { AddExpenseWizard, Home, Placeholder, Seo } from "@/components";
+import { Home, Placeholder, Seo } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { AppSeo } from "@/constants";
 import { useAuthStore, useGodownStore, useWalletStore } from "@/store";
@@ -28,7 +28,6 @@ const HomePage: React.FC<HomePageProps> = () => {
 					<Placeholder />
 				)}
 			</main>
-			{user ? <AddExpenseWizard /> : null}
 		</>
 	);
 };
