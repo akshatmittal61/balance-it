@@ -10,7 +10,7 @@ const withPWA = require("next-pwa")({
 	buildExcludes: [/middleware-manifest.json$/],
 });
 
-const nextConfig: NextConfig = withPWA({
+const nextConfig: NextConfig = {
 	/* config options here */
 	reactStrictMode: true,
 	images: {
@@ -34,6 +34,9 @@ const nextConfig: NextConfig = withPWA({
 			"mixed-decls",
 		],
 	},
-});
+};
 
-export default nextConfig;
+const config =
+	process.env.NODE_ENV === "production" ? withPWA(nextConfig) : nextConfig;
+
+export default config;
