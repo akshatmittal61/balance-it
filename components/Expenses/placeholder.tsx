@@ -47,3 +47,12 @@ export const Placeholder: React.FC<IPlaceholderProps> = ({
 		</div>
 	);
 };
+
+export const AddExpensePlaceholder: React.FC = () => {
+	return (
+		<div className={classes("-add")}>
+			<div className={classes("-add__amount")}></div>
+			<div className={classes("-add__title")}></div>
+		</div>
+	);
+};

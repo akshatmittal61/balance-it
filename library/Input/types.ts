@@ -10,6 +10,7 @@ export interface InputProps
 	extends Omit<React.HTMLProps<HTMLInputElement>, "size"> {
 	styles?: {
 		box?: React.CSSProperties;
+		container?: React.CSSProperties;
 		label?: React.CSSProperties;
 		input?: React.CSSProperties;
 		dropdown?: React.CSSProperties;

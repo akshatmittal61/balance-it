@@ -1,3 +1,6 @@
+@import "@/styles/config/mixins";
+@import "@/styles/config/typography";
+
 .add-expense {
 	width: 100%;
 	display: flex;
@@ -5,4 +8,13 @@
 	align-items: center;
 	flex-direction: column;
 	padding-top: 25%;
+
+	&-form {
+		width: 100%;
+		padding: 1rem;
+
+		& > div > div {
+			padding: 12px;
+		}
+	}
 }

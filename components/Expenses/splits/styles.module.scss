@@ -12,6 +12,7 @@
 		justify-content: space-between;
 		align-items: center;
 		gap: 24px;
+		padding: 12px;
 
 		&-controls {
 			display: flex;
@@ -78,6 +79,7 @@
 		flex-wrap: wrap;
 		flex-direction: row;
 		gap: 8px;
+		padding: 12px 0;
 	}
 
 	&-suggestion {

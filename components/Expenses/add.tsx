@@ -1,35 +1,21 @@
-import { expenseMethods, expenseTypes } from "@/constants";
+import { expenseMethods, expenseTypes, routes } from "@/constants";
 import { Responsive } from "@/layouts";
-import {
-	Button,
-	CheckBox,
-	FabButton,
-	IconButton,
-	Input,
-	Pane,
-	Textarea,
-	Typography,
-} from "@/library";
+import { Button, CheckBox, FabButton, Input, Pane, Textarea } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
-import { CreateExpense, T_EXPENSE_TYPE } from "@/types";
+import { CreateExpense } from "@/types";
 import { Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
-import {
-	FiChevronLeft,
-	FiChevronUp,
-	FiPlus,
-	FiUsers,
-	FiX,
-} from "react-icons/fi";
+import { FiArrowRight, FiUsers, FiX } from "react-icons/fi";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
-import { AddExpenseScreen, AddExpenseWizardProps, TagProps } from "./types";
+import { AddExpenseWizardProps, TagProps } from "./types";
 
-const classes = stylesConfig(styles, "expense-wizard");
+export const classes = stylesConfig(styles, "expense-wizard");
 
-const Tag: React.FC<TagProps> = ({
+export const Tag: React.FC<TagProps> = ({
 	tag,
 	active = true,
 	onClick,
@@ -55,13 +41,12 @@ const Tag: React.FC<TagProps> = ({
 };
 
 export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
+	const router = useRouter();
 	const { user } = useAuthStore();
 	const { isAdding, createExpense, tags } = useWalletStore();
-	const [openAddWizard, setOpenAddWizard] = useState(false);
 	const [expandAdditionInfo, setExpandAdditionInfo] = useState(false);
 	const [tagsStr, setTagsStr] = useState("");
-	const [currentScreen, setCurrentScreen] =
-		useState<AddExpenseScreen>("default");
+	const [enableSplits, setEnableSplits] = useState<boolean>(false);
 	const [members, setMembers] = useState<Array<ExpenseUser>>(
 		user ? [{ ...user, amount: 0, value: 0 }] : []
 	);
@@ -110,7 +95,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		});
 		setMembers(user ? [{ ...user, amount: 0, value: 0 }] : []);
 		setTagsStr("");
-		setCurrentScreen("default");
 	};
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -131,340 +115,148 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		}
 		try {
 			await createExpense(payload);
-			setOpenAddWizard(false);
 			handleReset();
+			router.push(routes.HOME);
 		} catch (error) {
 			Notify.error(error);
 		}
 	};
-	const handleClose = () => {
-		setCurrentScreen("default");
-		setOpenAddWizard(false);
-	};
-	const handleTypeSelect = (type: T_EXPENSE_TYPE) => {
-		setPayload((prev) => ({ ...prev, type }));
-		setOpenAddWizard(true);
-	};
 	return (
 		<>
-			{openAddWizard ? (
+			<Input
+				size="large"
+				name="amount"
+				placeholder="0"
+				value={payload.amount === 0 ? "" : payload.amount}
+				onChange={handleChange}
+				className={classes("-amount")}
+				autoFocus
+				required
+				styles={{
+					input: {
+						borderBottom: "none",
+					},
+				}}
+			/>
+			<Input
+				size="large"
+				name="title"
+				type="text"
+				placeholder="Add a note"
+				value={payload.title}
+				onChange={handleChange}
+				required
+				className={classes("-title")}
+				styles={{
+					input: {
+						borderBottom: "none",
+					},
+				}}
+			/>
+			{enableSplits ? (
+				<div className={classes("-members")}>
+					<MembersWindow
+						defaultMethod={distributionMethods.equal}
+						totalAmount={payload.amount}
+						members={members}
+						setMembers={(users) => {
+							setMembers(users);
+							setPayload((p) => ({
+								...p,
+								splits: users.map((user) => ({
+									user: user.id,
+									amount: user.amount,
+								})),
+							}));
+						}}
+					/>
+				</div>
+			) : null}
+			{expandAdditionInfo ? (
 				<Pane
-					title={`Add Expense - ${expenseTypes[payload.type].label}`}
-					onClose={handleClose}
+					onClose={() => {
+						setExpandAdditionInfo(false);
+					}}
 					direction="bottom"
 				>
 					<form onSubmit={handleSubmit} className={classes("-form")}>
 						<Responsive.Row>
-							{currentScreen === "default" ? (
-								<>
-									<Responsive.Col
-										xlg={50}
-										lg={50}
-										md={50}
-										sm={100}
-										xsm={100}
-									>
-										<Input
-											name="title"
-											type="text"
-											label="Title"
-											placeholder="Title e.g. Food"
-											value={payload.title}
-											onChange={handleChange}
-											required
-										/>
-									</Responsive.Col>
-									<Responsive.Col
-										xlg={50}
-										lg={50}
-										md={50}
-										sm={100}
-										xsm={100}
-									>
-										<Input
-											name="amount"
-											label="Amount"
-											placeholder="Amount e.g. 100"
-											value={payload.amount}
-											onChange={handleChange}
-											required
-										/>
-									</Responsive.Col>
-									<div
-										onClick={() =>
-											setExpandAdditionInfo((p) => !p)
-										}
-									>
-										<div className={classes("-additional")}>
-											<Typography size="lg">
-												Additional Information
-											</Typography>
-											<IconButton
-												type="button"
-												icon={
-													<FiChevronUp
-														style={{
-															transform:
-																expandAdditionInfo
-																	? "rotate(180deg)"
-																	: "rotate(0deg)",
-														}}
-													/>
-												}
-											/>
-										</div>
-									</div>
-									{expandAdditionInfo ? (
-										<>
-											<Responsive.Col
-												xlg={33}
-												lg={33}
-												md={50}
-												sm={50}
-												xsm={50}
-											>
-												<Input
-													name="tagsStr"
-													type="text"
-													label="Tags"
-													placeholder="Title e.g. Food, Travel, Grocery"
-													value={tagsStr}
-													onChange={(e: any) =>
-														setTagsStr(
-															e.target.value
-														)
-													}
-												/>
-											</Responsive.Col>
-											<Responsive.Col
-												xlg={33}
-												lg={33}
-												md={50}
-												sm={50}
-												xsm={50}
-											>
-												<Input
-													name="timestamp"
-													type="datetime-local"
-													placeholder=""
-													label="Date / Time"
-													value={dayjs(
-														payload.timestamp
-													).format(
-														"YYYY-MM-DDTHH:mm"
-													)}
-													onChange={handleChange}
-													required
-												/>
-											</Responsive.Col>
-											{tagsStr
-												.split(",")
-												.map((tag: string) =>
-													tag.trim()
-												)
-												.filter(Boolean).length > 0 ? (
-												<Responsive.Col
-													xlg={100}
-													lg={100}
-													md={100}
-													sm={100}
-													xsm={100}
-													className={classes("-tags")}
-												>
-													{tagsStr
+							<Responsive.Col
+								xlg={33}
+								lg={33}
+								md={50}
+								sm={50}
+								xsm={50}
+							>
+								<Input
+									name="tagsStr"
+									type="text"
+									label="Tags"
+									placeholder="Title e.g. Food, Travel, Grocery"
+									value={tagsStr}
+									onChange={(e: any) =>
+										setTagsStr(e.target.value)
+									}
+								/>
+							</Responsive.Col>
+							<Responsive.Col
+								xlg={33}
+								lg={33}
+								md={50}
+								sm={50}
+								xsm={50}
+							>
+								<Input
+									name="timestamp"
+									type="datetime-local"
+									placeholder=""
+									label="Date / Time"
+									value={dayjs(payload.timestamp).format(
+										"YYYY-MM-DDTHH:mm"
+									)}
+									onChange={handleChange}
+									required
+								/>
+							</Responsive.Col>
+							{tagsStr
+								.split(",")
+								.map((tag: string) => tag.trim())
+								.filter(Boolean).length > 0 ? (
+								<Responsive.Col
+									xlg={100}
+									lg={100}
+									md={100}
+									sm={100}
+									xsm={100}
+									className={classes("-tags")}
+								>
+									{tagsStr
+										.split(",")
+										.map((tag: string) => tag.trim())
+										.filter(Boolean)
+										.map((tag: string, index: number) => (
+											<Tag
+												tag={tag}
+												active={true}
+												key={`add-expense-tag-${index}`}
+												onRemove={() => {
+													const currentTags = tagsStr
 														.split(",")
-														.map((tag: string) =>
+														.map((tag) =>
 															tag.trim()
 														)
-														.filter(Boolean)
-														.map(
-															(
-																tag: string,
-																index: number
-															) => (
-																<Tag
-																	tag={tag}
-																	active={
-																		true
-																	}
-																	key={`add-expense-tag-${index}`}
-																	onRemove={() => {
-																		const currentTags =
-																			tagsStr
-																				.split(
-																					","
-																				)
-																				.map(
-																					(
-																						tag
-																					) =>
-																						tag.trim()
-																				)
-																				.filter(
-																					Boolean
-																				);
-																		setTagsStr(
-																			currentTags
-																				.filter(
-																					(
-																						t
-																					) =>
-																						t !==
-																						tag
-																				)
-																				.join(
-																					", "
-																				)
-																		);
-																	}}
-																/>
+														.filter(Boolean);
+													setTagsStr(
+														currentTags
+															.filter(
+																(t) => t !== tag
 															)
-														)}
-												</Responsive.Col>
-											) : null}
-											<Responsive.Col
-												xlg={100}
-												lg={100}
-												md={100}
-												sm={100}
-												xsm={100}
-												className={classes("-tags")}
-											>
-												{tags
-													.map((tag: string) =>
-														tag.trim()
-													)
-													.filter(Boolean)
-													.filter(
-														(tag: string) =>
-															!tagsStr
-																.split(",")
-																.map((tag) =>
-																	tag.trim()
-																)
-																.includes(tag)
-													)
-													.map(
-														(
-															tag: string,
-															index: number
-														) => (
-															<Tag
-																tag={tag}
-																active={false}
-																key={`add-expense-tag-${index}`}
-																onClick={() => {
-																	const currentTags =
-																		tagsStr
-																			.split(
-																				","
-																			)
-																			.map(
-																				(
-																					tag
-																				) =>
-																					tag.trim()
-																			)
-																			.filter(
-																				Boolean
-																			);
-																	if (
-																		currentTags.includes(
-																			tag
-																		)
-																	)
-																		return;
-																	setTagsStr(
-																		[
-																			...currentTags,
-																			tag,
-																		].join(
-																			", "
-																		)
-																	);
-																}}
-															/>
-														)
-													)}
-											</Responsive.Col>
-											<Responsive.Col
-												xlg={100}
-												lg={100}
-												md={100}
-												sm={100}
-												xsm={100}
-												className={classes("-methods")}
-											>
-												{Object.values(
-													expenseMethods
-												).map((method) => (
-													<CheckBox
-														key={`add-expense-payment-method-${method.id}`}
-														label={
-															<Image
-																src={
-																	method.logo
-																}
-																alt={
-																	method.label
-																}
-																width={50}
-																height={50}
-																className={classes(
-																	"-methods-logo"
-																)}
-															/>
-														}
-														checked={
-															payload.method ===
-															method.id
-														}
-														onChange={() => {
-															setPayload((p) => ({
-																...p,
-																method: method.id,
-															}));
-														}}
-													/>
-												))}
-											</Responsive.Col>
-											<Responsive.Col
-												xlg={100}
-												lg={100}
-												md={100}
-												sm={100}
-												xsm={100}
-											>
-												<Textarea
-													name="description"
-													label="Note"
-													placeholder="Add a note for your expense"
-													value={payload.description}
-													onChange={(e: any) => {
-														handleChange(e);
-													}}
-													rows={4}
-												/>
-											</Responsive.Col>
-										</>
-									) : null}
-								</>
-							) : currentScreen === "splits" ? (
-								<MembersWindow
-									defaultMethod={distributionMethods.equal}
-									totalAmount={payload.amount}
-									members={members}
-									setMembers={(users) => {
-										setMembers(users);
-										setPayload((p) => ({
-											...p,
-											splits: users.map((user) => ({
-												user: user.id,
-												amount: user.amount,
-											})),
-										}));
-									}}
-								/>
+															.join(", ")
+													);
+												}}
+											/>
+										))}
+								</Responsive.Col>
 							) : null}
 							<Responsive.Col
 								xlg={100}
@@ -472,45 +264,130 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 								md={100}
 								sm={100}
 								xsm={100}
+								className={classes("-tags")}
+							>
+								{tags
+									.map((tag: string) => tag.trim())
+									.filter(Boolean)
+									.filter(
+										(tag: string) =>
+											!tagsStr
+												.split(",")
+												.map((tag) => tag.trim())
+												.includes(tag)
+									)
+									.map((tag: string, index: number) => (
+										<Tag
+											tag={tag}
+											active={false}
+											key={`add-expense-tag-${index}`}
+											onClick={() => {
+												const currentTags = tagsStr
+													.split(",")
+													.map((tag) => tag.trim())
+													.filter(Boolean);
+												if (currentTags.includes(tag))
+													return;
+												setTagsStr(
+													[...currentTags, tag].join(
+														", "
+													)
+												);
+											}}
+										/>
+									))}
+							</Responsive.Col>
+							<Responsive.Col
+								xlg={100}
+								lg={100}
+								md={100}
+								sm={100}
+								xsm={100}
+								className={classes("-methods")}
+							>
+								{Object.values(expenseMethods).map((method) => (
+									<CheckBox
+										key={`add-expense-payment-method-${method.id}`}
+										label={
+											<Image
+												src={method.logo}
+												alt={method.label}
+												width={50}
+												height={50}
+												className={classes(
+													"-methods-logo"
+												)}
+											/>
+										}
+										checked={payload.method === method.id}
+										onChange={() => {
+											setPayload((p) => ({
+												...p,
+												method: method.id,
+											}));
+										}}
+									/>
+								))}
+							</Responsive.Col>
+							<Responsive.Col
+								xlg={100}
+								lg={100}
+								md={100}
+								sm={100}
+								xsm={100}
+							>
+								<Textarea
+									name="description"
+									label="Note"
+									placeholder="Add a note for your expense"
+									value={payload.description}
+									onChange={(e: any) => {
+										handleChange(e);
+									}}
+									rows={4}
+								/>
+							</Responsive.Col>
+							<Responsive.Col
+								xlg={50}
+								lg={50}
+								md={50}
+								sm={50}
+								xsm={50}
 								className={classes("-action")}
 							>
-								{payload.amount > 0 ? (
-									currentScreen === "default" ? (
-										<Button
-											type="button"
-											size="large"
-											variant="outlined"
-											onClick={() => {
-												if (!payload.title) {
-													return Notify.error(
-														"Please enter a title"
-													);
-												}
-												setCurrentScreen("splits");
-											}}
-											icon={<FiUsers />}
-											iconPosition="left"
-										>
-											Split with friends?
-										</Button>
-									) : (
-										<Button
-											type="button"
-											size="large"
-											variant="outlined"
-											onClick={() =>
-												setCurrentScreen("default")
-											}
-											icon={<FiChevronLeft />}
-											iconPosition="left"
-										>
-											Go back
-										</Button>
-									)
-								) : null}
+								<Button
+									type="button"
+									variant="outlined"
+									onClick={() => {
+										if (!payload.title) {
+											return Notify.error(
+												"Please enter a title"
+											);
+										}
+										if (payload.amount <= 0) {
+											return Notify.error(
+												"Please enter an amount"
+											);
+										}
+										setExpandAdditionInfo(false);
+										setEnableSplits(true);
+									}}
+									icon={<FiUsers />}
+									iconPosition="left"
+								>
+									Split with friends?
+								</Button>
+							</Responsive.Col>
+							<Responsive.Col
+								xlg={50}
+								lg={50}
+								md={50}
+								sm={50}
+								xsm={50}
+								className={classes("-action")}
+							>
 								<Button
 									type="submit"
-									size="large"
 									loading={isAdding}
 									title={(() => {
 										if (isAdding) return "Creating...";
@@ -585,16 +462,39 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					</form>
 				</Pane>
 			) : null}
-			<FabButton
-				icon={<FiPlus />}
-				options={Object.values(expenseTypes).map((o) => ({
-					id: o.id,
-					icon: <o.Icon size={16} />,
-					label: o.label,
-					onSelect: (id) => handleTypeSelect(id as T_EXPENSE_TYPE),
-				}))}
-				onClick={() => setOpenAddWizard(true)}
-			/>
+			{payload.title.length > 0 && payload.amount > 0 ? (
+				<FabButton
+					icon={<FiArrowRight />}
+					onClick={() => {
+						setExpandAdditionInfo(true);
+					}}
+					disabled={(() => {
+						if (isAdding) return true;
+						if (payload.amount <= 0) return true;
+						if (members.length > 0) {
+							if (
+								members.length === 1 &&
+								members[0].id === user?.id
+							) {
+								return false;
+							}
+							// some members have 0 amount
+							if (members.some((m) => m.amount === 0)) {
+								return true;
+							}
+							// if the total amount is not equal to sum of members split
+							if (
+								members
+									.map((user) => user.amount)
+									.reduce((a, b) => a + b, 0) !==
+								payload.amount
+							) {
+								return true;
+							}
+						}
+					})()}
+				/>
+			) : null}
 		</>
 	);
 };

@@ -84,7 +84,10 @@ export const Input: React.FC<InputProps> = ({
 					{label}
 				</label>
 			) : null}
-			<div className={classes("__input-container")}>
+			<div
+				className={classes("__input-container")}
+				style={styles?.container}
+			>
 				{leftIcon && !dropdown?.enabled ? (
 					<div className={classes("__icon", "__icon--left")}>
 						{leftIcon}
