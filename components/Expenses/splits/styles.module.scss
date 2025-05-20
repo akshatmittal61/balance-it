@@ -26,6 +26,32 @@
 		}
 	}
 
+	&-tabs {
+		border-bottom: 1px solid var(--back-shadow-light);
+		padding-bottom: 0;
+		margin-bottom: 12px;
+	}
+
+	&-tab {
+		width: 25%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 1.25rem;
+		border-bottom: 2px solid transparent;
+		filter: grayscale(1);
+
+		svg {
+			color: var(--accent-color);
+			font-size: 1.25rem;
+		}
+
+		&--active {
+			border-bottom: 2px solid var(--accent-color);
+			filter: none;
+		}
+	}
+
 	&-user {
 		width: 100%;
 		display: flex;

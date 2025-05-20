@@ -5,7 +5,7 @@ import { Avatar, IconButton, Input, MaterialIcon, Typography } from "@/library";
 import { Logger } from "@/log";
 import { useAuthStore, useGodownStore } from "@/store";
 import { IUser } from "@/types";
-import { getUserDetails, runningCase } from "@/utils";
+import { getUserDetails } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { classes, distributionMethods } from "./assets";
 import { BulkEditor } from "./bulk-editor";
@@ -45,7 +45,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		const newMembers = members
 			.filter((m) => m.id !== member.id)
 			.map((member) => {
-				if (method === distributionMethods.equal) {
+				if (method === distributionMethods.equal.id) {
 					const newAmount = ExpenseUtils.getAmount(
 						member.value,
 						method,
@@ -79,7 +79,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 			const newMembers = members
 				.filter((m) => m.id !== user.id)
 				.map((member) => {
-					if (method === distributionMethods.equal) {
+					if (method === distributionMethods.equal.id) {
 						const newAmount = ExpenseUtils.getAmount(
 							member.value,
 							method,
@@ -106,7 +106,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 			const newCount = members.length + 1;
 			const newMembers = [
 				...members.map((member) => {
-					if (method === distributionMethods.equal) {
+					if (method === distributionMethods.equal.id) {
 						const newAmount = ExpenseUtils.getAmount(
 							member.value,
 							method,
@@ -144,7 +144,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		const oldMethod = method;
 		Logger.debug(oldMethod, newMethod);
 		const newMembers = members.map((member) => {
-			if (newMethod === distributionMethods.equal) {
+			if (newMethod === distributionMethods.equal.id) {
 				const newAmount = ExpenseUtils.getAmount(
 					member.value,
 					newMethod,
@@ -264,36 +264,30 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 					/>
 				</div>
 			</div>
-			<div className={classes("-header")}>
-				<Typography>Split Balance</Typography>
-				<div className={classes("-header-controls")}>
-					<Input
-						placeholder="Equal"
-						value={runningCase(method)}
-						dropdown={{
-							enabled: true,
-							options: Object.values(distributionMethods).map(
-								(method, index) => ({
-									id: `distribution-method-option-${index}`,
-									value: method,
-									label: runningCase(method),
-								})
-							),
-							onSelect: (option) => {
-								handleMethodChange(
-									option.value as DistributionMethod
-								);
-							},
-						}}
-					/>
-				</div>
+			<div className={classes("-header", "-tabs")}>
+				{Object.values(distributionMethods).map((m) => {
+					return (
+						<div
+							key={`distribution-method-tab-${m.id}`}
+							className={classes("-tab", {
+								"-tab--active": m.id === method,
+							})}
+							title={m.label}
+							onClick={() => {
+								handleMethodChange(m.id);
+							}}
+						>
+							{m.icon}
+						</div>
+					);
+				})}
 			</div>
 			{openBulkEditor ? (
 				<BulkEditor
 					selectedMembers={members}
 					setSelectedMembers={(users) => {
 						const finalMembers = users.map((u) => {
-							if (method === distributionMethods.equal) {
+							if (method === distributionMethods.equal.id) {
 								const newAmount = ExpenseUtils.getAmount(
 									"",
 									method,

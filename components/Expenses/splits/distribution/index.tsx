@@ -29,27 +29,27 @@ export const DistributionMember: React.FC<DistributionMemberProps> = ({
 					{member.email}
 				</Typography>
 			</div>
-			{distributionMethod === distributionMethods.equal ? (
+			{distributionMethod === distributionMethods.equal.id ? (
 				<EqualDistribution member={member} />
-			) : distributionMethod === distributionMethods.percentage ? (
+			) : distributionMethod === distributionMethods.percentage.id ? (
 				<PercentageDistribution
 					member={member}
 					onChange={(value) =>
-						onChange(value, distributionMethods.percentage)
+						onChange(value, distributionMethods.percentage.id)
 					}
 				/>
-			) : distributionMethod === distributionMethods.fraction ? (
+			) : distributionMethod === distributionMethods.fraction.id ? (
 				<FractionDistribution
 					member={member}
 					onChange={(value) =>
-						onChange(value, distributionMethods.fraction)
+						onChange(value, distributionMethods.fraction.id)
 					}
 				/>
-			) : distributionMethod === distributionMethods.custom ? (
+			) : distributionMethod === distributionMethods.custom.id ? (
 				<CustomDistribution
 					member={member}
 					onChange={(value) =>
-						onChange(value, distributionMethods.custom)
+						onChange(value, distributionMethods.custom.id)
 					}
 				/>
 			) : null}

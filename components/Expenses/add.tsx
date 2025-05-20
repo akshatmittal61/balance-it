@@ -156,7 +156,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			{enableSplits ? (
 				<div className={classes("-members")}>
 					<MembersWindow
-						defaultMethod={distributionMethods.equal}
+						defaultMethod={distributionMethods.equal.id}
 						totalAmount={payload.amount}
 						members={members}
 						setMembers={(users) => {
