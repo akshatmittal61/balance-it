@@ -1,9 +1,18 @@
 import { expenseMethods, expenseTypes, routes } from "@/constants";
 import { Responsive } from "@/layouts";
-import { Button, CheckBox, FabButton, Input, Pane, Textarea } from "@/library";
+import {
+	Avatar,
+	Avatars,
+	Button,
+	CheckBox,
+	FabButton,
+	Input,
+	Pane,
+	Textarea,
+} from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { CreateExpense } from "@/types";
-import { Notify, stylesConfig } from "@/utils";
+import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -123,6 +132,23 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	};
 	return (
 		<>
+			<div className={classes("-avatars")}>
+				{members.length > 0 &&
+				!(members.length === 1 && members[0].id === user?.id) ? (
+					<Avatars size={48}>
+						{members.map((m) => ({
+							src: getUserDetails(m).avatar || "",
+							alt: getUserDetails(m).name || "",
+						}))}
+					</Avatars>
+				) : user ? (
+					<Avatar
+						src={getUserDetails(user).avatar || ""}
+						alt={getUserDetails(user).name || ""}
+						size={48}
+					/>
+				) : null}
+			</div>
 			<Input
 				size="large"
 				name="amount"

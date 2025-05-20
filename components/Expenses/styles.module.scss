@@ -9,6 +9,13 @@
 	flex-direction: column;
 	gap: 8px;
 
+	&-avatars {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 1rem auto;
+	}
+
 	&-amount {
 		text-align: center;
 		@include typography(poppins, head-1, medium);
