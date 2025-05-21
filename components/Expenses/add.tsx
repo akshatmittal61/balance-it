@@ -3,9 +3,8 @@ import { Responsive } from "@/layouts";
 import {
 	Avatar,
 	Avatars,
-	Button,
 	CheckBox,
-	FabButton,
+	IconButton,
 	Input,
 	Pane,
 	Textarea,
@@ -17,7 +16,8 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { FiArrowRight, FiUsers, FiX } from "react-icons/fi";
+import { BsChevronCompactUp } from "react-icons/bs";
+import { FiCheckCircle, FiUsers, FiX } from "react-icons/fi";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddExpenseWizardProps, TagProps } from "./types";
@@ -105,13 +105,12 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		setMembers(user ? [{ ...user, amount: 0, value: 0 }] : []);
 		setTagsStr("");
 	};
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const onSave = async () => {
 		payload.tags = tagsStr
 			.split(",")
 			.map((tag) => tag.trim())
 			.filter(Boolean);
-		if (payload.splits !== undefined) {
+		if (payload.splits !== undefined && enableSplits) {
 			if (payload.splits.length === 0) {
 				delete payload.splits;
 			}
@@ -134,7 +133,8 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		<>
 			<div className={classes("-avatars")}>
 				{members.length > 0 &&
-				!(members.length === 1 && members[0].id === user?.id) ? (
+				!(members.length === 1 && members[0].id === user?.id) &&
+				enableSplits ? (
 					<Avatars size={48}>
 						{members.map((m) => ({
 							src: getUserDetails(m).avatar || "",
@@ -203,9 +203,10 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					onClose={() => {
 						setExpandAdditionInfo(false);
 					}}
+					height="50vh"
 					direction="bottom"
 				>
-					<form onSubmit={handleSubmit} className={classes("-form")}>
+					<div className={classes("-form")}>
 						<Responsive.Row>
 							<Responsive.Col
 								xlg={33}
@@ -373,153 +374,122 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 									rows={4}
 								/>
 							</Responsive.Col>
-							<Responsive.Col
-								xlg={50}
-								lg={50}
-								md={50}
-								sm={50}
-								xsm={50}
-								className={classes("-action")}
-							>
-								<Button
-									type="button"
-									variant="outlined"
-									onClick={() => {
-										if (!payload.title) {
-											return Notify.error(
-												"Please enter a title"
-											);
-										}
-										if (payload.amount <= 0) {
-											return Notify.error(
-												"Please enter an amount"
-											);
-										}
-										setExpandAdditionInfo(false);
-										setEnableSplits(true);
-									}}
-									icon={<FiUsers />}
-									iconPosition="left"
-								>
-									Split with friends?
-								</Button>
-							</Responsive.Col>
-							<Responsive.Col
-								xlg={50}
-								lg={50}
-								md={50}
-								sm={50}
-								xsm={50}
-								className={classes("-action")}
-							>
-								<Button
-									type="submit"
-									loading={isAdding}
-									title={(() => {
-										if (isAdding) return "Creating...";
-										if (payload.amount <= 0)
-											return "Enter Amount";
-										if (members.length > 0) {
-											// the only member is the logged in user
-											if (
-												members.length === 1 &&
-												members[0].id === user?.id
-											) {
-												return "Create";
-											}
-											// some members have 0 amount
-											if (
-												members.some(
-													(m) => m.amount === 0
-												)
-											) {
-												return "Enter Amount for all members";
-											}
-											// if the total amount is not equal to sum of members split
-											if (
-												members
-													.map((user) => user.amount)
-													.reduce(
-														(a, b) => a + b,
-														0
-													) !== payload.amount
-											) {
-												return "Enter Amount for all members";
-											}
-										}
-										return "Create";
-									})()}
-									disabled={(() => {
-										if (isAdding) return true;
-										if (payload.amount <= 0) return true;
-										if (members.length > 0) {
-											if (
-												members.length === 1 &&
-												members[0].id === user?.id
-											) {
-												return false;
-											}
-											// some members have 0 amount
-											if (
-												members.some(
-													(m) => m.amount === 0
-												)
-											) {
-												return true;
-											}
-											// if the total amount is not equal to sum of members split
-											if (
-												members
-													.map((user) => user.amount)
-													.reduce(
-														(a, b) => a + b,
-														0
-													) !== payload.amount
-											) {
-												return true;
-											}
-										}
-									})()}
-								>
-									Add
-								</Button>
-							</Responsive.Col>
 						</Responsive.Row>
-					</form>
+					</div>
 				</Pane>
 			) : null}
 			{payload.title.length > 0 && payload.amount > 0 ? (
-				<FabButton
-					icon={<FiArrowRight />}
-					onClick={() => {
-						setExpandAdditionInfo(true);
-					}}
-					disabled={(() => {
-						if (isAdding) return true;
-						if (payload.amount <= 0) return true;
-						if (members.length > 0) {
-							if (
-								members.length === 1 &&
-								members[0].id === user?.id
-							) {
-								return false;
-							}
-							// some members have 0 amount
-							if (members.some((m) => m.amount === 0)) {
-								return true;
-							}
-							// if the total amount is not equal to sum of members split
-							if (
-								members
-									.map((user) => user.amount)
-									.reduce((a, b) => a + b, 0) !==
-								payload.amount
-							) {
-								return true;
-							}
-						}
-					})()}
-				/>
+				<div className={classes("-bottom-bar")}>
+					{isAdding ? (
+						<div className={classes("-bottom-bar__skeleton")}>
+							<div className={classes("-bottom-bar__loader")} />
+						</div>
+					) : (
+						<>
+							<IconButton
+								icon={<FiUsers />}
+								onClick={() => {
+									setEnableSplits((p) => !p);
+								}}
+								disabled={(() => {
+									if (isAdding) return true;
+									if (payload.amount <= 0) return true;
+									if (members.length > 0) {
+										if (
+											members.length === 1 &&
+											members[0].id === user?.id
+										) {
+											return false;
+										}
+										// some members have 0 amount
+										if (
+											members.some((m) => m.amount === 0)
+										) {
+											return true;
+										}
+										// if the total amount is not equal to sum of members split
+										if (
+											members
+												.map((user) => user.amount)
+												.reduce((a, b) => a + b, 0) !==
+											payload.amount
+										) {
+											return true;
+										}
+									}
+								})()}
+							/>
+							<IconButton
+								icon={<BsChevronCompactUp />}
+								size="large"
+								onClick={() => {
+									setExpandAdditionInfo(true);
+								}}
+							/>
+							<IconButton
+								icon={<FiCheckCircle />}
+								onClick={onSave}
+								title={(() => {
+									if (isAdding) return "Creating...";
+									if (payload.amount <= 0)
+										return "Enter Amount";
+									if (members.length > 0) {
+										// the only member is the logged in user
+										if (
+											members.length === 1 &&
+											members[0].id === user?.id
+										) {
+											return "Create";
+										}
+										// some members have 0 amount
+										if (
+											members.some((m) => m.amount === 0)
+										) {
+											return "Enter Amount for all members";
+										}
+										// if the total amount is not equal to sum of members split
+										if (
+											members
+												.map((user) => user.amount)
+												.reduce((a, b) => a + b, 0) !==
+											payload.amount
+										) {
+											return "Enter Amount for all members";
+										}
+									}
+									return "Create";
+								})()}
+								disabled={(() => {
+									if (isAdding) return true;
+									if (payload.amount <= 0) return true;
+									if (members.length > 0) {
+										if (
+											members.length === 1 &&
+											members[0].id === user?.id
+										) {
+											return false;
+										}
+										// some members have 0 amount
+										if (
+											members.some((m) => m.amount === 0)
+										) {
+											return true;
+										}
+										// if the total amount is not equal to sum of members split
+										if (
+											members
+												.map((user) => user.amount)
+												.reduce((a, b) => a + b, 0) !==
+											payload.amount
+										) {
+											return true;
+										}
+									}
+								})()}
+							/>
+						</>
+					)}
+				</div>
 			) : null}
 		</>
 	);

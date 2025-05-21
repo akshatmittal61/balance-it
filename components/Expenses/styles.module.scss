@@ -1,5 +1,6 @@
 @import "@/styles/config/mixins";
 @import "@/styles/config/typography";
+@import "@/styles/config/animations";
 
 .expense-wizard {
 	width: 100%;
@@ -118,7 +119,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		// padding: 8px 0;
 		padding: 0.25rem 12px;
 		border-bottom: 1px solid var(--back-shadow-dark);
 		cursor: pointer;
@@ -130,6 +130,49 @@
 
 	&-description {
 		padding: 0.5rem;
+	}
+
+	&-bottom-bar {
+		width: 100%;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		border-radius: 32px 32px 0 0;
+		box-shadow: 0px -10px 15px -3px rgba(0, 0, 0, 0.1);
+		padding: 16px 20px;
+		background-color: inherit;
+		animation: slide-bottom var(--transition-time) linear;
+
+		&__skeleton {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 32px;
+		}
+
+		&__loader {
+			width: 50px;
+			aspect-ratio: 1;
+			border-radius: 50%;
+			background: var(--accent-color);
+			-webkit-mask: radial-gradient(
+				circle closest-side at 50% 40%,
+				#0000 94%,
+				#000
+			);
+			transform-origin: 50% 40%;
+			animation: add-expense-loader 1s infinite linear;
+		}
+
+		@keyframes add-expense-loader {
+			100% {
+				transform: rotate(1turn);
+			}
+		}
 	}
 }
 
@@ -389,10 +432,36 @@
 		flex-direction: column;
 		gap: 24px;
 
+		&__avatar {
+			width: 5rem;
+			height: 5rem;
+			border-radius: 500px;
+			background: #d9d9d9;
+			background-size: 400% 400%;
+			position: relative;
+
+			&::before {
+				content: "";
+				position: absolute;
+				height: 100%;
+				width: 100%;
+				background-image: linear-gradient(
+					to right,
+					#d9d9d9 0%,
+					rgba(0, 0, 0, 0.07) 20%,
+					#d9d9d9 40%,
+					#d9d9d9 100%
+				);
+				background-repeat: no-repeat;
+				background-size: 1200px 1000px;
+				animation: shimmer 1s linear infinite;
+				border-radius: inherit;
+			}
+		}
+
 		&__amount {
 			width: 4rem;
 			height: 4rem;
-			border-radius: 500px;
 			background: #d9d9d9;
 			background-size: 400% 400%;
 			border-radius: 8px;
