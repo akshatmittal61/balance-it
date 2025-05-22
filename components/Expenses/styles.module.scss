@@ -133,10 +133,10 @@
 	}
 
 	&-bottom-bar {
-		width: 100%;
+		width: calc(100% - var(--side-width));
 		position: fixed;
 		bottom: 0;
-		left: 0;
+		left: var(--side-width);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -145,6 +145,11 @@
 		padding: 16px 20px;
 		background-color: inherit;
 		animation: slide-bottom var(--transition-time) linear;
+
+		@include responsive(phone) {
+			width: 100%;
+			left: 0;
+		}
 
 		&__skeleton {
 			width: 100%;
