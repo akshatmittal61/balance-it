@@ -280,9 +280,6 @@ export class UserService {
 		const finalCollection = newUsersCollection.filter(
 			(user) => user !== null
 		);
-		if (!finalCollection.map((a) => a.email).includes(invitee.email)) {
-			finalCollection.push(invitee);
-		}
 		const message =
 			nonFoundUsers.length > 0
 				? `Invited ${nonFoundUsers.length} users`

@@ -1,11 +1,12 @@
 import { UserApi } from "@/api";
 import { Friend } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
 
 type State = {
 	friends: Array<Friend>;
+	isLoading: boolean;
 };
 
 type Getter<T extends keyof State> = () => State[T];
@@ -14,6 +15,8 @@ type Setter<T extends keyof State> = (_: State[T]) => void;
 type Action = {
 	getFriends: Getter<"friends">;
 	setFriends: Setter<"friends">;
+	getIsLoading: Getter<"isLoading">;
+	setIsLoading: Setter<"isLoading">;
 };
 
 type Store = State & Action;
@@ -21,8 +24,11 @@ type Store = State & Action;
 const store = create<Store>((set, get) => {
 	return {
 		friends: [],
+		isLoading: false,
 		getFriends: () => get().friends,
 		setFriends: (friends) => set({ friends }),
+		getIsLoading: () => get().isLoading,
+		setIsLoading: (isLoading) => set({ isLoading }),
 	};
 });
 
@@ -41,17 +47,16 @@ type GodownStoreHook = (_?: Options) => ReturnType;
 
 export const useGodownStore: GodownStoreHook = (options = {}) => {
 	const store = useStore();
-	const [isLoading, setIsLoading] = useState(false);
 
 	const sync = async () => {
 		try {
-			setIsLoading(true);
+			store.setIsLoading(true);
 			const res = await UserApi.getUserFriends();
 			store.setFriends(res.data);
 		} catch {
 			store.setFriends([]);
 		} finally {
-			setIsLoading(false);
+			store.setIsLoading(false);
 		}
 	};
 
@@ -64,7 +69,7 @@ export const useGodownStore: GodownStoreHook = (options = {}) => {
 
 	return {
 		...store,
-		isLoading,
+		isLoading: store.getIsLoading(),
 		sync,
 	};
 };
