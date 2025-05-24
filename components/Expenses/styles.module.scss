@@ -14,7 +14,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin: 1rem auto;
+		margin: 0 auto;
 	}
 
 	&-amount {
@@ -77,24 +77,22 @@
 	}
 
 	&-tags {
-		width: 100%;
+		width: 70%;
 		display: flex;
-		justify-content: flex-start;
-		align-items: flex-start;
+		justify-content: center;
+		align-items: center;
 		flex-wrap: wrap;
 		gap: 8px;
+		margin: 0 auto;
 	}
 
 	&-tag {
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: row;
+		@include init-button;
 		gap: 8px;
 		width: auto;
 		border-radius: 500px;
-		border: 1px solid var(--accent-color);
-		padding: 6px 12px;
+		border: 0.5px solid var(--accent-color);
+		padding: 4px 8px;
 		color: var(--accent-color);
 		@include typography(body, sm, regular);
 
@@ -102,9 +100,18 @@
 			cursor: pointer;
 		}
 
-		&--active {
-			background-color: var(--accent-color);
-			color: var(--white);
+		&--add {
+			border-style: dashed;
+		}
+
+		&--form {
+			input {
+				&:active,
+				&:focus {
+					border: none;
+					outline: none;
+				}
+			}
 		}
 	}
 

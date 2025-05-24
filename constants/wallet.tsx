@@ -96,3 +96,33 @@ export const initialExpensesSummary: ExpensesSummary = {
 	paid: 0,
 	received: 0,
 };
+
+export const TAG_DICTIONARY: Record<string, string[]> = {
+	food: [
+		"food",
+		"pizza",
+		"lunch",
+		"dinner",
+		"snack",
+		"tea",
+		"coffee",
+		"restaurant",
+	],
+	commute: [
+		"uber",
+		"ola",
+		"auto",
+		"rickshaw",
+		"metro",
+		"train",
+		"flight",
+		"cab",
+		"ride",
+		"travel",
+	],
+	entertainment: ["movie", "netflix", "game", "concert", "event", "fun"],
+	shopping: ["grocery", "amazon", "shopping", "clothes", "shoes", "flipkart"],
+	health: ["medicine", "hospital", "doctor", "checkup"],
+	rent: ["rent", "room", "apartment", "flat"],
+	gift: ["gift", "present", "birthday", "anniversary"],
+};

@@ -8,4 +8,6 @@ export type TagProps = {
 	className?: string;
 };
 
-export type AddExpenseScreen = "default" | "splits";
+export type AddTagProps = {
+	onAdd: (_: string) => void;
+};

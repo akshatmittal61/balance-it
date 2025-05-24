@@ -1,5 +1,5 @@
 import { expenseMethods, expenseTypes, routes } from "@/constants";
-import { useDevice } from "@/hooks";
+import { useDebounce, useDevice } from "@/hooks";
 import { Responsive } from "@/layouts";
 import {
 	Avatar,
@@ -10,53 +10,30 @@ import {
 	Pane,
 	Textarea,
 } from "@/library";
+import { Logger } from "@/log";
 import { useAuthStore, useWalletStore } from "@/store";
 import { CreateExpense } from "@/types";
 import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsChevronCompactUp } from "react-icons/bs";
-import { FiCheckCircle, FiUsers, FiX } from "react-icons/fi";
+import { FiCheckCircle, FiUsers } from "react-icons/fi";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
-import { AddExpenseWizardProps, TagProps } from "./types";
+import { AddTag, Tag } from "./tags";
+import { AddExpenseWizardProps } from "./types";
+import { inferTagsFromTitle } from "./utils";
 
 export const classes = stylesConfig(styles, "expense-wizard");
-
-export const Tag: React.FC<TagProps> = ({
-	tag,
-	active = true,
-	onClick,
-	onRemove,
-	className = "",
-}) => {
-	return (
-		<span
-			className={classes(
-				"-tag",
-				{
-					"-tag--active": active,
-					"-tag--interactive": onClick !== undefined,
-				},
-				className
-			)}
-			onClick={onClick}
-		>
-			{tag}
-			{onRemove ? <FiX onClick={onRemove} /> : null}
-		</span>
-	);
-};
 
 export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	const router = useRouter();
 	const { user } = useAuthStore();
-	const { isAdding, createExpense, tags } = useWalletStore();
+	const { isAdding, createExpense } = useWalletStore();
 	const { device } = useDevice();
 	const [expandAdditionInfo, setExpandAdditionInfo] = useState(false);
-	const [tagsStr, setTagsStr] = useState("");
 	const [manageSplits, setManageSplits] = useState<boolean>(false);
 	const [members, setMembers] = useState<Array<ExpenseUser>>(
 		user ? [{ ...user, amount: 0, value: 0 }] : []
@@ -73,6 +50,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		method: "UPI",
 		author: user ? user.id : "",
 	});
+	const [rawTitle, debouncedTitle, setRawTitle] = useDebounce("", 500);
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const name = e.target.name;
 		const value = e.target.value;
@@ -105,13 +83,9 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			author: user ? user.id : "",
 		});
 		setMembers(user ? [{ ...user, amount: 0, value: 0 }] : []);
-		setTagsStr("");
 	};
 	const onSave = async () => {
-		payload.tags = tagsStr
-			.split(",")
-			.map((tag) => tag.trim())
-			.filter(Boolean);
+		Logger.debug("payload", payload);
 		if (payload.splits !== undefined) {
 			if (payload.splits.length === 0) {
 				delete payload.splits;
@@ -131,6 +105,18 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			Notify.error(error);
 		}
 	};
+
+	// Tags auto suggestion
+	useEffect(() => {
+		if (!debouncedTitle) return;
+		const tags = inferTagsFromTitle(debouncedTitle);
+		setPayload((prev) => ({
+			...prev,
+			title: debouncedTitle,
+			tags: Array.from(new Set([...(prev.tags || []), ...tags])),
+		}));
+	}, [debouncedTitle]);
+
 	return (
 		<>
 			<div className={classes("-avatars")}>
@@ -170,8 +156,8 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				name="title"
 				type="text"
 				placeholder="Add a note"
-				value={payload.title}
-				onChange={handleChange}
+				value={rawTitle}
+				onChange={(e: any) => setRawTitle(e.target.value)}
 				required
 				className={classes("-title")}
 				styles={{
@@ -180,6 +166,37 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					},
 				}}
 			/>
+			{debouncedTitle.length > 0 && payload.amount > 0 ? (
+				<div className={classes("-tags")}>
+					{payload.tags && payload.tags.length > 0
+						? payload.tags.map((tag: string) => (
+								<Tag
+									key={`add-expense-tag-${tag}`}
+									tag={tag}
+									onRemove={() => {
+										setPayload((p) => ({
+											...p,
+											tags: p.tags?.filter(
+												(t) => t !== tag
+											),
+										}));
+									}}
+								/>
+							))
+						: null}
+					<AddTag
+						onAdd={(tag: string) => {
+							if (tag.trim().length < 3) {
+								return;
+							}
+							setPayload((p) => ({
+								...p,
+								tags: [...(p.tags || []), tag],
+							}));
+						}}
+					/>
+				</div>
+			) : null}
 			{payload.title.length > 0 && payload.amount > 0 ? (
 				<div className={classes("-members")}>
 					<MembersWindow
@@ -219,24 +236,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 								xsm={50}
 							>
 								<Input
-									name="tagsStr"
-									type="text"
-									label="Tags"
-									placeholder="Title e.g. Food, Travel, Grocery"
-									value={tagsStr}
-									onChange={(e: any) =>
-										setTagsStr(e.target.value)
-									}
-								/>
-							</Responsive.Col>
-							<Responsive.Col
-								xlg={33}
-								lg={33}
-								md={50}
-								sm={50}
-								xsm={50}
-							>
-								<Input
 									name="timestamp"
 									type="datetime-local"
 									placeholder=""
@@ -247,85 +246,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 									onChange={handleChange}
 									required
 								/>
-							</Responsive.Col>
-							{tagsStr
-								.split(",")
-								.map((tag: string) => tag.trim())
-								.filter(Boolean).length > 0 ? (
-								<Responsive.Col
-									xlg={100}
-									lg={100}
-									md={100}
-									sm={100}
-									xsm={100}
-									className={classes("-tags")}
-								>
-									{tagsStr
-										.split(",")
-										.map((tag: string) => tag.trim())
-										.filter(Boolean)
-										.map((tag: string, index: number) => (
-											<Tag
-												tag={tag}
-												active={true}
-												key={`add-expense-tag-${index}`}
-												onRemove={() => {
-													const currentTags = tagsStr
-														.split(",")
-														.map((tag) =>
-															tag.trim()
-														)
-														.filter(Boolean);
-													setTagsStr(
-														currentTags
-															.filter(
-																(t) => t !== tag
-															)
-															.join(", ")
-													);
-												}}
-											/>
-										))}
-								</Responsive.Col>
-							) : null}
-							<Responsive.Col
-								xlg={100}
-								lg={100}
-								md={100}
-								sm={100}
-								xsm={100}
-								className={classes("-tags")}
-							>
-								{tags
-									.map((tag: string) => tag.trim())
-									.filter(Boolean)
-									.filter(
-										(tag: string) =>
-											!tagsStr
-												.split(",")
-												.map((tag) => tag.trim())
-												.includes(tag)
-									)
-									.map((tag: string, index: number) => (
-										<Tag
-											tag={tag}
-											active={false}
-											key={`add-expense-tag-${index}`}
-											onClick={() => {
-												const currentTags = tagsStr
-													.split(",")
-													.map((tag) => tag.trim())
-													.filter(Boolean);
-												if (currentTags.includes(tag))
-													return;
-												setTagsStr(
-													[...currentTags, tag].join(
-														", "
-													)
-												);
-											}}
-										/>
-									))}
 							</Responsive.Col>
 							<Responsive.Col
 								xlg={100}
@@ -392,7 +312,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 							<IconButton
 								icon={<FiUsers />}
 								onClick={() => {
-									setManageSplits((p) => !p);
+									setManageSplits(true);
 								}}
 								disabled={(() => {
 									if (isAdding) return true;
@@ -431,7 +351,10 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 							/>
 							<IconButton
 								icon={<FiCheckCircle />}
-								onClick={onSave}
+								onClick={(e: any) => {
+									e.preventDefault();
+									onSave();
+								}}
 								title={(() => {
 									if (isAdding) return "Creating...";
 									if (payload.amount <= 0)
