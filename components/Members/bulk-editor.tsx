@@ -35,6 +35,7 @@ const BulkEditor: React.FC<BulkEditorProps> = ({ members, setMembers }) => {
 
 	useEffect(() => {
 		setEditorEmails(members.map((user) => user.email).join(", "));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [members]);
 
 	return (

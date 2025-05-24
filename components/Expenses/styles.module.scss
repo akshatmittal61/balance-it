@@ -19,17 +19,26 @@
 
 	&-amount {
 		text-align: center;
-		@include typography(poppins, head-1, medium);
+		@include typography(poppins, head-3, medium);
+
+		@include responsive(phone) {
+			@include typography(poppins, head-1, medium);
+		}
 	}
 
 	&-title {
 		width: fit-content;
 		text-align: center;
 		vertical-align: middle;
-		@include typography(poppins, xl, regular);
+		@include typography(poppins, s, regular);
 		border-radius: 8px;
-		padding: 0.25rem 0;
+		padding: unset;
 		background-color: var(--back-shadow-light);
+
+		@include responsive(phone) {
+			@include typography(poppins, xl, regular);
+			padding: 0.25rem 0;
+		}
 	}
 
 	&-form {

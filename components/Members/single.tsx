@@ -3,8 +3,8 @@ import { IUser } from "@/types";
 import { getUserDetails, stylesConfig } from "@/utils";
 import React from "react";
 import { FiX } from "react-icons/fi";
-import styles from "./styles.module.scss";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import styles from "./styles.module.scss";
 
 type MemberProps = {
 	user: IUser;
@@ -26,10 +26,8 @@ export const MemberRow: React.FC<MemberProps> = ({
 				size={36}
 			/>
 			<div className={classes("__details")}>
-				<Typography size="lg" weight="medium">
-					{getUserDetails(user).name}
-				</Typography>
-				<Typography size="s">{getUserDetails(user).email}</Typography>
+				<Typography size="md">{getUserDetails(user).name}</Typography>
+				<Typography size="sm">{getUserDetails(user).email}</Typography>
 			</div>
 			{isSelected ? (
 				<IoIosCheckmarkCircle className={classes("__icon")} />
@@ -48,7 +46,7 @@ export const MemberIcon: React.FC<MemberProps> = ({ user, onSelect }) => {
 				alt={getUserDetails(user).name || ""}
 				size={48}
 			/>
-			<Typography size="lg" weight="medium" className={classes("-name")}>
+			<Typography size="md" weight="medium" className={classes("-name")}>
 				{getUserDetails(user).name}
 			</Typography>
 		</div>

@@ -1,4 +1,5 @@
 import { expenseMethods, expenseTypes, routes } from "@/constants";
+import { useDevice } from "@/hooks";
 import { Responsive } from "@/layouts";
 import {
 	Avatar,
@@ -53,6 +54,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	const router = useRouter();
 	const { user } = useAuthStore();
 	const { isAdding, createExpense, tags } = useWalletStore();
+	const { device } = useDevice();
 	const [expandAdditionInfo, setExpandAdditionInfo] = useState(false);
 	const [tagsStr, setTagsStr] = useState("");
 	const [manageSplits, setManageSplits] = useState<boolean>(false);
@@ -149,7 +151,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				) : null}
 			</div>
 			<Input
-				size="large"
+				size={device === "mobile" ? "large" : "medium"}
 				name="amount"
 				placeholder="0"
 				value={payload.amount === 0 ? "" : payload.amount}
@@ -164,7 +166,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				}}
 			/>
 			<Input
-				size="large"
+				size={device === "mobile" ? "large" : "medium"}
 				name="title"
 				type="text"
 				placeholder="Add a note"
@@ -205,7 +207,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 						setExpandAdditionInfo(false);
 					}}
 					height="50vh"
-					direction="bottom"
+					direction={device === "mobile" ? "bottom" : "right"}
 				>
 					<div className={classes("-form")}>
 						<Responsive.Row>

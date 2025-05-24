@@ -79,7 +79,7 @@ const MembersSelector: React.FC<IMembersSelectorProps> = ({
 						onChange={(e: any) => setSearchStr(e.target.value)}
 					/>
 				)}
-				{enableBulkEditor ? (
+				{enableBulkEditor && setSelectedMembers ? (
 					<IconButton
 						icon={openBulkEditor ? <FiMail /> : <FiUsers />}
 						title={

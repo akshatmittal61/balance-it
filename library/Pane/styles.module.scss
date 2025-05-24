@@ -13,18 +13,18 @@
 
 	&[data-direction="left"] {
 		top: 0;
-		right: 0;
-		height: 100vh;
-		border-radius: 32px 0 0 32px;
-		animation: slide-left 0.3s ease-in-out forwards;
-	}
-
-	&[data-direction="right"] {
-		top: 0;
 		left: 0;
 		height: 100vh;
 		border-radius: 0 32px 32px 0;
 		animation: slide-right 0.3s ease-in-out forwards;
+	}
+
+	&[data-direction="right"] {
+		top: 0;
+		right: 0;
+		height: 100vh;
+		border-radius: 32px 0 0 32px;
+		animation: slide-left 0.3s ease-in-out forwards;
 	}
 
 	&[data-direction="top"] {
@@ -47,11 +47,11 @@
 
 	&--closing {
 		&[data-direction="left"] {
-			animation: slide-left-out 0.3s ease-in-out forwards;
+			animation: slide-right-out 0.3s ease-in-out forwards;
 		}
 
 		&[data-direction="right"] {
-			animation: slide-right-out 0.3s ease-in-out forwards;
+			animation: slide-left-out 0.3s ease-in-out forwards;
 		}
 
 		&[data-direction="top"] {

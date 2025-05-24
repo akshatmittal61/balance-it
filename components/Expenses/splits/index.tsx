@@ -1,4 +1,5 @@
 import { MembersSelector } from "@/components";
+import { useDevice } from "@/hooks";
 import { Pane } from "@/library";
 import { Logger } from "@/log";
 import { useAuthStore } from "@/store";
@@ -23,6 +24,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		defaultMethod || distributionMethods.equal
 	);
 	const { user: loggedInUser } = useAuthStore();
+	const { device } = useDevice();
 
 	const handleRemoveUser = (member: IUser) => {
 		const newMembers = members
@@ -246,7 +248,10 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 					))
 				: null}
 			{isSplitsManagerOpen ? (
-				<Pane onClose={onCloseSplitsManager} direction="bottom">
+				<Pane
+					onClose={onCloseSplitsManager}
+					direction={device === "mobile" ? "bottom" : "right"}
+				>
 					<MembersSelector
 						selectedMembers={members}
 						onAddMember={handleSelectUser}

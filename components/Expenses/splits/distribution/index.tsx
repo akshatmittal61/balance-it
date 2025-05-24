@@ -1,5 +1,6 @@
 import { fallbackAssets } from "@/constants";
-import { Avatar, IconButton, MaterialIcon, Typography } from "@/library";
+import { useDevice } from "@/hooks";
+import { Avatar, Typography } from "@/library";
 import React from "react";
 import { classes, distributionMethods } from "./assets";
 import { CustomDistribution } from "./custom";
@@ -13,18 +14,19 @@ export const DistributionMember: React.FC<DistributionMemberProps> = ({
 	distributionMethod,
 	onChange,
 }) => {
+	const { device } = useDevice();
 	return (
 		<div className={classes("-member")} key={`member-${member.id}`}>
 			<Avatar
 				src={member.avatar || fallbackAssets.avatar}
 				alt={member.name || member.email}
-				size={32}
+				size={device === "mobile" ? 32 : 48}
 			/>
 			<div className={classes("-member-details")}>
 				<Typography size="md" className={classes("-member-name")}>
 					{member.name || member.email.split("@")[0]}
 				</Typography>
-				<Typography size="s" className={classes("-member-email")}>
+				<Typography size="sm" className={classes("-member-email")}>
 					{member.email}
 				</Typography>
 			</div>
