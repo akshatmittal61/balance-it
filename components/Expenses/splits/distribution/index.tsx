@@ -7,6 +7,7 @@ import { CustomDistribution } from "./custom";
 import { EqualDistribution } from "./equal";
 import { FractionDistribution } from "./fraction";
 import { PercentageDistribution } from "./percentage";
+import { ShareDistribution } from "./shares";
 import { DistributionMemberProps } from "./types";
 
 export const DistributionMember: React.FC<DistributionMemberProps> = ({
@@ -37,6 +38,13 @@ export const DistributionMember: React.FC<DistributionMemberProps> = ({
 					member={member}
 					onChange={(value) =>
 						onChange(value, distributionMethods.percentage.id)
+					}
+				/>
+			) : distributionMethod === distributionMethods.shares.id ? (
+				<ShareDistribution
+					member={member}
+					onChange={(value) =>
+						onChange(value, distributionMethods.shares.id)
 					}
 				/>
 			) : distributionMethod === distributionMethods.fraction.id ? (

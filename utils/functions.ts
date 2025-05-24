@@ -1,3 +1,5 @@
+import { Fraction } from "@/types";
+
 /**
  * Opens a link in a new tab.
  * @param {string} link - The link to open.
@@ -288,6 +290,39 @@ export const runningCase = (text: string): string => {
 };
 
 /**
+ * Calculates the greatest common divisor of two numbers using the Euclidean algorithm.
+ * @param {number} a The first number.
+ * @param {number} b The second number.
+ * @returns {number} The greatest common divisor of a and b.
+ */
+export const gcd = (a: number, b: number): number => {
+	return b === 0 ? Math.abs(a) : gcd(b, a % b);
+};
+
+/**
+ * Calculates the lowest common multiple of two numbers.
+ * @param {number} a The first number.
+ * @param {number} b The second number.
+ * @returns {number} The lowest common multiple of a and b.
+ */
+export const lcm = (a: number, b: number): number => {
+	return (a * b) / gcd(a, b);
+};
+
+export const parseFraction = (fraction: string): Fraction | string => {
+	let splitted = fraction.split("/");
+	if (splitted.length !== 2 || isNaN(+splitted[0]) || isNaN(+splitted[1])) {
+		return fraction;
+	}
+	const numerator = parseInt(splitted[0], 10);
+	const denominator = parseInt(splitted[1], 10);
+	if (denominator === 0) {
+		return fraction; // cannot divide by zero
+	}
+	return { numerator, denominator };
+};
+
+/**
  * Simplifies a given fraction by dividing both the numerator and the denominator by
  * all of their common divisors until the fraction cannot be simplified further.
  * @param {string} fraction The fraction to simplify, given as a string in the
@@ -295,23 +330,56 @@ export const runningCase = (text: string): string => {
  * @returns {string} The simplified fraction, or the original fraction if it
  * cannot be simplified further.
  */
-export const simplifyFraction = (fraction: string) => {
-	let splitted = fraction.split("/");
-	if (splitted.length !== 2 || isNaN(+splitted[0]) || isNaN(+splitted[1])) {
-		return fraction;
+export const simplifyFraction = (fractionStr: string) => {
+	const fraction = parseFraction(fractionStr);
+	if (typeof fraction === "string") return fraction;
+	const { numerator, denominator } = fraction;
+
+	const divisor = gcd(numerator, denominator);
+
+	const simplifiedNumerator = numerator / divisor;
+	const simplifiedDenominator = denominator / divisor;
+
+	// Handle negative denominator
+	if (simplifiedDenominator < 0) {
+		return `${-simplifiedNumerator}/${-simplifiedDenominator}`;
 	}
-	const numerator = +splitted[0];
-	const denominator = +splitted[1];
-	const divisors = [];
-	for (let i = 2; i <= Math.min(numerator, denominator); i++) {
-		if (denominator % i === 0) {
-			divisors.push(i);
-		}
+
+	return `${simplifiedNumerator}/${simplifiedDenominator}`;
+};
+
+/**
+ * Converts an array of fractions into a new array of fractions with the lowest
+ * common denominator.
+ * @param {Array<string>} fractions The array of fractions to convert, given as
+ * strings in the format "numerator/denominator".
+ * @returns {Array<string>} The new array of fractions with the lowest common
+ * denominator, still given as strings in the format "numerator/denominator".
+ */
+export const convertToCommonDenominator = (
+	fractions: Array<string>
+): Array<string> => {
+	const parsed: Fraction[] = [];
+
+	// Step 1: Parse all fractions
+	for (const fraction of fractions) {
+		const res = parseFraction(fraction);
+		if (typeof res === "string") continue;
+		const { numerator, denominator } = res;
+		parsed.push({ numerator, denominator });
 	}
-	for (let i = divisors.length - 1; i >= 0; i--) {
-		if (numerator % divisors[i] === 0) {
-			return `${numerator / divisors[i]}/${denominator / divisors[i]}`;
-		}
-	}
-	return fraction;
+
+	// Step 2: Compute LCM of all denominators
+	const commonDenominator = parsed.reduce(
+		(acc, f) => lcm(acc, f.denominator),
+		1
+	);
+
+	// Step 3: Convert all fractions
+	const result = parsed.map(({ numerator, denominator }) => {
+		const multiplier = commonDenominator / denominator;
+		return `${numerator * multiplier}/${commonDenominator}`;
+	});
+
+	return result;
 };

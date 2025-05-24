@@ -1,6 +1,11 @@
 import { IUser } from "@/types";
 
-export type DistributionMethod = "equal" | "percentage" | "fraction" | "custom";
+export type DistributionMethod =
+	| "equal"
+	| "percentage"
+	| "shares"
+	| "fraction"
+	| "custom";
 
 export type ExpenseUser = IUser & {
 	amount: number;
@@ -20,6 +25,11 @@ export type EqualDistributionProps = {
 export type PercentageDistributionProps = {
 	member: ExpenseUser;
 	onChange: (_: string | number) => void;
+};
+
+export type SharesDistributionProps = {
+	member: ExpenseUser;
+	onChange: (_: number) => void;
 };
 
 export type FractionDistributionProps = {

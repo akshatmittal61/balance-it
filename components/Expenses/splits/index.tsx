@@ -34,13 +34,17 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 					const newAmount = ExpenseUtils.getAmount(
 						m.value,
 						method,
-						members.length - 1,
+						members
+							.filter((m) => m.id !== member.id)
+							.map((m) => m.value),
 						totalAmount
 					);
 					const newValue = ExpenseUtils.getFormattedValue(
 						newAmount,
 						method,
-						members.length - 1,
+						members
+							.filter((m) => m.id !== member.id)
+							.map((m) => m.amount),
 						totalAmount
 					);
 					return {
@@ -60,7 +64,6 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 			.map((m) => m.id)
 			.includes(user.id);
 		if (isUserCurrentlySelected) {
-			const newCount = members.length - 1;
 			const newMembers = members
 				.filter((m) => m.id !== user.id)
 				.map((member) => {
@@ -68,13 +71,17 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 						const newAmount = ExpenseUtils.getAmount(
 							member.value,
 							method,
-							newCount,
+							members
+								.filter((m) => m.id !== user.id)
+								.map((m) => m.value),
 							totalAmount
 						);
 						const newValue = ExpenseUtils.getFormattedValue(
 							newAmount,
 							method,
-							newCount,
+							members
+								.filter((m) => m.id !== user.id)
+								.map((m) => m.amount),
 							totalAmount
 						);
 						return {
@@ -88,20 +95,25 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 				});
 			setMembers(newMembers);
 		} else {
-			const newCount = members.length + 1;
+			const newExpenseUser = ExpenseUtils.generateNewExpenseUser(
+				user,
+				method,
+				members,
+				totalAmount
+			);
 			const newMembers = [
 				...members.map((member) => {
 					if (method === distributionMethods.equal.id) {
 						const newAmount = ExpenseUtils.getAmount(
 							member.value,
 							method,
-							newCount,
+							[...members, newExpenseUser].map((m) => m.value),
 							totalAmount
 						);
 						const newValue = ExpenseUtils.getFormattedValue(
 							newAmount,
 							method,
-							newCount,
+							[...members, newExpenseUser].map((m) => m.amount),
 							totalAmount
 						);
 						return {
@@ -113,12 +125,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 						return member;
 					}
 				}),
-				ExpenseUtils.makeExpenseUser(
-					user,
-					method,
-					newCount,
-					totalAmount
-				),
+				newExpenseUser,
 			];
 			setMembers(newMembers);
 		}
@@ -132,13 +139,13 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 				const newAmount = ExpenseUtils.getAmount(
 					member.value,
 					newMethod,
-					members.length,
+					members.map((m) => m.value),
 					totalAmount
 				);
 				const newValue = ExpenseUtils.getFormattedValue(
 					newAmount,
 					newMethod,
-					members.length,
+					members.map((m) => m.amount),
 					totalAmount
 				);
 				return {
@@ -148,20 +155,21 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 				};
 			}
 			const value = member.value;
-			Logger.debug(value);
+			Logger.debug("value, totalAmount", value, totalAmount);
 			const amount = ExpenseUtils.getAmount(
 				value,
 				oldMethod,
-				members.length,
+				members.map((m) => m.value),
 				totalAmount
 			);
+			Logger.debug("newAmount", amount, value, oldMethod, totalAmount);
 			const newValue = ExpenseUtils.getFormattedValue(
 				amount,
 				newMethod,
-				members.length,
+				members.map((m) => m.amount),
 				totalAmount
 			);
-			Logger.debug(amount, newValue);
+			Logger.debug("amount, newValue", amount, newValue);
 			return {
 				...member,
 				value: newValue,
@@ -180,13 +188,13 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		const amount = ExpenseUtils.getAmount(
 			value,
 			method,
-			members.length,
+			members.map((m) => m.value),
 			totalAmount
 		);
 		const newValue = ExpenseUtils.getFormattedValue(
 			amount,
 			method,
-			members.length,
+			members.map((m) => m.amount),
 			totalAmount
 		);
 		Logger.debug(amount, newValue);
@@ -203,8 +211,37 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		setMembers(newMembers);
 	};
 
+	const handleTotalAmountChange = () => {
+		if (method === distributionMethods.custom.id) return;
+		const newMembersWithUpdatedAmount = members.map((member) => {
+			const amount = ExpenseUtils.getAmount(
+				member.value,
+				method,
+				members.map((m) => m.value),
+				totalAmount
+			);
+			return {
+				...member,
+				amount,
+			};
+		});
+		const finalMembers = newMembersWithUpdatedAmount.map((member) => {
+			const value = ExpenseUtils.getFormattedValue(
+				member.amount,
+				method,
+				newMembersWithUpdatedAmount.map((m) => m.amount),
+				totalAmount
+			);
+			return {
+				...member,
+				value,
+			};
+		});
+		setMembers(finalMembers);
+	};
+
 	useEffect(() => {
-		handleMethodChange(method);
+		handleTotalAmountChange();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [totalAmount]);
 
