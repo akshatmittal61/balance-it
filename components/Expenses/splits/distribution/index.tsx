@@ -12,7 +12,6 @@ export const DistributionMember: React.FC<DistributionMemberProps> = ({
 	member,
 	distributionMethod,
 	onChange,
-	onRemove,
 }) => {
 	return (
 		<div className={classes("-member")} key={`member-${member.id}`}>
@@ -53,14 +52,6 @@ export const DistributionMember: React.FC<DistributionMemberProps> = ({
 					}
 				/>
 			) : null}
-			{onRemove ? (
-				<IconButton
-					onClick={onRemove}
-					icon={<MaterialIcon icon="close" />}
-				/>
-			) : (
-				<span className={classes("-remove-placeholder")} />
-			)}
 		</div>
 	);
 };

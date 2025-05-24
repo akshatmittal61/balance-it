@@ -1,18 +1,12 @@
-import { UserApi } from "@/api";
-import { Loader } from "@/components";
-import { useDebounce, useHttpClient } from "@/hooks";
-import { Avatar, IconButton, Input, MaterialIcon, Typography } from "@/library";
+import { MembersSelector } from "@/components";
+import { Pane } from "@/library";
 import { Logger } from "@/log";
-import { useAuthStore, useGodownStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { IUser } from "@/types";
-import { getUserDetails } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { classes, distributionMethods } from "./assets";
-import { BulkEditor } from "./bulk-editor";
 import { DistributionMember } from "./distribution";
-import { MembersUser } from "./member";
-import { SplitsPlaceholder } from "./placeholder";
-import { DistributionMethod, ExpenseUser, MembersWindowProps } from "./types";
+import { DistributionMethod, MembersWindowProps } from "./types";
 import { ExpenseUtils } from "./utils";
 export * from "./assets";
 export * from "./types";
@@ -22,32 +16,21 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 	members,
 	setMembers,
 	totalAmount,
+	isSplitsManagerOpen,
+	onCloseSplitsManager,
 }) => {
 	const [method, setMethod] = useState<DistributionMethod>(
 		defaultMethod || distributionMethods.equal
 	);
 	const { user: loggedInUser } = useAuthStore();
-	const { friends } = useGodownStore();
-	const [searchResults, setSearchResults] = useState<Array<IUser>>([]);
-	const [openBulkEditor, setOpenBulkEditor] = useState(false);
-	const { loading: searching, call: api } = useHttpClient<Array<IUser>>([]);
-	const [searchStr, debouncedSearchStr, setSearchStr] = useDebounce<string>(
-		"",
-		1000
-	);
 
-	const handleSearch = async (searchStr: any) => {
-		const res = await api(UserApi.searchForUsers, searchStr);
-		setSearchResults(res);
-	};
-
-	const handleRemoveUser = (member: ExpenseUser) => {
+	const handleRemoveUser = (member: IUser) => {
 		const newMembers = members
 			.filter((m) => m.id !== member.id)
-			.map((member) => {
+			.map((m) => {
 				if (method === distributionMethods.equal.id) {
 					const newAmount = ExpenseUtils.getAmount(
-						member.value,
+						m.value,
 						method,
 						members.length - 1,
 						totalAmount
@@ -59,12 +42,12 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 						totalAmount
 					);
 					return {
-						...member,
+						...m,
 						amount: newAmount,
 						value: newValue,
 					};
 				} else {
-					return member;
+					return m;
 				}
 			});
 		setMembers(newMembers);
@@ -137,7 +120,6 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 			];
 			setMembers(newMembers);
 		}
-		setSearchStr("");
 	};
 
 	const handleMethodChange = (newMethod: DistributionMethod) => {
@@ -220,199 +202,57 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 	};
 
 	useEffect(() => {
-		if (debouncedSearchStr && debouncedSearchStr.length >= 3) {
-			handleSearch(debouncedSearchStr);
-		} else {
-			setSearchResults([]);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearchStr]);
-
-	useEffect(() => {
 		handleMethodChange(method);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [totalAmount]);
 
 	return (
 		<>
-			<div className={classes("-header")}>
-				<Typography size="xxl" weight="medium">
-					Members
-				</Typography>
-				<div className={classes("-header-controls")}>
-					{!openBulkEditor ? (
-						<Input
-							name="email"
-							placeholder="Search by email"
-							size="small"
-							value={searchStr}
-							onChange={(e: any) => setSearchStr(e.target.value)}
-						/>
-					) : null}
-					<IconButton
-						icon={
-							<MaterialIcon
-								icon={openBulkEditor ? "list" : "email"}
-							/>
-						}
-						title="Bulk Editor"
-						type="button"
-						onClick={(e: any) => {
-							e.preventDefault();
-							setOpenBulkEditor((p) => !p);
-						}}
-					/>
+			{members.length > 0 &&
+			!(members.length === 1 && members[0].id === loggedInUser?.id) ? (
+				<div className={classes("-header", "-tabs")}>
+					{Object.values(distributionMethods).map((m) => {
+						return (
+							<div
+								key={`distribution-method-tab-${m.id}`}
+								className={classes("-tab", {
+									"-tab--active": m.id === method,
+								})}
+								title={m.label}
+								onClick={() => {
+									handleMethodChange(m.id);
+								}}
+							>
+								{m.icon}
+							</div>
+						);
+					})}
 				</div>
-			</div>
-			<div className={classes("-header", "-tabs")}>
-				{Object.values(distributionMethods).map((m) => {
-					return (
-						<div
-							key={`distribution-method-tab-${m.id}`}
-							className={classes("-tab", {
-								"-tab--active": m.id === method,
-							})}
-							title={m.label}
-							onClick={() => {
-								handleMethodChange(m.id);
-							}}
-						>
-							{m.icon}
-						</div>
-					);
-				})}
-			</div>
-			{openBulkEditor ? (
-				<BulkEditor
-					selectedMembers={members}
-					setSelectedMembers={(users) => {
-						const finalMembers = users.map((u) => {
-							if (method === distributionMethods.equal.id) {
-								const newAmount = ExpenseUtils.getAmount(
-									"",
-									method,
-									users.length,
-									totalAmount
-								);
-								const newValue = ExpenseUtils.getFormattedValue(
-									newAmount,
-									method,
-									users.length,
-									totalAmount
-								);
-								return {
-									...u,
-									amount: newAmount,
-									value: newValue,
-								};
-							} else {
-								if (members.find((m) => m.email === u.email)) {
-									const foundMember = members.find(
-										(m) => m.email === u.email
-									)!;
-									return foundMember;
-								} else {
-									return ExpenseUtils.makeExpenseUser(
-										u,
-										method,
-										members.length,
-										totalAmount
-									);
-								}
-							}
-						});
-						setMembers(finalMembers);
-					}}
-				/>
 			) : null}
-			{debouncedSearchStr.length > 0 ? (
-				searching ? (
-					<Loader.Spinner />
-				) : searchResults.length > 0 ? (
-					searchResults.map((user, index) => (
-						<MembersUser
-							{...user}
-							key={`group-manager-searched-user-${user.id}`}
-							index={index}
-							onSelect={
-								loggedInUser && user.id === loggedInUser.id
-									? undefined
-									: () => handleSelectUser(user)
-							}
-							isSelected={members
-								.map((user) => user.id)
-								.includes(user.id)}
+			{members.length > 0 &&
+			!(members.length === 1 && members[0].id === loggedInUser?.id)
+				? members.map((member) => (
+						<DistributionMember
+							member={member}
+							key={`split-manager-user-${member.id}`}
+							distributionMethod={method}
+							onChange={(
+								value: string | number,
+								method: DistributionMethod
+							) => {
+								handleValueChange(value, method, member);
+							}}
 						/>
 					))
-				) : (
-					<SplitsPlaceholder
-						// no user was found, invitation is expected
-						loading={false}
-						searchStr={searchStr}
-						onInvited={(invitedUser) => {
-							setSearchResults([invitedUser]);
-							handleSelectUser(invitedUser);
-						}}
+				: null}
+			{isSplitsManagerOpen ? (
+				<Pane onClose={onCloseSplitsManager} direction="bottom">
+					<MembersSelector
+						selectedMembers={members}
+						onAddMember={handleSelectUser}
+						onRemoveMember={handleRemoveUser}
 					/>
-				)
-			) : (
-				members.map((member) => (
-					<DistributionMember
-						member={member}
-						key={`split-manager-user-${member.id}`}
-						distributionMethod={method}
-						onRemove={
-							loggedInUser && member.id === loggedInUser.id
-								? undefined
-								: () => handleRemoveUser(member)
-						}
-						onChange={(
-							value: string | number,
-							method: DistributionMethod
-						) => {
-							handleValueChange(value, method, member);
-						}}
-					/>
-				))
-			)}
-			{friends.length > 0 ? (
-				<div className={classes("-suggestions")}>
-					{friends.map((friend) => (
-						<div
-							key={`add-suggestion-${friend.id}`}
-							className={classes("-suggestion", {
-								"-suggestion--active": members.find(
-									(m) => m.email === friend.email
-								)
-									? true
-									: false,
-							})}
-							onClick={() => {
-								handleSelectUser(friend);
-							}}
-						>
-							<Avatar
-								src={getUserDetails(friend).avatar || ""}
-								alt={getUserDetails(friend).name || ""}
-								size={24}
-							/>
-							<div className={classes("-suggestion-details")}>
-								<Typography
-									size="s"
-									className={classes("-suggestion-name")}
-								>
-									{getUserDetails(friend).name}
-								</Typography>
-								<Typography
-									size="sm"
-									className={classes("-suggestion-email")}
-								>
-									{friend.email}
-								</Typography>
-							</div>
-						</div>
-					))}
-				</div>
+				</Pane>
 			) : null}
 		</>
 	);

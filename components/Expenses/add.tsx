@@ -55,7 +55,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	const { isAdding, createExpense, tags } = useWalletStore();
 	const [expandAdditionInfo, setExpandAdditionInfo] = useState(false);
 	const [tagsStr, setTagsStr] = useState("");
-	const [enableSplits, setEnableSplits] = useState<boolean>(false);
+	const [manageSplits, setManageSplits] = useState<boolean>(false);
 	const [members, setMembers] = useState<Array<ExpenseUser>>(
 		user ? [{ ...user, amount: 0, value: 0 }] : []
 	);
@@ -110,7 +110,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			.split(",")
 			.map((tag) => tag.trim())
 			.filter(Boolean);
-		if (payload.splits !== undefined && enableSplits) {
+		if (payload.splits !== undefined) {
 			if (payload.splits.length === 0) {
 				delete payload.splits;
 			}
@@ -133,8 +133,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		<>
 			<div className={classes("-avatars")}>
 				{members.length > 0 &&
-				!(members.length === 1 && members[0].id === user?.id) &&
-				enableSplits ? (
+				!(members.length === 1 && members[0].id === user?.id) ? (
 					<Avatars size={48}>
 						{members.map((m) => ({
 							src: getUserDetails(m).avatar || "",
@@ -179,12 +178,14 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					},
 				}}
 			/>
-			{enableSplits ? (
+			{payload.title.length > 0 && payload.amount > 0 ? (
 				<div className={classes("-members")}>
 					<MembersWindow
 						defaultMethod={distributionMethods.equal.id}
 						totalAmount={payload.amount}
 						members={members}
+						isSplitsManagerOpen={manageSplits}
+						onCloseSplitsManager={() => setManageSplits(false)}
 						setMembers={(users) => {
 							setMembers(users);
 							setPayload((p) => ({
@@ -389,7 +390,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 							<IconButton
 								icon={<FiUsers />}
 								onClick={() => {
-									setEnableSplits((p) => !p);
+									setManageSplits((p) => !p);
 								}}
 								disabled={(() => {
 									if (isAdding) return true;

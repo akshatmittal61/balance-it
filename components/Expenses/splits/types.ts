@@ -7,6 +7,8 @@ export type MembersWindowProps = {
 	members: Array<ExpenseUser>;
 	setMembers: (_: Array<ExpenseUser>) => void;
 	totalAmount: number;
+	isSplitsManagerOpen: boolean;
+	onCloseSplitsManager: () => void;
 };
 
 export type MembersUserProps = IUser & {

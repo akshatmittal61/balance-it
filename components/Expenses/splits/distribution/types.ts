@@ -11,7 +11,6 @@ export type DistributionMemberProps = {
 	member: ExpenseUser;
 	distributionMethod: DistributionMethod;
 	onChange: (_: string | number, __: DistributionMethod) => void;
-	onRemove?: () => void;
 };
 
 export type EqualDistributionProps = {
