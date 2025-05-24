@@ -185,25 +185,22 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		method: DistributionMethod,
 		member: IUser
 	) => {
-		const amount = ExpenseUtils.getAmount(
+		const newAmount = ExpenseUtils.getAmount(
 			value,
 			method,
-			members.map((m) => m.value),
+			members.map((m) => {
+				if (m.id === member.id) return value;
+				return m.value;
+			}),
 			totalAmount
 		);
-		const newValue = ExpenseUtils.getFormattedValue(
-			amount,
-			method,
-			members.map((m) => m.amount),
-			totalAmount
-		);
-		Logger.debug(amount, newValue);
+		Logger.debug(member, newAmount);
 		const newMembers = members.map((m) => {
 			if (m.id === member.id) {
 				return {
 					...m,
 					value,
-					amount,
+					amount: newAmount,
 				};
 			}
 			return m;
