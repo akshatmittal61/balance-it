@@ -156,15 +156,36 @@ export class ApiRoute {
 				// We need the handler to run by async/await to catch errors
 				let result: ApiResponse;
 
-				if (method === apiMethods.GET && this.GET) {
+				Logger.debug(
+					"method and handler",
+					method,
+					typeof this.GET,
+					typeof this.POST,
+					typeof this.PUT,
+					typeof this.PATCH,
+					typeof this.DELETE
+				);
+				if (method === apiMethods.GET && this.GET !== undefined) {
 					result = await this.wrapper(this.GET)(req, res);
-				} else if (method === apiMethods.POST && this.POST) {
+				} else if (
+					method === apiMethods.POST &&
+					this.POST !== undefined
+				) {
 					result = await this.wrapper(this.POST)(req, res);
-				} else if (method === apiMethods.PUT && this.PUT) {
+				} else if (
+					method === apiMethods.PUT &&
+					this.PUT !== undefined
+				) {
 					result = await this.wrapper(this.PUT)(req, res);
-				} else if (method === apiMethods.PATCH && this.PATCH) {
+				} else if (
+					method === apiMethods.PATCH &&
+					this.PATCH !== undefined
+				) {
 					result = await this.wrapper(this.PATCH)(req, res);
-				} else if (method === apiMethods.DELETE && this.DELETE) {
+				} else if (
+					method === apiMethods.DELETE &&
+					this.DELETE !== undefined
+				) {
 					result = await this.wrapper(this.DELETE)(req, res);
 				} else {
 					return new ApiFailure(res)
