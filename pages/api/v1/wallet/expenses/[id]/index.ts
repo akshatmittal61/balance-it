@@ -1,4 +1,4 @@
-import { WalletController } from "@/controllers";
+/* import { WalletController } from "@/controllers";
 import { ApiRoute } from "@/server";
 
 const apiRoute = new ApiRoute(
@@ -10,3 +10,19 @@ const apiRoute = new ApiRoute(
 );
 
 export default apiRoute.getHandler();
+ */
+
+import { ApiRequest, ApiResponse } from "@/types";
+import { ApiSuccess } from "@/utils";
+
+const handler = (req: ApiRequest, res: ApiResponse) => {
+	if (req.method === "GET") {
+		return new ApiSuccess(res).json(req.query).send();
+	} else {
+		return new ApiSuccess(res)
+			.json({ message: "Wan'nt GET", query: req.query })
+			.send();
+	}
+};
+
+export default handler;
