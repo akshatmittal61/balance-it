@@ -136,36 +136,56 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					/>
 				) : null}
 			</div>
-			<Input
-				size={device === "mobile" ? "large" : "medium"}
-				name="amount"
-				placeholder="0"
-				value={payload.amount === 0 ? "" : payload.amount}
-				onChange={handleChange}
-				className={classes("-amount")}
-				autoFocus
-				required
-				styles={{
-					input: {
-						borderBottom: "none",
-					},
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					onSave();
 				}}
-			/>
-			<Input
-				size={device === "mobile" ? "large" : "medium"}
-				name="title"
-				type="text"
-				placeholder="Add a note"
-				value={rawTitle}
-				onChange={(e: any) => setRawTitle(e.target.value)}
-				required
-				className={classes("-title")}
-				styles={{
-					input: {
-						borderBottom: "none",
-					},
-				}}
-			/>
+				className={classes("-form")}
+			>
+				<Input
+					size={device === "mobile" ? "large" : "medium"}
+					name="amount"
+					placeholder="0"
+					value={payload.amount === 0 ? "" : payload.amount}
+					onChange={handleChange}
+					className={classes("-amount")}
+					autoFocus
+					required
+					styles={{
+						input: {
+							width: "fit-content",
+							borderBottom: "none",
+							maxWidth: "4ch",
+						},
+						container: {
+							width: "fit-content",
+							maxWidth: "4ch",
+						},
+						box: {
+							width: "fit-content",
+						},
+					}}
+				/>
+				<Input
+					size={device === "mobile" ? "large" : "medium"}
+					name="title"
+					type="text"
+					placeholder="Add a note"
+					value={rawTitle}
+					onChange={(e: any) => setRawTitle(e.target.value)}
+					required
+					className={classes("-title")}
+					styles={{
+						input: {
+							borderBottom: "none",
+						},
+					}}
+				/>
+				<button type="submit" className="dispn">
+					Save
+				</button>
+			</form>
 			{debouncedTitle.length > 0 && payload.amount > 0 ? (
 				<div className={classes("-tags")}>
 					{payload.tags && payload.tags.length > 0
@@ -226,79 +246,75 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					height="50vh"
 					direction={device === "mobile" ? "bottom" : "right"}
 				>
-					<div className={classes("-form")}>
-						<Responsive.Row>
-							<Responsive.Col
-								xlg={33}
-								lg={33}
-								md={50}
-								sm={50}
-								xsm={50}
-							>
-								<Input
-									name="timestamp"
-									type="datetime-local"
-									placeholder=""
-									label="Date / Time"
-									value={dayjs(payload.timestamp).format(
-										"YYYY-MM-DDTHH:mm"
-									)}
-									onChange={handleChange}
-									required
-								/>
-							</Responsive.Col>
-							<Responsive.Col
-								xlg={100}
-								lg={100}
-								md={100}
-								sm={100}
-								xsm={100}
-								className={classes("-methods")}
-							>
-								{Object.values(expenseMethods).map((method) => (
-									<CheckBox
-										key={`add-expense-payment-method-${method.id}`}
-										label={
-											<Image
-												src={method.logo}
-												alt={method.label}
-												width={50}
-												height={50}
-												className={classes(
-													"-methods-logo"
-												)}
-											/>
-										}
-										checked={payload.method === method.id}
-										onChange={() => {
-											setPayload((p) => ({
-												...p,
-												method: method.id,
-											}));
-										}}
-									/>
-								))}
-							</Responsive.Col>
-							<Responsive.Col
-								xlg={100}
-								lg={100}
-								md={100}
-								sm={100}
-								xsm={100}
-							>
-								<Textarea
-									name="description"
-									label="Note"
-									placeholder="Add a note for your expense"
-									value={payload.description}
-									onChange={(e: any) => {
-										handleChange(e);
+					<Responsive.Row className={classes("-additional")}>
+						<Responsive.Col
+							xlg={33}
+							lg={33}
+							md={50}
+							sm={50}
+							xsm={50}
+						>
+							<Input
+								name="timestamp"
+								type="datetime-local"
+								placeholder=""
+								label="Date / Time"
+								value={dayjs(payload.timestamp).format(
+									"YYYY-MM-DDTHH:mm"
+								)}
+								onChange={handleChange}
+								required
+							/>
+						</Responsive.Col>
+						<Responsive.Col
+							xlg={100}
+							lg={100}
+							md={100}
+							sm={100}
+							xsm={100}
+							className={classes("-methods")}
+						>
+							{Object.values(expenseMethods).map((method) => (
+								<CheckBox
+									key={`add-expense-payment-method-${method.id}`}
+									label={
+										<Image
+											src={method.logo}
+											alt={method.label}
+											width={50}
+											height={50}
+											className={classes("-methods-logo")}
+										/>
+									}
+									checked={payload.method === method.id}
+									onChange={() => {
+										setPayload((p) => ({
+											...p,
+											method: method.id,
+										}));
 									}}
-									rows={4}
 								/>
-							</Responsive.Col>
-						</Responsive.Row>
-					</div>
+							))}
+						</Responsive.Col>
+						<Responsive.Col
+							xlg={100}
+							lg={100}
+							md={100}
+							sm={100}
+							xsm={100}
+						>
+							<Textarea
+								name="description"
+								label="Note"
+								placeholder="Add a note for your expense"
+								value={payload.description}
+								onChange={(e: any) => {
+									handleChange(e);
+								}}
+								rows={4}
+							/>
+						</Responsive.Col>
+					</Responsive.Row>
 				</Pane>
 			) : null}
 			{payload.title.length > 0 && payload.amount > 0 ? (

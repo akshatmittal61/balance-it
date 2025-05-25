@@ -11,7 +11,7 @@ export class WalletApi {
 	}
 	public static async getExpenseForUser(expenseId: string, headers?: any) {
 		const res = await http.get<ApiRes<ApiResponses.GetExpenseById>>(
-			`/wallet/expenses/${expenseId}`,
+			`/wallet/expense?id=${expenseId}`,
 			{ headers }
 		);
 		return res.data;
@@ -32,7 +32,7 @@ export class WalletApi {
 	}
 	public static async deleteExpense(expenseId: string, headers?: any) {
 		const response = await http.delete<ApiRes<ApiResponses.DeleteExpense>>(
-			`/wallet/expenses/${expenseId}`,
+			`/wallet/expense?id=${expenseId}`,
 			{ headers }
 		);
 		return response.data;

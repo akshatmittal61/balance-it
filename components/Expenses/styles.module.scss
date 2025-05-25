@@ -42,19 +42,13 @@
 	}
 
 	&-form {
-		width: 60%;
+		width: 100%;
 		display: flex;
 		justify-content: flex-start;
-		align-items: flex-start;
-		margin: 0 auto;
-
-		@include responsive(phone) {
-			width: 100%;
-		}
-
-		& > div > div {
-			padding: 12px;
-		}
+		align-items: center;
+		flex-direction: column;
+		margin: 12px auto;
+		gap: 12px;
 	}
 
 	&-type {
@@ -135,12 +129,9 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0.25rem 12px;
-		border-bottom: 1px solid var(--back-shadow-dark);
-		cursor: pointer;
 
-		&:hover {
-			background-color: var(--back-shadow-light);
+		& > div > div {
+			padding: 12px;
 		}
 	}
 

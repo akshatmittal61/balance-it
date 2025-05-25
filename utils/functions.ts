@@ -383,3 +383,29 @@ export const convertToCommonDenominator = (
 
 	return result;
 };
+
+export const getSearchParam = (uri: string | undefined, param: string) => {
+	try {
+		if (uri === undefined || uri.length === 0) return null;
+		const url = (() => {
+			try {
+				return new URL(uri);
+			} catch {
+				return null;
+			}
+		})();
+		if (url !== null) {
+			const searchParams = url.searchParams;
+			const value = searchParams.get(param);
+			if (value !== null && value.length !== 0) {
+				return value;
+			}
+		}
+
+		const paramsStr = uri.split("?").length > 1 ? uri.split("?")[1] : "";
+		const params = new URLSearchParams(paramsStr);
+		return params.get(param);
+	} catch {
+		return null;
+	}
+};

@@ -123,175 +123,185 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 		return this.parser(res);
 	}
 	public async findByIdWithSplits(id: string): Promise<ExpenseSpread | null> {
-		const res = await this.findWithSplits({ _id: new ObjectId(id) });
-		if (res.length === 0) return null;
-		return this.parseSpread(res[0]);
+		try {
+			const res = await this.findWithSplits({ _id: new ObjectId(id) });
+			if (res.length === 0) return null;
+			return this.parseSpread(res[0]);
+		} catch (error: any) {
+			if (error.kind === "ObjectId") return null;
+			throw error;
+		}
 	}
 	public async findWithSplits(
 		query: FilterQuery<Expense>
 	): Promise<Array<ExpenseSpread>> {
-		const expensesWithSplits = await this.model.aggregate([
-			{
-				$match: query,
-			},
-			{
-				$lookup: {
-					from: "users",
-					localField: "author",
-					foreignField: "_id",
-					as: "author",
+		try {
+			const expensesWithSplits = await this.model.aggregate([
+				{
+					$match: query,
 				},
-			},
-			{
-				$unwind: {
-					path: "$author",
-				},
-			},
-			{
-				$project: {
-					_id: 1,
-					id: "$_id",
-					title: 1,
-					amount: 1,
-					author: {
-						id: "$author._id",
-						name: 1,
-						email: 1,
-						phone: 1,
-						avatar: 1,
-						status: 1,
+				{
+					$lookup: {
+						from: "users",
+						localField: "author",
+						foreignField: "_id",
+						as: "author",
 					},
-					timestamp: 1,
-					description: 1,
-					group: 1,
-					tags: 1,
-					icon: 1,
-					type: 1,
-					method: 1,
-					createdAt: 1,
-					updatedAt: 1,
 				},
-			},
-			{
-				$lookup: {
-					from: "splits",
-					localField: "_id",
-					foreignField: "expense",
-					as: "splits",
+				{
+					$unwind: {
+						path: "$author",
+					},
 				},
-			},
-			{
-				$unwind: {
-					path: "$splits",
-					preserveNullAndEmptyArrays: true, // Keeps expenses even if they have no splits
+				{
+					$project: {
+						_id: 1,
+						id: "$_id",
+						title: 1,
+						amount: 1,
+						author: {
+							id: "$author._id",
+							name: 1,
+							email: 1,
+							phone: 1,
+							avatar: 1,
+							status: 1,
+						},
+						timestamp: 1,
+						description: 1,
+						group: 1,
+						tags: 1,
+						icon: 1,
+						type: 1,
+						method: 1,
+						createdAt: 1,
+						updatedAt: 1,
+					},
 				},
-			},
-			{
-				$lookup: {
-					from: "users",
-					localField: "splits.user",
-					foreignField: "_id",
-					as: "splits.user",
+				{
+					$lookup: {
+						from: "splits",
+						localField: "_id",
+						foreignField: "expense",
+						as: "splits",
+					},
 				},
-			},
-			{
-				$unwind: {
-					path: "$splits.user",
-					preserveNullAndEmptyArrays: true, // Ensures null user in case of missing reference
+				{
+					$unwind: {
+						path: "$splits",
+						preserveNullAndEmptyArrays: true, // Keeps expenses even if they have no splits
+					},
 				},
-			},
-			{
-				$lookup: {
-					from: "groups",
-					localField: "group",
-					foreignField: "_id",
-					as: "group",
+				{
+					$lookup: {
+						from: "users",
+						localField: "splits.user",
+						foreignField: "_id",
+						as: "splits.user",
+					},
 				},
-			},
-			{
-				$unwind: {
-					path: "$group",
-					preserveNullAndEmptyArrays: true, // Keeps expenses even if they have no group
+				{
+					$unwind: {
+						path: "$splits.user",
+						preserveNullAndEmptyArrays: true, // Ensures null user in case of missing reference
+					},
 				},
-			},
-			{
-				$lookup: {
-					from: "users",
-					localField: "group.author",
-					foreignField: "_id",
-					as: "group.author",
+				{
+					$lookup: {
+						from: "groups",
+						localField: "group",
+						foreignField: "_id",
+						as: "group",
+					},
 				},
-			},
-			{
-				$unwind: {
-					path: "$group.author",
-					preserveNullAndEmptyArrays: true, // Ensures group author is null if missing
+				{
+					$unwind: {
+						path: "$group",
+						preserveNullAndEmptyArrays: true, // Keeps expenses even if they have no group
+					},
 				},
-			},
-			{
-				$group: {
-					_id: "$_id",
-					id: { $first: "$id" },
-					title: { $first: "$title" },
-					amount: { $first: "$amount" },
-					author: { $first: "$author" },
-					timestamp: { $first: "$timestamp" },
-					description: { $first: "$description" },
-					tags: { $first: "$tags" },
-					icon: { $first: "$icon" },
-					type: { $first: "$type" },
-					method: { $first: "$method" },
-					createdAt: { $first: "$createdAt" },
-					updatedAt: { $first: "$updatedAt" },
-					splits: {
-						$push: {
-							$cond: {
-								if: { $gt: ["$splits._id", null] },
-								then: {
-									id: "$splits._id",
-									user: {
-										id: "$splits.user._id",
-										name: "$splits.user.name",
-										email: "$splits.user.email",
-										phone: "$splits.user.phone",
-										avatar: "$splits.user.avatar",
-										status: "$splits.user.status",
+				{
+					$lookup: {
+						from: "users",
+						localField: "group.author",
+						foreignField: "_id",
+						as: "group.author",
+					},
+				},
+				{
+					$unwind: {
+						path: "$group.author",
+						preserveNullAndEmptyArrays: true, // Ensures group author is null if missing
+					},
+				},
+				{
+					$group: {
+						_id: "$_id",
+						id: { $first: "$id" },
+						title: { $first: "$title" },
+						amount: { $first: "$amount" },
+						author: { $first: "$author" },
+						timestamp: { $first: "$timestamp" },
+						description: { $first: "$description" },
+						tags: { $first: "$tags" },
+						icon: { $first: "$icon" },
+						type: { $first: "$type" },
+						method: { $first: "$method" },
+						createdAt: { $first: "$createdAt" },
+						updatedAt: { $first: "$updatedAt" },
+						splits: {
+							$push: {
+								$cond: {
+									if: { $gt: ["$splits._id", null] },
+									then: {
+										id: "$splits._id",
+										user: {
+											id: "$splits.user._id",
+											name: "$splits.user.name",
+											email: "$splits.user.email",
+											phone: "$splits.user.phone",
+											avatar: "$splits.user.avatar",
+											status: "$splits.user.status",
+										},
+										pending: "$splits.pending",
+										completed: "$splits.completed",
 									},
-									pending: "$splits.pending",
-									completed: "$splits.completed",
+									else: "$$REMOVE", // Removes empty split entries
 								},
-								else: "$$REMOVE", // Removes empty split entries
+							},
+						},
+						group: {
+							$first: {
+								$cond: {
+									if: { $gt: ["$group._id", null] },
+									then: {
+										id: "$group._id",
+										name: "$group.name",
+										icon: "$group.icon",
+										banner: "$group.banner",
+										tags: "$group.tags",
+										author: {
+											id: "$group.author._id",
+											name: "$group.author.name",
+											email: "$group.author.email",
+											phone: "$group.author.phone",
+											avatar: "$group.user.avatar",
+											status: "$group.user.status",
+										},
+									},
+									else: null,
+								},
 							},
 						},
 					},
-					group: {
-						$first: {
-							$cond: {
-								if: { $gt: ["$group._id", null] },
-								then: {
-									id: "$group._id",
-									name: "$group.name",
-									icon: "$group.icon",
-									banner: "$group.banner",
-									tags: "$group.tags",
-									author: {
-										id: "$group.author._id",
-										name: "$group.author.name",
-										email: "$group.author.email",
-										phone: "$group.author.phone",
-										avatar: "$group.user.avatar",
-										status: "$group.user.status",
-									},
-								},
-								else: null,
-							},
-						},
-					},
 				},
-			},
-			{ $sort: { timestamp: -1 } },
-		]);
-		return expensesWithSplits;
+				{ $sort: { timestamp: -1 } },
+			]);
+			return expensesWithSplits;
+		} catch (error: any) {
+			if (error.kind === "ObjectId") return [];
+			throw error;
+		}
 	}
 }
 
