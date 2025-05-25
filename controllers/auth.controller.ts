@@ -32,10 +32,9 @@ export class AuthController {
 	) {
 		const email = getNonEmptyString(req.body.email);
 		await OtpService.requestOtpWithEmail(email);
-		return new ApiSuccess<ApiResponses.RequestOtp>(res).send(
-			null,
-			"OTP sent successfully"
-		);
+		return new ApiSuccess<ApiResponses.RequestOtp>(res)
+			.message("OTP sent successfully")
+			.send(null);
 	}
 	public static async verifyOtp(
 		req: ApiRequest<ApiRequests.VerifyOtp>,
@@ -63,7 +62,9 @@ export class AuthController {
 	) {
 		const user = req.user;
 		if (!user) {
-			return new ApiFailure(res).send("Please login to continue");
+			return new ApiFailure(res)
+				.message("Please login to continue")
+				.send();
 		}
 		return new ApiSuccess<ApiResponses.VerifyUser>(res).send(user);
 	}

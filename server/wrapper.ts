@@ -145,9 +145,10 @@ export class ApiRoute {
 				if (this.useDatabase) {
 					await this.dbContainer.db.connect();
 					if (this.dbContainer.db.isConnected() === false) {
-						return res
+						return new ApiFailure(res)
 							.status(HTTP.status.SERVICE_UNAVAILABLE)
-							.json({ message: "Database not initialized" });
+							.message("Database not initialized")
+							.send();
 					}
 				}
 
@@ -198,25 +199,29 @@ export class ApiRoute {
 			} catch (error: any) {
 				this.log(req, res, startTime);
 				if (error instanceof ApiError) {
-					return new ApiFailure(res).send(
-						error.message,
-						error.status
-					);
+					return new ApiFailure(res)
+						.status(error.status)
+						.message(error.message)
+						.send();
 				} else if (error instanceof DbConnectionError) {
-					return new ApiFailure(res).send(
-						error.message || HTTP.message.DB_CONNECTION_ERROR,
-						HTTP.status.SERVICE_UNAVAILABLE
-					);
+					return new ApiFailure(res)
+						.status(HTTP.status.SERVICE_UNAVAILABLE)
+						.message(
+							error.message || HTTP.message.DB_CONNECTION_ERROR
+						)
+						.send();
 				} else if (error instanceof ParserSafetyError) {
-					return new ApiFailure(res).send(
-						error.message || HTTP.message.BAD_REQUEST,
-						HTTP.status.BAD_REQUEST
-					);
+					return new ApiFailure(res)
+						.status(HTTP.status.BAD_REQUEST)
+						.message(error.message || HTTP.message.BAD_REQUEST)
+						.send();
 				} else {
-					return new ApiFailure(res).send(
-						error.message || HTTP.message.INTERNAL_SERVER_ERROR,
-						HTTP.status.INTERNAL_SERVER_ERROR
-					);
+					return new ApiFailure(res)
+						.status(HTTP.status.INTERNAL_SERVER_ERROR)
+						.message(
+							error.message || HTTP.message.INTERNAL_SERVER_ERROR
+						)
+						.send();
 				}
 			}
 		};

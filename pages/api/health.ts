@@ -10,9 +10,9 @@ const handler = async (req: ApiRequest, res: ApiResponse) => {
 	if (req.method === apiMethods.GET) {
 		return ServerController.health(dbContainer.db)(req, res);
 	} else {
-		res.setHeader("Allow", apiMethods.GET);
 		return new ApiFailure(res)
 			.status(HTTP.status.METHOD_NOT_ALLOWED)
+			.headers("Allow", apiMethods.GET)
 			.message(`Method ${req.method} Not Allowed`)
 			.send();
 	}

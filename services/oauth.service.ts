@@ -90,6 +90,7 @@ export class OAuthService {
 		);
 		Logger.debug("Decoded validator token", decodedToken);
 		const authMappingId = genericParse(getNonEmptyString, decodedToken.id);
+		Logger.debug("Decoded auth mapping id", authMappingId);
 		const foundAuthMapping = await authRepo.findById(authMappingId);
 		Logger.debug("Found auth mapping", foundAuthMapping);
 		if (!foundAuthMapping || !foundAuthMapping.user) {

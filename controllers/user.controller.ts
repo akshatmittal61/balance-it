@@ -29,9 +29,9 @@ export class UserController {
 		if (phone != null) body["phone"] = phone;
 		if (avatar !== null) body["avatar"] = avatar;
 		if (Object.keys(body).length === 0) {
-			return new ApiFailure(res).send(
-				"Please provide at least one field to update"
-			);
+			return new ApiFailure(res)
+				.message("Please provide at least one field to update")
+				.send();
 		}
 		const user = await UserService.updateUserProfile(userId, body);
 		return new ApiSuccess<ApiResponses.UpdateUser>(res).send(user);

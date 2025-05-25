@@ -53,11 +53,10 @@ export class WalletController {
 			splits || []
 		);
 		Logger.debug("Created expense", created);
-		return new ApiSuccess<ApiResponses.CreateExpense>(res).send(
-			created,
-			HTTP.message.SUCCESS,
-			HTTP.status.CREATED
-		);
+		return new ApiSuccess<ApiResponses.CreateExpense>(res)
+			.status(HTTP.status.CREATED)
+			.message(HTTP.message.SUCCESS)
+			.send(created);
 	}
 	public static async deleteExpense(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);

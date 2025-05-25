@@ -7,10 +7,10 @@ export class ServerController {
 	public static health =
 		(db: DatabaseManager) => (_: ApiRequest, res: ApiResponse) => {
 			if (db.isConnected() === false) {
-				return new ApiFailure(res).send(
-					HTTP.message.DB_CONNECTION_ERROR,
-					HTTP.status.SERVICE_UNAVAILABLE
-				);
+				return new ApiFailure(res)
+					.status(HTTP.status.SERVICE_UNAVAILABLE)
+					.message(HTTP.message.DB_CONNECTION_ERROR)
+					.send();
 			}
 			const payload = {
 				identity: process.pid,
@@ -18,10 +18,9 @@ export class ServerController {
 				timestamp: new Date().toISOString(),
 				database: db.isConnected(),
 			};
-			return new ApiSuccess<typeof payload>(res).send(
-				payload,
-				HTTP.message.HEALTHY_API
-			);
+			return new ApiSuccess<typeof payload>(res)
+				.message(HTTP.message.HEALTHY_API)
+				.send(payload);
 		};
 	public static heartbeat =
 		(db: DatabaseManager) => (_: ApiRequest, res: ApiResponse) => {
@@ -31,9 +30,8 @@ export class ServerController {
 				timestamp: new Date().toISOString(),
 				database: db.isConnected(),
 			};
-			return new ApiSuccess<typeof payload>(res).send(
-				payload,
-				HTTP.message.HEARTBEAT
-			);
+			return new ApiSuccess<typeof payload>(res)
+				.message(HTTP.message.HEARTBEAT)
+				.send(payload);
 		};
 }
