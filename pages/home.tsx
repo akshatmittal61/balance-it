@@ -20,10 +20,10 @@ const HomePage: React.FC<HomePageProps> = () => {
 				title={`${user ? getUserDetails(user).name : ""} - Home | ${AppSeo.title}`}
 			/>
 			<main className={classes("")}>
-				{isLoading || !isLoggedIn ? (
-					<ExpenseTableSkeleton />
-				) : expenses.length > 0 ? (
+				{expenses.length > 0 ? (
 					<Home.Body />
+				) : isLoading || !isLoggedIn ? (
+					<ExpenseTableSkeleton />
 				) : (
 					<Placeholder />
 				)}

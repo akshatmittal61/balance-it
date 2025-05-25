@@ -11,6 +11,7 @@ import {
 	DbContainer,
 	T_API_METHODS,
 } from "@/types";
+import { MongooseError } from "mongoose";
 import { NextApiHandler } from "next";
 import { DatabaseManager } from "../connections";
 
@@ -143,13 +144,13 @@ export class ApiRoute {
 			const startTime = Date.now();
 			try {
 				if (this.useDatabase) {
-					await this.dbContainer.db.connect();
-					if (this.dbContainer.db.isConnected() === false) {
+					this.dbContainer.db.connect();
+					/* if (this.dbContainer.db.isConnected() === false) {
 						return new ApiFailure(res)
 							.status(HTTP.status.SERVICE_UNAVAILABLE)
 							.message("Database not initialized")
 							.send();
-					}
+					} */
 				}
 
 				const { method } = req;
@@ -203,7 +204,10 @@ export class ApiRoute {
 						.status(error.status)
 						.message(error.message)
 						.send();
-				} else if (error instanceof DbConnectionError) {
+				} else if (
+					error instanceof DbConnectionError ||
+					error instanceof MongooseError
+				) {
 					return new ApiFailure(res)
 						.status(HTTP.status.SERVICE_UNAVAILABLE)
 						.message(

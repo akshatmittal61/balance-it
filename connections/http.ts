@@ -182,6 +182,6 @@ export const http = new HttpWrapper(
 			"Content-Type": "application/json",
 		},
 		withCredentials: true,
-		timeout: 10000,
+		timeout: 15000,
 	})
 );
