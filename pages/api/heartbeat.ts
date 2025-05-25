@@ -1,8 +1,8 @@
 import { DatabaseManager } from "@/connections";
 import { apiMethods, dbUri, HTTP } from "@/constants";
 import { ServerController } from "@/controllers";
+import { ApiFailure } from "@/server";
 import { ApiRequest, ApiResponse } from "@/types";
-import { ApiFailure } from "@/utils";
 
 const handler = async (req: ApiRequest, res: ApiResponse) => {
 	const dbContainer = DatabaseManager.createContainer(dbUri);

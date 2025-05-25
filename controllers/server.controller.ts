@@ -1,7 +1,7 @@
 import { DatabaseManager } from "@/connections";
 import { HTTP } from "@/constants";
+import { ApiFailure, ApiSuccess } from "@/server";
 import { ApiRequest, ApiResponse } from "@/types";
-import { ApiFailure, ApiSuccess } from "@/utils";
 
 export class ServerController {
 	public static health =

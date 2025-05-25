@@ -1,3 +1,4 @@
+import { ApiFailure, ApiSuccess } from "@/server";
 import { UserService } from "@/services";
 import {
 	ApiRequest,
@@ -7,8 +8,6 @@ import {
 	UpdateUser,
 } from "@/types";
 import {
-	ApiFailure,
-	ApiSuccess,
 	genericParse,
 	getNonEmptyString,
 	getNonNullValue,

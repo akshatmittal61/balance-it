@@ -1,7 +1,7 @@
 import { apiMethods, dbUri, HTTP } from "@/constants";
 import { ApiError, DbConnectionError, ParserSafetyError } from "@/errors";
 import { Logger } from "@/log";
-import { ServerMiddleware } from "@/server";
+import { ApiFailure, ServerMiddleware } from "@/server";
 import {
 	ApiController,
 	ApiControllers,
@@ -11,7 +11,6 @@ import {
 	DbContainer,
 	T_API_METHODS,
 } from "@/types";
-import { ApiFailure } from "@/utils";
 import { NextApiHandler } from "next";
 import { DatabaseManager } from "../connections";
 

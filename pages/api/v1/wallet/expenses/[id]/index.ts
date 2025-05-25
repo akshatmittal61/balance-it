@@ -12,8 +12,8 @@ const apiRoute = new ApiRoute(
 export default apiRoute.getHandler();
  */
 
+import { ApiSuccess } from "@/server";
 import { ApiRequest, ApiResponse } from "@/types";
-import { ApiSuccess } from "@/utils";
 
 const handler = (req: ApiRequest, res: ApiResponse) => {
 	if (req.method === "GET") {

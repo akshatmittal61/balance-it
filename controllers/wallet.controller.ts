@@ -1,14 +1,9 @@
 import { HTTP } from "@/constants";
 import { Logger } from "@/log";
+import { ApiSuccess } from "@/server";
 import { ExpenseService } from "@/services";
 import { ApiRequest, ApiRequests, ApiResponse, ApiResponses } from "@/types";
-import {
-	ApiSuccess,
-	genericParse,
-	getArray,
-	getNonEmptyString,
-	safeParse,
-} from "@/utils";
+import { genericParse, getArray, getNonEmptyString, safeParse } from "@/utils";
 
 export class WalletController {
 	public static async getExpensesForUser(req: ApiRequest, res: ApiResponse) {
