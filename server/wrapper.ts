@@ -93,7 +93,7 @@ export class ApiRoute {
 	 * @return {ApiController} The wrapped controller with the applied middleware.
 	 */
 	private wrapper(controller: ApiController): ApiController {
-		controller = ServerMiddleware.responseBodyPopulator(controller);
+		// controller = ServerMiddleware.responseBodyPopulator(controller);
 		if (this.isAdmin) {
 			return ServerMiddleware.adminRoute(controller);
 		} else if (this.isAuthenticated) {
@@ -119,7 +119,6 @@ export class ApiRoute {
 		};
 		const response = {
 			status: res.statusCode,
-			body: res.locals?.body,
 			headers: res.getHeaders ? res.getHeaders() : {}, // Assuming `getHeaders` exists
 			time: executionTime,
 		};
@@ -154,7 +153,7 @@ export class ApiRoute {
 
 				const { method } = req;
 				// We need the handler to run by async/await to catch errors
-				let result: ApiResponse;
+				let result: void;
 
 				Logger.debug(
 					"method and handler",

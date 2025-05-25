@@ -54,7 +54,8 @@ export class AuthController {
 		return new ApiSuccess<ApiResponses.VerifyOtp>(res)
 			.status(responseStatus)
 			.cookies(cookies)
-			.data(user);
+			.data(user)
+			.send();
 	}
 	public static async verifyLoggedInUser(
 		req: ApiRequest<ApiRequests.VerifyUser>,
