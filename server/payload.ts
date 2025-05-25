@@ -1,4 +1,5 @@
 import { HTTP } from "@/constants";
+import { Logger } from "@/log";
 import { ApiRes, ApiResponse, Cookie } from "@/types";
 
 abstract class ApiBaseResponse<T> {
@@ -67,6 +68,12 @@ export class ApiSuccess<T> extends ApiBaseResponse<T> {
 		if (data) {
 			payload.data = data;
 		}
+		if (this.res.headersSent || this.res.writableEnded) {
+			return Logger.error(
+				"Response already sent, cannot send response",
+				payload
+			);
+		}
 		this.status(status).json(payload).end();
 	}
 	public data(data: T): ApiSuccess<T> {
@@ -89,6 +96,12 @@ export class ApiFailure extends ApiBaseResponse<null> {
 		message: string = this.payload.message,
 		status: number = this.payload.status
 	): void {
+		if (this.res.headersSent || this.res.writableEnded) {
+			return Logger.error("Response already sent, cannot send response", {
+				status,
+				message,
+			});
+		}
 		this.status(status).message(message).end();
 	}
 }
