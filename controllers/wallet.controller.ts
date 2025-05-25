@@ -16,6 +16,15 @@ export class WalletController {
 		const expenses = await ExpenseService.getUserExpenses(userId);
 		return new ApiSuccess<ApiResponses.GetUserExpenses>(res).send(expenses);
 	}
+	public static async getExpenseById(req: ApiRequest, res: ApiResponse) {
+		const expenseId = genericParse(getNonEmptyString, req.query.id);
+		const userId = genericParse(getNonEmptyString, req.user?.id);
+		const expense = await ExpenseService.getExpenseForUser(
+			expenseId,
+			userId
+		);
+		return new ApiSuccess<ApiResponses.GetExpenseById>(res).send(expense);
+	}
 	public static async getExpensesSummary(req: ApiRequest, res: ApiResponse) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
 		const summary = await ExpenseService.getExpensesSummary(userId);

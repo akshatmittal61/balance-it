@@ -9,6 +9,13 @@ export class WalletApi {
 		);
 		return res.data;
 	}
+	public static async getExpenseForUser(expenseId: string, headers?: any) {
+		const res = await http.get<ApiRes<ApiResponses.GetExpenseById>>(
+			`/wallet/expenses/${expenseId}`,
+			{ headers }
+		);
+		return res.data;
+	}
 	public static async getExpensesSummary(headers?: any) {
 		const res = await http.get<ApiRes<ApiResponses.GetExpensesSummary>>(
 			"/wallet/expenses/summary",

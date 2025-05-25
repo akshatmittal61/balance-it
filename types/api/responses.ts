@@ -21,5 +21,6 @@ export type GetUserFriends = Array<Friend>;
 // Wallet
 export type GetUserExpenses = Array<ExpenseSpread>;
 export type GetExpensesSummary = ExpensesSummary;
+export type GetExpenseById = ExpenseSpread;
 export type CreateExpense = ExpenseSpread;
 export type DeleteExpense = boolean;

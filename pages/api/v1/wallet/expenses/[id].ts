@@ -1,8 +1,11 @@
-import { ApiRoute } from "@/server";
 import { WalletController } from "@/controllers";
+import { ApiRoute } from "@/server";
 
 const apiRoute = new ApiRoute(
-	{ DELETE: WalletController.deleteExpense },
+	{
+		GET: WalletController.getExpenseById,
+		DELETE: WalletController.deleteExpense,
+	},
 	{ db: true, auth: true }
 );
 

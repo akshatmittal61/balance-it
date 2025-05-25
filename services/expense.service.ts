@@ -47,6 +47,19 @@ export class ExpenseService {
 			expenseRepo.findByIdWithSplits(expenseId)
 		);
 	}
+	public static async getExpenseForUser(
+		expenseId: string,
+		userId: string
+	): Promise<IExpense> {
+		const expense = await ExpenseService.getExpenseById(expenseId);
+		if (!expense) {
+			throw new ApiError(HTTP.status.NOT_FOUND, "Expense not found");
+		}
+		if (expense.author.id !== userId) {
+			throw new ApiError(HTTP.status.FORBIDDEN, "None of your business");
+		}
+		return expense;
+	}
 	public static async getExpensesSummary(userId: string): Promise<{
 		paid: number;
 		received: number;
