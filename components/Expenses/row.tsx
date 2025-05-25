@@ -66,20 +66,20 @@ const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 				if (expense.author.id === user.id) {
 					return (
 						<Typography size="sm">
-							{`${expense.author.name || expense.author.email.slice(0, 7) + "..."} paid ${roundOff(completed, 2)} for this expense`}
+							{`${getUserDetails(expense.author).name} paid ${roundOff(completed, 2)} for this expense`}
 						</Typography>
 					);
 				} else {
 					if (pending === 0) {
 						return (
 							<Typography size="sm">
-								{`${user.name || user.email.slice(0, 7) + "..."} has paid ${roundOff(completed, 2)} to ${expense.author.name || expense.author.email.slice(0, 7) + "..."}`}
+								{`${getUserDetails(user).name} has paid ${roundOff(completed, 2)} to ${expense.author.name || expense.author.email.slice(0, 7) + "..."}`}
 							</Typography>
 						);
 					} else {
 						return (
 							<Typography size="sm">
-								{`${user.name || user.email.slice(0, 7) + "..."} owes ${roundOff(pending, 2)} to ${expense.author.name || expense.author.email.slice(0, 7) + "..."}`}
+								{`${getUserDetails(user).name} owes ${roundOff(pending, 2)} to ${expense.author.name || expense.author.email.slice(0, 7) + "..."}`}
 							</Typography>
 						);
 					}
