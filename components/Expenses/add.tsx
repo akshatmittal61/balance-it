@@ -119,23 +119,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 
 	return (
 		<>
-			<div className={classes("-avatars")}>
-				{members.length > 0 &&
-				!(members.length === 1 && members[0].id === user?.id) ? (
-					<Avatars size={48}>
-						{members.map((m) => ({
-							src: getUserDetails(m).avatar || "",
-							alt: getUserDetails(m).name || "",
-						}))}
-					</Avatars>
-				) : user ? (
-					<Avatar
-						src={getUserDetails(user).avatar || ""}
-						alt={getUserDetails(user).name || ""}
-						size={48}
-					/>
-				) : null}
-			</div>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -143,6 +126,23 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				}}
 				className={classes("-form")}
 			>
+				<div className={classes("-avatars")}>
+					{members.length > 0 &&
+					!(members.length === 1 && members[0].id === user?.id) ? (
+						<Avatars size={48}>
+							{members.map((m) => ({
+								src: getUserDetails(m).avatar || "",
+								alt: getUserDetails(m).name || "",
+							}))}
+						</Avatars>
+					) : user ? (
+						<Avatar
+							src={getUserDetails(user).avatar || ""}
+							alt={getUserDetails(user).name || ""}
+							size={48}
+						/>
+					) : null}
+				</div>
 				<Input
 					size={device === "mobile" ? "large" : "medium"}
 					name="amount"

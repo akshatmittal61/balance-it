@@ -1,6 +1,6 @@
-import { fallbackAssets } from "@/constants";
 import { useDevice } from "@/hooks";
 import { Avatar, Typography } from "@/library";
+import { getUserDetails } from "@/utils";
 import React from "react";
 import { classes, distributionMethods } from "./assets";
 import { CustomDistribution } from "./custom";
@@ -19,8 +19,8 @@ export const DistributionMember: React.FC<DistributionMemberProps> = ({
 	return (
 		<div className={classes("-member")} key={`member-${member.id}`}>
 			<Avatar
-				src={member.avatar || fallbackAssets.avatar}
-				alt={member.name || member.email}
+				src={getUserDetails(member).avatar || ""}
+				alt={getUserDetails(member).name || ""}
 				size={device === "mobile" ? 32 : 48}
 			/>
 			<div className={classes("-member-details")}>

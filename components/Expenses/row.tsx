@@ -1,9 +1,9 @@
-import { expenseMethods, expenseTypes, fallbackAssets } from "@/constants";
+import { expenseMethods, expenseTypes } from "@/constants";
 import { useConfirmationModal } from "@/hooks";
 import { Avatar, Avatars, Pill, Typography } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { ExpenseSpread, ISplit } from "@/types";
-import { Notify, roundOff, stylesConfig } from "@/utils";
+import { getUserDetails, Notify, roundOff, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -58,8 +58,8 @@ const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 			})}
 		>
 			<Avatar
-				src={user.avatar || fallbackAssets.avatar}
-				alt={user.name || user.email}
+				src={getUserDetails(user).avatar || ""}
+				alt={getUserDetails(user).name || ""}
 				size={36}
 			/>
 			{(() => {
@@ -164,12 +164,9 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 						<div className={classes("-splits")}>
 							<Avatars size={24}>
 								{expense.splits.map((exp) => ({
-									src:
-										exp.user.avatar ||
-										fallbackAssets.avatar,
+									src: getUserDetails(exp.user).avatar || "",
 									alt:
-										(exp.user.name ||
-											exp.user.email.split("@")[0]) +
+										(getUserDetails(exp.user).name || "") +
 										" - " +
 										(exp.pending + exp.completed),
 								}))}

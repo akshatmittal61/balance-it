@@ -9,6 +9,7 @@
 	align-items: flex-start;
 	flex-direction: column;
 	gap: 8px;
+	background-color: var(--bgcolor);
 
 	&-avatars {
 		display: flex;
@@ -49,6 +50,10 @@
 		flex-direction: column;
 		margin: 12px auto;
 		gap: 12px;
+		position: sticky;
+		top: 0;
+		background-color: var(--bgcolor);
+		z-index: 5;
 	}
 
 	&-type {
@@ -140,6 +145,7 @@
 	}
 
 	&-bottom-bar {
+		background-color: var(--white);
 		width: calc(100% - var(--side-width));
 		position: fixed;
 		bottom: 0;
@@ -150,7 +156,6 @@
 		border-radius: 32px 32px 0 0;
 		box-shadow: 0px -10px 15px -3px rgba(0, 0, 0, 0.1);
 		padding: 16px 20px;
-		background-color: inherit;
 		animation: slide-bottom var(--transition-time) linear;
 
 		@include responsive(phone) {

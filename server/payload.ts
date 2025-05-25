@@ -27,8 +27,7 @@ abstract class ApiBaseResponse<T> {
 			...this.payload,
 			message,
 		};
-		this.payload.message = message;
-		this.res.json(payload);
+		this.payload = payload;
 		return this;
 	}
 	public cookies(cookies: Array<Cookie>): this {
@@ -56,6 +55,14 @@ export class ApiSuccess<T> extends ApiBaseResponse<T> {
 	constructor(r: ApiResponse) {
 		super(r);
 	}
+	public data(data: T): ApiSuccess<T> {
+		const payload = {
+			...this.payload,
+			data,
+		};
+		this.payload = payload;
+		return this;
+	}
 	public send(
 		data?: T,
 		message: string = this.payload.message,
@@ -75,14 +82,6 @@ export class ApiSuccess<T> extends ApiBaseResponse<T> {
 			);
 		}
 		this.status(status).json(payload).end();
-	}
-	public data(data: T): ApiSuccess<T> {
-		const payload = {
-			...this.payload,
-			data,
-		};
-		this.res.json(payload);
-		return this;
 	}
 }
 

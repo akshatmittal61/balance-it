@@ -45,7 +45,7 @@ export const Avatars: React.FC<IAvatarsProps> = ({
 			))}
 			{children.length > 4 ? (
 				<Avatar
-					src=""
+					src={`https://ui-avatars.com/api/?name=%2B${children.length - 4}&background=random`}
 					alt={`+${children.length - 4}`}
 					size={props.size}
 					style={{
