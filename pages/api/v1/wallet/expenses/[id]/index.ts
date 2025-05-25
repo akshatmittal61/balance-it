@@ -12,16 +12,15 @@ const apiRoute = new ApiRoute(
 export default apiRoute.getHandler();
  */
 
-import { ApiSuccess } from "@/server";
-import { ApiRequest, ApiResponse } from "@/types";
+import { NextApiRequest, NextApiResponse } from "next";
 
-const handler = (req: ApiRequest, res: ApiResponse) => {
+const handler = (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === "GET") {
-		return new ApiSuccess(res).json(req.query).send();
+		return res.status(200).json(req.query);
 	} else {
-		return new ApiSuccess(res)
-			.json({ message: "Wan'nt GET", query: req.query })
-			.send();
+		return res
+			.status(200)
+			.json({ message: "Wan'nt GET", query: req.query });
 	}
 };
 
