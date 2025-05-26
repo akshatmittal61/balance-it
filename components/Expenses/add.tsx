@@ -156,11 +156,11 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 						input: {
 							width: "fit-content",
 							borderBottom: "none",
-							maxWidth: "4ch",
+							maxWidth: "7ch",
 						},
 						container: {
 							width: "fit-content",
-							maxWidth: "4ch",
+							maxWidth: "7ch",
 						},
 						box: {
 							width: "fit-content",
