@@ -4,4 +4,5 @@ export * from "./notify";
 export * from "./parser";
 export * from "./profiler";
 export * from "./safety";
+export * from "./string";
 export * from "./validators";

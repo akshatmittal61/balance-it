@@ -1,12 +1,14 @@
 import { Home, Placeholder, Seo } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
-import { AppSeo } from "@/constants";
+import { authRouterInterceptor } from "@/connections";
+import { AppSeo, routes } from "@/constants";
 import { useAuthStore, useGodownStore, useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
+import { IUser, ServerSideResult } from "@/types";
 import { getUserDetails, stylesConfig } from "@/utils";
 import React from "react";
 
-type HomePageProps = {};
+type HomePageProps = { user: IUser };
 
 const classes = stylesConfig(styles, "home");
 
@@ -33,3 +35,23 @@ const HomePage: React.FC<HomePageProps> = () => {
 };
 
 export default HomePage;
+
+export const getServerSideProps = (
+	context: any
+): Promise<ServerSideResult<HomePageProps>> => {
+	return authRouterInterceptor(context, {
+		onLoggedIn(user) {
+			return {
+				props: { user },
+			};
+		},
+		onLoggedOut() {
+			return {
+				redirect: {
+					destination: routes.LOGIN,
+					permanent: false,
+				},
+			};
+		},
+	});
+};

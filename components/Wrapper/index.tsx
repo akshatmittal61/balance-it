@@ -1,5 +1,10 @@
 import { Header, Loader, Seo, SideBar } from "@/components";
-import { AppSeo, routes, routesSupportingContainer } from "@/constants";
+import {
+	AppSeo,
+	protectedRoutes,
+	routes,
+	routesSupportingContainer,
+} from "@/constants";
 import { useDevice } from "@/hooks";
 import FabButton from "@/library/Button/fab";
 import { useAuthStore, useUiStore } from "@/store";
@@ -10,7 +15,6 @@ import React, { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { FiPlus } from "react-icons/fi";
 import styles from "./styles.module.scss";
-import { Logger } from "@/log";
 
 interface WrapperProps {
 	children: React.ReactNode;
@@ -22,20 +26,11 @@ const classes = stylesConfig(styles, "wrapper");
 export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 	const router = useRouter();
 	const [showLoader, setShowLoader] = useState(false);
-	const {
-		sync: syncAuth,
-		setUser,
-		isLoggedIn,
-	} = useAuthStore({ syncOnMount: true });
+	const { sync: syncAuth, setUser, isLoggedIn } = useAuthStore();
 	const { setOpenSidebar, syncNetworkStatus } = useUiStore({
 		syncOnMount: true,
 	});
 	const { device } = useDevice();
-	Logger.debug(
-		isLoggedIn &&
-			routesSupportingContainer.includes(router.pathname) &&
-			router.pathname !== routes.ADD_EXPENSE
-	);
 
 	// only show router when route is changing
 	useEffect(() => {
@@ -53,20 +48,26 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 	useEffect(() => {
 		if (user) {
 			setUser(user);
+		} else {
+			if (!isLoggedIn && protectedRoutes.includes(router.pathname)) {
+				syncAuth();
+			}
 		}
-		setInterval(() => {
-			syncNetworkStatus();
-		}, 5000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user]);
+	}, [user, router.pathname]);
 
 	useEffect(() => {
 		if (device === "mobile") {
 			setOpenSidebar(false);
 		}
-		syncAuth();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [device, router.pathname]);
+
+	useEffect(() => {
+		setInterval(() => {
+			syncNetworkStatus();
+		}, 5000);
+	}, [syncNetworkStatus]);
 
 	return (
 		<>

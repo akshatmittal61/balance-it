@@ -24,7 +24,8 @@ export class AuthController {
 		Logger.debug("User logged in with Google", user, cookies);
 		return new ApiSuccess<ApiResponses.ContinueGoogleOAuth>(res)
 			.cookies(cookies)
-			.send(user);
+			.data(user)
+			.send();
 	}
 	public static async requestOtp(
 		req: ApiRequest<ApiRequests.RequestOtp>,

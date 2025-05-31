@@ -37,7 +37,7 @@ export class DatabaseManager {
 			return true;
 		} catch (error: any) {
 			Logger.error("Error connecting to MongoDB", error.message);
-			return false;
+			throw new DbConnectionError("DB Connection Initiator");
 		}
 	}
 

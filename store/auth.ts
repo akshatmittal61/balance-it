@@ -1,6 +1,7 @@
 import { AuthApi, UserApi } from "@/api";
 import { useHttpClient } from "@/hooks";
 import { IUser } from "@/types";
+import { StringUtils } from "@/utils";
 import { useEffect } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
@@ -20,7 +21,6 @@ type Action = {
 	getIsLoggedIn: Getter<"isLoggedIn">;
 	setUser: Setter<"user">;
 	setIsLoading: Setter<"isLoading">;
-	setIsLoggedIn: Setter<"isLoggedIn">;
 };
 
 type Store = State & Action;
@@ -33,9 +33,14 @@ const store = create<Store>((set, get) => {
 		getUser: () => get().user,
 		getIsLoading: () => get().isLoading,
 		getIsLoggedIn: () => get().isLoggedIn,
-		setUser: (user) => set({ user }),
+		setUser: (user) => {
+			if (user && user !== null && StringUtils.isNotEmpty(user.id)) {
+				set({ user, isLoggedIn: true });
+			} else {
+				set({ user, isLoggedIn: false });
+			}
+		},
 		setIsLoading: (isLoading) => set({ isLoading }),
-		setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
 	};
 });
 
@@ -64,10 +69,8 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 			store.setIsLoading(true);
 			const res = await AuthApi.verify();
 			store.setUser(res.data);
-			store.setIsLoggedIn(true);
 		} catch {
 			store.setUser(null);
-			store.setIsLoggedIn(false);
 		} finally {
 			store.setIsLoading(false);
 		}
@@ -81,7 +84,6 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 	const logout = async () => {
 		await AuthApi.logout();
 		store.setUser(null);
-		store.setIsLoggedIn(false);
 	};
 
 	useEffect(() => {

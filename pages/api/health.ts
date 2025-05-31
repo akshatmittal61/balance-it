@@ -12,7 +12,7 @@ const handler = async (req: ApiRequest, res: ApiResponse) => {
 	} else {
 		return new ApiFailure(res)
 			.status(HTTP.status.METHOD_NOT_ALLOWED)
-			.headers("Allow", apiMethods.GET)
+			.headers("Allow", [apiMethods.GET])
 			.message(`Method ${req.method} Not Allowed`)
 			.send();
 	}

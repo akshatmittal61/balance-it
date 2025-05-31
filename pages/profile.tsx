@@ -1,9 +1,11 @@
 import { Seo } from "@/components";
+import { authRouterInterceptor } from "@/connections";
 import { AppSeo, routes } from "@/constants";
 import { Responsive } from "@/layouts";
 import { Avatar, Button, Input, Typography } from "@/library";
 import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Profile.module.scss";
+import { IUser, ServerSideResult } from "@/types";
 import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -11,9 +13,9 @@ import { FiArrowLeft, FiLogOut } from "react-icons/fi";
 
 const classes = stylesConfig(styles, "profile-page");
 
-interface IProfilePageProps {}
+type ProfilePageProps = { user: IUser };
 
-const ProfilePage: React.FC<IProfilePageProps> = () => {
+const ProfilePage: React.FC<ProfilePageProps> = () => {
 	const router = useRouter();
 	const { user, logout, update, isUpdating, isLoggedIn } = useAuthStore();
 	const [fields, setFields] = useState({
@@ -175,3 +177,22 @@ const ProfilePage: React.FC<IProfilePageProps> = () => {
 };
 
 export default ProfilePage;
+export const getServerSideProps = (
+	context: any
+): Promise<ServerSideResult<ProfilePageProps>> => {
+	return authRouterInterceptor(context, {
+		onLoggedIn(user) {
+			return {
+				props: { user },
+			};
+		},
+		onLoggedOut() {
+			return {
+				redirect: {
+					destination: routes.LOGIN,
+					permanent: false,
+				},
+			};
+		},
+	});
+};
