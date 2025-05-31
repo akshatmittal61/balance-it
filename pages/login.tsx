@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Auth.module.scss";
 import { ServerSideResult } from "@/types";
 import { Notify, stylesConfig } from "@/utils";
+import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -142,15 +143,13 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 
 export default LoginPage;
 
-export const getServerSideProps = (
-	context: any
-): Promise<ServerSideResult<LoginPageProps>> => {
-	return authRouterInterceptor(context, {
+export const getServerSideProps = (context: GetServerSidePropsContext) => {
+	return authRouterInterceptor<ServerSideResult<LoginPageProps>>(context, {
 		onLoggedIn() {
 			const { redirect } = context.query;
 			return {
 				redirect: {
-					destination: redirect ?? routes.HOME,
+					destination: redirect ? redirect.toString() : routes.HOME,
 					permanent: false,
 				},
 			};

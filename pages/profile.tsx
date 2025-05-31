@@ -1,11 +1,11 @@
 import { Seo } from "@/components";
-import { authRouterInterceptor } from "@/connections";
+import { withAuthPage } from "@/connections";
 import { AppSeo, routes } from "@/constants";
 import { Responsive } from "@/layouts";
 import { Avatar, Button, Input, Typography } from "@/library";
 import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Profile.module.scss";
-import { IUser, ServerSideResult } from "@/types";
+import { IUser } from "@/types";
 import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -177,22 +177,6 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
 };
 
 export default ProfilePage;
-export const getServerSideProps = (
-	context: any
-): Promise<ServerSideResult<ProfilePageProps>> => {
-	return authRouterInterceptor(context, {
-		onLoggedIn(user) {
-			return {
-				props: { user },
-			};
-		},
-		onLoggedOut() {
-			return {
-				redirect: {
-					destination: routes.LOGIN,
-					permanent: false,
-				},
-			};
-		},
-	});
-};
+export const getServerSideProps = withAuthPage<ProfilePageProps>((user) => ({
+	props: { user },
+}));

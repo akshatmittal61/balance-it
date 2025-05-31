@@ -1,8 +1,7 @@
+import { GetServerSidePropsContext } from "next";
 import { IUser } from "./client";
 
-type ServerSideProps<T = any> = {
-	props: T;
-};
+type ServerSideProps<T = any> = { props: T };
 
 type ServerSideRedirect = {
 	redirect: {
@@ -16,10 +15,10 @@ export type ServerSideResult<T = any> =
 	| ServerSideRedirect;
 
 export type ServerSideAuthInterceptor = <
-	T extends ServerSideResult,
-	V extends ServerSideResult,
+	T extends ServerSideResult = ServerSideResult,
+	V extends ServerSideResult = T,
 >(
-	_: any,
+	_: GetServerSidePropsContext,
 	__: {
 		onLoggedIn: (_: IUser, __?: any) => T | Promise<T>;
 		onLoggedOut: () => V;
@@ -27,11 +26,11 @@ export type ServerSideAuthInterceptor = <
 ) => Promise<T | V>;
 
 export type ServerSideAdminInterceptor = <
-	T extends ServerSideResult,
-	U extends ServerSideResult,
-	V extends ServerSideResult,
+	T extends ServerSideResult = ServerSideResult,
+	U extends ServerSideResult = T,
+	V extends ServerSideResult = U,
 >(
-	_: any,
+	_: GetServerSidePropsContext,
 	__: {
 		onAdmin: (_: IUser, __?: any) => T | Promise<T>;
 		onNonAdmin: (_: IUser, __?: any) => U | Promise<U>;

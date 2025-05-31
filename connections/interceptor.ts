@@ -1,10 +1,11 @@
 import { AuthApi } from "@/api";
 import { Cache } from "@/cache";
-import { cacheParameter } from "@/constants";
-import { ServerSideAuthInterceptor } from "@/types";
+import { cacheParameter, routes } from "@/constants";
+import { IUser, ServerSideAuthInterceptor, ServerSideResult } from "@/types";
+import { GetServerSidePropsContext } from "next";
 
 export const authRouterInterceptor: ServerSideAuthInterceptor = async (
-	context: any,
+	context: GetServerSidePropsContext,
 	{ onLoggedIn, onLoggedOut }
 ) => {
 	const { req } = context;
@@ -24,4 +25,16 @@ export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 	} catch (error: any) {
 		return onLoggedOut();
 	}
+};
+
+export const withAuthPage = <T = any>(
+	handler: (_: IUser) => ServerSideResult<T>
+) => {
+	return async (context: GetServerSidePropsContext) =>
+		authRouterInterceptor<ServerSideResult<T>>(context, {
+			onLoggedIn: (user) => handler(user),
+			onLoggedOut: () => ({
+				redirect: { destination: routes.LOGIN, permanent: false },
+			}),
+		});
 };
