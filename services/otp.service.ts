@@ -1,5 +1,6 @@
 import {
 	AppSeo,
+	AuthConstants,
 	emailTemplates,
 	HTTP,
 	OTP_STATUS,
@@ -99,7 +100,7 @@ export class OtpService {
 	public static isExpired(otp: Otp): boolean {
 		return (
 			new Date().getTime() - new Date(otp.updatedAt).getTime() >
-			5 * 60 * 1000
+			AuthConstants.OTP_EXPIRY
 		);
 	}
 }

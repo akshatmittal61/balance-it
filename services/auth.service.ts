@@ -1,4 +1,5 @@
 import { jwtSecret } from "@/config";
+import { AuthConstants } from "@/constants";
 import { Logger } from "@/log";
 import { authRepo } from "@/repo";
 import { AuthResponse, Cookie, IAuthMapping, Tokens, User } from "@/types";
@@ -113,12 +114,12 @@ export class AuthService {
 	}
 	public static generateRefreshToken(id: string) {
 		return jwt.sign({ id }, jwtSecret.authRefresh, {
-			expiresIn: "7d",
+			expiresIn: AuthConstants.REFRESH_TOKEN_EXPIRY,
 		});
 	}
 	public static generateAccessToken(id: string) {
 		return jwt.sign({ id }, jwtSecret.authAccess, {
-			expiresIn: "1m",
+			expiresIn: AuthConstants.ACCESS_TOKEN_EXPIRY,
 		});
 	}
 	public static generateTokens(id: string): {
@@ -142,12 +143,12 @@ export class AuthService {
 		const cookiesToSet: Array<Cookie> = [];
 		if (logout) {
 			cookiesToSet.push({
-				name: "accessToken",
+				name: AuthConstants.ACCESS_TOKEN,
 				value: "",
 				maxAge: -1,
 			});
 			cookiesToSet.push({
-				name: "refreshToken",
+				name: AuthConstants.REFRESH_TOKEN,
 				value: "",
 				maxAge: -1,
 			});
@@ -155,16 +156,16 @@ export class AuthService {
 		}
 		if (accessToken) {
 			cookiesToSet.push({
-				name: "accessToken",
+				name: AuthConstants.ACCESS_TOKEN,
 				value: accessToken,
-				maxAge: 1 * 60 * 1000,
+				maxAge: AuthConstants.ACCESS_TOKEN_EXPIRY,
 			});
 		}
 		if (refreshToken) {
 			cookiesToSet.push({
-				name: "refreshToken",
+				name: AuthConstants.REFRESH_TOKEN,
 				value: refreshToken,
-				maxAge: 7 * 24 * 60 * 60 * 1000,
+				maxAge: AuthConstants.REFRESH_TOKEN_EXPIRY,
 			});
 		}
 		return cookiesToSet;
@@ -173,16 +174,16 @@ export class AuthService {
 		const cookiesToSet = [];
 		if (old.accessToken !== newTokens.accessToken) {
 			cookiesToSet.push({
-				name: "accessToken",
+				name: AuthConstants.ACCESS_TOKEN,
 				value: newTokens.accessToken,
-				maxAge: 1 * 60 * 1000,
+				maxAge: AuthConstants.ACCESS_TOKEN_EXPIRY,
 			});
 		}
 		if (old.refreshToken !== newTokens.refreshToken) {
 			cookiesToSet.push({
-				name: "refreshToken",
+				name: AuthConstants.REFRESH_TOKEN,
 				value: newTokens.refreshToken,
-				maxAge: 7 * 24 * 60 * 60 * 1000,
+				maxAge: AuthConstants.REFRESH_TOKEN_EXPIRY,
 			});
 		}
 		return cookiesToSet;
