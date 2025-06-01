@@ -1,1 +1,1 @@
-export { default as MembersSelector } from "./selector";
+export * from "./selector";

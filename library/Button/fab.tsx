@@ -14,7 +14,7 @@ const BUTON_SIZES: { [key: string]: string } = {
 	large: "fab-btn--size--large",
 };
 
-const FabButton: React.ForwardRefRenderFunction<
+const FabButtonComponent: React.ForwardRefRenderFunction<
 	HTMLButtonElement,
 	FabButtonProps
 > = (
@@ -87,4 +87,6 @@ const FabButton: React.ForwardRefRenderFunction<
 	);
 };
 
-export default React.forwardRef<HTMLButtonElement, FabButtonProps>(FabButton);
+export const FabButton = React.forwardRef<HTMLButtonElement, FabButtonProps>(
+	FabButtonComponent
+);

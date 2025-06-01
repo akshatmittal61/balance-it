@@ -1,4 +1,2 @@
-import Bar from "./bar";
-import Spinner from "./spinner";
-
-export { Bar, Spinner };
+export * from "./bar";
+export * from "./spinner";

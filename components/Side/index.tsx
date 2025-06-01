@@ -21,7 +21,7 @@ interface ISideBarProps {}
 
 const classes = stylesConfig(styles, "side-bar");
 
-const SideBar: React.FC<ISideBarProps> = () => {
+export const SideBar: React.FC<ISideBarProps> = () => {
 	const router = useRouter();
 	const { user, isLoggedIn, sync: syncAuthState, logout } = useAuthStore();
 	const { sync: syncWalletState } = useWalletStore();
@@ -225,5 +225,3 @@ const SideBar: React.FC<ISideBarProps> = () => {
 		</>
 	);
 };
-
-export default SideBar;

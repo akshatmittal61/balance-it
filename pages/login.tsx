@@ -6,7 +6,7 @@ import { Typography } from "@/library";
 import { Logger } from "@/log";
 import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Auth.module.scss";
-import { ServerSideResult } from "@/types";
+import { ServerSideResult, UserDetails } from "@/types";
 import { Notify, stylesConfig } from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
@@ -63,7 +63,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 		}
 	};
 
-	const saveUserDetails = async (data: Components.UserDetails) => {
+	const saveUserDetails = async (data: UserDetails) => {
 		try {
 			setUpdatingUserDetails(true);
 			const res = await UserApi.updateUser(data);
@@ -100,7 +100,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 					/>
 					{authFrame === "input" ? (
 						<>
-							<Components.Content
+							<Components.AuthContent
 								email={email}
 								setEmail={(value) => setEmail(value)}
 								onContinueWithEmail={requestOtpWithEmail}
@@ -116,7 +116,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 							/>
 						</>
 					) : authFrame === "otp-verification" ? (
-						<Components.Verification
+						<Components.AuthVerification
 							email={email}
 							verifyingOtp={verifyingOtp}
 							onSubmit={verifyOtp}
@@ -125,7 +125,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 							}}
 						/>
 					) : authFrame === "onboarding" ? (
-						<Components.Onboarding
+						<Components.AuthOnboarding
 							loading={updatingUserDetails}
 							onContinue={saveUserDetails}
 						/>

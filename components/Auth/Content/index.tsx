@@ -14,7 +14,7 @@ interface IAuthContentProps {
 
 const classes = stylesConfig(styles, "auth-content");
 
-const AuthContent: React.FC<IAuthContentProps> = ({
+export const AuthContent: React.FC<IAuthContentProps> = ({
 	email,
 	setEmail,
 	onContinueWithEmail,
@@ -51,5 +51,3 @@ const AuthContent: React.FC<IAuthContentProps> = ({
 		</form>
 	);
 };
-
-export default AuthContent;

@@ -1,14 +1,9 @@
 import { Button, Input } from "@/library";
+import { UserDetails } from "@/types";
 import { stylesConfig } from "@/utils";
 import React, { useState } from "react";
 import { FiCheck } from "react-icons/fi";
 import styles from "./styles.module.scss";
-
-export type UserDetails = {
-	name: string;
-	phone: string;
-	avatar: string;
-};
 
 interface IAuthOnboardingProps {
 	loading: boolean;
@@ -17,7 +12,7 @@ interface IAuthOnboardingProps {
 
 const classes = stylesConfig(styles, "auth-onboarding");
 
-const AuthOnboarding: React.FC<IAuthOnboardingProps> = ({
+export const AuthOnboarding: React.FC<IAuthOnboardingProps> = ({
 	loading,
 	onContinue,
 }) => {
@@ -72,5 +67,3 @@ const AuthOnboarding: React.FC<IAuthOnboardingProps> = ({
 		</form>
 	);
 };
-
-export default AuthOnboarding;

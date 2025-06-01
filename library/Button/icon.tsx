@@ -11,7 +11,7 @@ const BUTON_SIZES: { [key: string]: string } = {
 	large: "icon-btn--size--large",
 };
 
-const IconButton: React.ForwardRefRenderFunction<
+const IconButtonComponent: React.ForwardRefRenderFunction<
 	HTMLButtonElement,
 	IconButtonProps
 > = ({ className, size = "medium", icon, ...props }, ref) => {
@@ -27,4 +27,6 @@ const IconButton: React.ForwardRefRenderFunction<
 	);
 };
 
-export default forwardRef<HTMLButtonElement, IconButtonProps>(IconButton);
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+	IconButtonComponent
+);

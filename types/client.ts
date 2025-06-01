@@ -7,6 +7,11 @@ export type UpdateUser = Omit<UpdateModel<User>, "email">;
 export type IAuthMapping = Omit<AuthMapping, "user"> & { user: IUser | null };
 export type IMember = Omit<Member, "user"> & { user: IUser };
 export type IGroup = Omit<Group, "author"> & { author: IUser };
+export type UserDetails = {
+	name: string;
+	phone: string;
+	avatar: string;
+};
 export type IExpense = Omit<Expense, "author" | "group"> & {
 	author: IUser;
 	group?: IGroup;

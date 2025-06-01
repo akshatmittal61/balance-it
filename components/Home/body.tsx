@@ -4,11 +4,11 @@ import { stylesConfig } from "@/utils";
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
 
-type HomeBodyProps = {};
+type BodyProps = {};
 
 const classes = stylesConfig(styles, "home-body");
 
-export const HomeBody: React.FC<HomeBodyProps> = () => {
+export const Body: React.FC<BodyProps> = () => {
 	const { expenses } = useWalletStore();
 	const [expandedExpense, setExpandedExpense] = useState<string | null>(null);
 	return (

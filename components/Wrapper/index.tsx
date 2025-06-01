@@ -6,7 +6,7 @@ import {
 	routesSupportingContainer,
 } from "@/constants";
 import { useDevice } from "@/hooks";
-import FabButton from "@/library/Button/fab";
+import { FabButton } from "@/library";
 import { useAuthStore, useUiStore } from "@/store";
 import { IUser } from "@/types";
 import { stylesConfig } from "@/utils";

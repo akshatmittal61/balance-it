@@ -10,7 +10,7 @@ interface IHeaderProps {}
 
 const classes = stylesConfig(styles, "header");
 
-const Header: React.FC<IHeaderProps> = () => {
+export const Header: React.FC<IHeaderProps> = () => {
 	const router = useRouter();
 	const { toggleSidebar } = useUiStore();
 	return (
@@ -32,5 +32,3 @@ const Header: React.FC<IHeaderProps> = () => {
 		</div>
 	);
 };
-
-export default Header;

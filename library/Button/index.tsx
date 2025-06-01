@@ -6,7 +6,7 @@ import { IButtonProps } from "./types";
 
 const classNames = stylesConfig(styles);
 
-const Button: React.ForwardRefRenderFunction<
+const ButtonComponent: React.ForwardRefRenderFunction<
 	HTMLButtonElement,
 	IButtonProps
 > = (
@@ -71,4 +71,6 @@ const Button: React.ForwardRefRenderFunction<
 	);
 };
 
-export default forwardRef<HTMLButtonElement, IButtonProps>(Button);
+export const Button = forwardRef<HTMLButtonElement, IButtonProps>(
+	ButtonComponent
+);

@@ -1,7 +1,6 @@
 import { UserApi } from "@/api";
 import { useDebounce, useHttpClient } from "@/hooks";
-import { Input } from "@/library";
-import IconButton from "@/library/Button/icon";
+import { IconButton, Input } from "@/library";
 import { useGodownStore } from "@/store";
 import { IUser } from "@/types";
 import { stylesConfig } from "@/utils";
@@ -22,7 +21,7 @@ type IMembersSelectorProps = {
 
 const classes = stylesConfig(styles, "members-selector");
 
-const MembersSelector: React.FC<IMembersSelectorProps> = ({
+export const MembersSelector: React.FC<IMembersSelectorProps> = ({
 	selectedMembers,
 	setSelectedMembers,
 	enableBulkEditor,
@@ -151,5 +150,3 @@ const MembersSelector: React.FC<IMembersSelectorProps> = ({
 		</div>
 	);
 };
-
-export default MembersSelector;

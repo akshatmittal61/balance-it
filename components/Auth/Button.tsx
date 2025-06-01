@@ -6,7 +6,7 @@ interface IButtonProps
 		HTMLButtonElement
 	> {}
 
-const GoogleOAuthButton: React.FC<IButtonProps> = (props) => {
+export const GoogleOAuthButton: React.FC<IButtonProps> = (props) => {
 	return (
 		<button
 			className="gsi-material-button"
@@ -50,5 +50,3 @@ const GoogleOAuthButton: React.FC<IButtonProps> = (props) => {
 		</button>
 	);
 };
-
-export default GoogleOAuthButton;

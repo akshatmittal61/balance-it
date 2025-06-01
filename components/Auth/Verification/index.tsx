@@ -12,7 +12,7 @@ interface IAuthVerificationProps {
 
 const classes = stylesConfig(styles, "auth-verification");
 
-const AuthVerification: React.FC<IAuthVerificationProps> = ({
+export const AuthVerification: React.FC<IAuthVerificationProps> = ({
 	email,
 	verifyingOtp,
 	onSubmit,
@@ -135,5 +135,3 @@ const AuthVerification: React.FC<IAuthVerificationProps> = ({
 		</>
 	);
 };
-
-export default AuthVerification;

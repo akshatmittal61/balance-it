@@ -18,7 +18,7 @@ interface ErrorPageProps {
 
 const classes = stylesConfig(styles, "error");
 
-const Error: React.FC<ErrorPageProps> = ({
+export const Error: React.FC<ErrorPageProps> = ({
 	title,
 	description,
 	image,
@@ -80,5 +80,3 @@ const Error: React.FC<ErrorPageProps> = ({
 		</>
 	);
 };
-
-export default Error;
