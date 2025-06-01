@@ -153,7 +153,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				<div className={classes("-avatars")}>
 					{members.length > 0 &&
 					!(members.length === 1 && members[0].id === user?.id) ? (
-						<Avatars size={48}>
+						<Avatars size={48} limit={3}>
 							{members.map((m) => ({
 								src: getUserDetails(m).avatar || "",
 								alt: getUserDetails(m).name || "",
