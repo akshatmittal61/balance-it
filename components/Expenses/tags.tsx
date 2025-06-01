@@ -74,6 +74,8 @@ export const AddTag: React.FC<AddTagProps> = ({ onAdd }) => {
 			<input
 				type="text"
 				placeholder="Tag"
+				id="new-tag"
+				name="new-tag"
 				title="Press 'Enter' when you're done"
 				value={newTag}
 				onChange={(e) => {

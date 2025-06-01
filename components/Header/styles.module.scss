@@ -23,6 +23,20 @@
 		box-shadow: none;
 	}
 
+	&-navigation {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	&-content {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		margin-left: auto;
+	}
+
 	&-button {
 		@include init-button;
 		border-radius: 0.5rem;

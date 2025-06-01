@@ -1,7 +1,7 @@
 import { appTheme, sideBarLinks } from "@/constants";
 import { AppNetworkStatus, AppTheme, Navigation } from "@/types";
 import { hexToRgb, Notify } from "@/utils";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
 
@@ -12,6 +12,8 @@ type State = {
 	networkStatus: AppNetworkStatus;
 	isSidebarExpanded: boolean;
 	sideBarLinks: Array<Navigation>;
+	headerNavigation: Array<Navigation>;
+	headerContent: React.ReactNode;
 };
 
 type Getter<T extends keyof State> = () => State[T];
@@ -24,12 +26,16 @@ type Action = {
 	getNetworkStatus: Getter<"networkStatus">;
 	getIsSidebarExpanded: Getter<"isSidebarExpanded">;
 	getSideBarLinks: Getter<"sideBarLinks">;
+	getHeaderNavigation: Getter<"headerNavigation">;
+	getHeaderContent: Getter<"headerContent">;
 	setVh: Setter<"vh">;
 	setTheme: Setter<"theme">;
 	setAccentColor: Setter<"accentColor">;
 	setNetworkStatus: Setter<"networkStatus">;
 	setIsSidebarExpanded: Setter<"isSidebarExpanded">;
 	setSideBarLinks: Setter<"sideBarLinks">;
+	setHeaderNavigation: Setter<"headerNavigation">;
+	setHeaderContent: Setter<"headerContent">;
 };
 
 type Store = State & Action;
@@ -43,6 +49,8 @@ const store = create<Store>((set, get) => {
 		networkStatus: "online",
 		isSidebarExpanded: true,
 		sideBarLinks: sideBarLinks,
+		headerNavigation: [],
+		headerContent: null,
 		// getters
 		getVh: () => get().vh,
 		getTheme: () => get().theme,
@@ -50,6 +58,8 @@ const store = create<Store>((set, get) => {
 		getNetworkStatus: () => get().networkStatus,
 		getIsSidebarExpanded: () => get().isSidebarExpanded,
 		getSideBarLinks: () => get().sideBarLinks,
+		getHeaderNavigation: () => get().headerNavigation,
+		getHeaderContent: () => get().headerContent,
 		// setters
 		setVh: (vh) => set({ vh }),
 		setTheme: (theme) => {
@@ -60,6 +70,8 @@ const store = create<Store>((set, get) => {
 		setNetworkStatus: (networkStatus) => set({ networkStatus }),
 		setIsSidebarExpanded: (isSidebarExpanded) => set({ isSidebarExpanded }),
 		setSideBarLinks: (sideBarLinks) => set({ sideBarLinks }),
+		setHeaderNavigation: (headerNavigation) => set({ headerNavigation }),
+		setHeaderContent: (headerContent) => set({ headerContent }),
 	};
 });
 
@@ -169,4 +181,23 @@ export const useUiStore: UiStoreHook = (options = {}) => {
 		toggleSidebar,
 		setOpenSidebar,
 	};
+};
+
+export const useHeader = (
+	navigation: Array<Navigation> = [],
+	content: React.ReactNode = null
+) => {
+	const setHeaderNavigation = useStore((state) => state.setHeaderNavigation);
+	const setHeaderContent = useStore((state) => state.setHeaderContent);
+	useEffect(() => {
+		if (navigation && navigation.length > 0) {
+			setHeaderNavigation(navigation);
+		}
+		setHeaderContent(content);
+		return () => {
+			setHeaderNavigation([]);
+			setHeaderContent(null);
+		}; // Reset on unmount
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [content, navigation]);
 };

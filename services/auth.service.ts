@@ -158,14 +158,14 @@ export class AuthService {
 			cookiesToSet.push({
 				name: AuthConstants.ACCESS_TOKEN,
 				value: accessToken,
-				maxAge: AuthConstants.ACCESS_TOKEN_EXPIRY,
+				maxAge: AuthConstants.COOKIES_EXPIRY,
 			});
 		}
 		if (refreshToken) {
 			cookiesToSet.push({
 				name: AuthConstants.REFRESH_TOKEN,
 				value: refreshToken,
-				maxAge: AuthConstants.REFRESH_TOKEN_EXPIRY,
+				maxAge: AuthConstants.COOKIES_EXPIRY,
 			});
 		}
 		return cookiesToSet;
@@ -176,14 +176,14 @@ export class AuthService {
 			cookiesToSet.push({
 				name: AuthConstants.ACCESS_TOKEN,
 				value: newTokens.accessToken,
-				maxAge: AuthConstants.ACCESS_TOKEN_EXPIRY,
+				maxAge: AuthConstants.COOKIES_EXPIRY,
 			});
 		}
 		if (old.refreshToken !== newTokens.refreshToken) {
 			cookiesToSet.push({
 				name: AuthConstants.REFRESH_TOKEN,
 				value: newTokens.refreshToken,
-				maxAge: AuthConstants.REFRESH_TOKEN_EXPIRY,
+				maxAge: AuthConstants.COOKIES_EXPIRY,
 			});
 		}
 		return cookiesToSet;

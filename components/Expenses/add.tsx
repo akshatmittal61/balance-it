@@ -1,25 +1,32 @@
-import { expenseMethods, expenseTypes, routes } from "@/constants";
+import {
+	expenseMethods,
+	expenseTypes,
+	navigationMap,
+	routes,
+} from "@/constants";
 import { useDebounce, useDevice } from "@/hooks";
 import { Responsive } from "@/layouts";
 import {
 	Avatar,
 	Avatars,
+	Button,
 	CheckBox,
 	IconButton,
 	Input,
 	Pane,
 	Textarea,
+	Typography,
 } from "@/library";
 import { Logger } from "@/log";
-import { useAuthStore, useWalletStore } from "@/store";
+import { useAuthStore, useHeader, useWalletStore } from "@/store";
 import { CreateExpense } from "@/types";
 import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BsChevronCompactUp } from "react-icons/bs";
-import { FiCheckCircle, FiUsers } from "react-icons/fi";
+import { FiCalendar, FiUsers } from "react-icons/fi";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddTag, Tag } from "./tags";
@@ -38,6 +45,9 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	const [members, setMembers] = useState<Array<ExpenseUser>>(
 		user ? [{ ...user, amount: 0, value: 0 }] : []
 	);
+	const amountInputRef = useRef<HTMLInputElement>(null);
+	const titleInputRef = useRef<HTMLInputElement>(null);
+	const timestampInputRef = useRef<HTMLInputElement>(null);
 	const [payload, setPayload] = useState<CreateExpense>({
 		title: "",
 		amount: 0,
@@ -99,12 +109,21 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		}
 		try {
 			await createExpense(payload);
-			handleReset();
 			router.push(routes.HOME);
+			handleReset();
 		} catch (error) {
 			Notify.error(error);
 		}
 	};
+
+	useHeader(
+		[navigationMap.home],
+		debouncedTitle.length > 0 && payload.amount > 0 ? (
+			<Typography size="sm" style={{ fontStyle: "italic" }}>
+				{dayjs(payload.timestamp).format("MMM DD, HH:mm")}
+			</Typography>
+		) : null
+	);
 
 	// Tags auto suggestion
 	useEffect(() => {
@@ -122,7 +141,12 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
-					onSave();
+					if (titleInputRef && titleInputRef.current) {
+						titleInputRef.current.blur();
+					}
+					if (amountInputRef && amountInputRef.current) {
+						amountInputRef.current.blur();
+					}
 				}}
 				className={classes("-form")}
 			>
@@ -152,6 +176,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					className={classes("-amount")}
 					autoFocus
 					required
+					ref={amountInputRef}
 					styles={{
 						input: {
 							width: "fit-content",
@@ -175,6 +200,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					value={rawTitle}
 					onChange={(e: any) => setRawTitle(e.target.value)}
 					required
+					ref={titleInputRef}
 					className={classes("-title")}
 					styles={{
 						input: {
@@ -248,25 +274,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				>
 					<Responsive.Row className={classes("-additional")}>
 						<Responsive.Col
-							xlg={33}
-							lg={33}
-							md={50}
-							sm={50}
-							xsm={50}
-						>
-							<Input
-								name="timestamp"
-								type="datetime-local"
-								placeholder=""
-								label="Date / Time"
-								value={dayjs(payload.timestamp).format(
-									"YYYY-MM-DDTHH:mm"
-								)}
-								onChange={handleChange}
-								required
-							/>
-						</Responsive.Col>
-						<Responsive.Col
 							xlg={100}
 							lg={100}
 							md={100}
@@ -319,118 +326,157 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			) : null}
 			{payload.title.length > 0 && payload.amount > 0 ? (
 				<div className={classes("-bottom-bar")}>
-					{isAdding ? (
-						<div className={classes("-bottom-bar__skeleton")}>
-							<div className={classes("-bottom-bar__loader")} />
-						</div>
-					) : (
+					{isAdding ? null : (
 						<>
-							<IconButton
-								icon={<FiUsers />}
-								onClick={() => {
-									setManageSplits(true);
-								}}
-								disabled={(() => {
-									if (isAdding) return true;
-									if (payload.amount <= 0) return true;
-									if (members.length > 0) {
-										if (
-											members.length === 1 &&
-											members[0].id === user?.id
-										) {
-											return false;
+							<div className={classes("-bottom-bar__options")}>
+								<IconButton
+									icon={<FiUsers />}
+									onClick={() => {
+										setManageSplits(true);
+									}}
+									disabled={(() => {
+										if (isAdding) return true;
+										if (payload.amount <= 0) return true;
+										if (members.length > 0) {
+											if (
+												members.length === 1 &&
+												members[0].id === user?.id
+											) {
+												return false;
+											}
+											// some members have 0 amount
+											if (
+												members.some(
+													(m) => m.amount === 0
+												)
+											) {
+												return true;
+											}
+											// if the total amount is not equal to sum of members split
+											if (
+												members
+													.map((user) => user.amount)
+													.reduce(
+														(a, b) => a + b,
+														0
+													) !== payload.amount
+											) {
+												return true;
+											}
 										}
-										// some members have 0 amount
-										if (
-											members.some((m) => m.amount === 0)
-										) {
-											return true;
-										}
-										// if the total amount is not equal to sum of members split
-										if (
-											members
-												.map((user) => user.amount)
-												.reduce((a, b) => a + b, 0) !==
-											payload.amount
-										) {
-											return true;
-										}
-									}
-								})()}
-							/>
-							<IconButton
-								icon={<BsChevronCompactUp />}
-								size="large"
-								onClick={() => {
-									setExpandAdditionInfo(true);
-								}}
-							/>
-							<IconButton
-								icon={<FiCheckCircle />}
-								onClick={(e: any) => {
-									e.preventDefault();
-									onSave();
-								}}
-								title={(() => {
-									if (isAdding) return "Creating...";
-									if (payload.amount <= 0)
-										return "Enter Amount";
-									if (members.length > 0) {
-										// the only member is the logged in user
-										if (
-											members.length === 1 &&
-											members[0].id === user?.id
-										) {
-											return "Create";
-										}
-										// some members have 0 amount
-										if (
-											members.some((m) => m.amount === 0)
-										) {
-											return "Enter Amount for all members";
-										}
-										// if the total amount is not equal to sum of members split
-										if (
-											members
-												.map((user) => user.amount)
-												.reduce((a, b) => a + b, 0) !==
-											payload.amount
-										) {
-											return "Enter Amount for all members";
-										}
-									}
-									return "Create";
-								})()}
-								disabled={(() => {
-									if (isAdding) return true;
-									if (payload.amount <= 0) return true;
-									if (members.length > 0) {
-										if (
-											members.length === 1 &&
-											members[0].id === user?.id
-										) {
-											return false;
-										}
-										// some members have 0 amount
-										if (
-											members.some((m) => m.amount === 0)
-										) {
-											return true;
-										}
-										// if the total amount is not equal to sum of members split
-										if (
-											members
-												.map((user) => user.amount)
-												.reduce((a, b) => a + b, 0) !==
-											payload.amount
-										) {
-											return true;
-										}
-									}
-								})()}
-							/>
+									})()}
+								/>
+								<IconButton
+									icon={<BsChevronCompactUp />}
+									size="large"
+									onClick={() => {
+										setExpandAdditionInfo(true);
+									}}
+								/>
+								<>
+									<input
+										name="timestamp"
+										id="timestamp"
+										type="datetime-local"
+										placeholder=""
+										value={dayjs(payload.timestamp).format(
+											"YYYY-MM-DDTHH:mm"
+										)}
+										onChange={handleChange}
+										required
+										ref={timestampInputRef}
+										className="dispn"
+									/>
+									<label
+										htmlFor="timestamp"
+										onClick={() => {
+											if (
+												timestampInputRef &&
+												timestampInputRef.current
+											) {
+												try {
+													timestampInputRef.current.showPicker();
+												} catch {
+													Logger.error(
+														"Unable to show picker"
+													);
+												}
+											}
+										}}
+									>
+										<IconButton icon={<FiCalendar />} />
+									</label>
+								</>
+							</div>
 						</>
 					)}
+					<Button
+						loading={isAdding}
+						size="large"
+						className={classes("-bottom-bar__cta")}
+						onClick={(e: any) => {
+							e.preventDefault();
+							onSave();
+						}}
+						title={(() => {
+							if (isAdding) return "Creating...";
+							if (payload.amount <= 0) return "Enter Amount";
+							if (members.length > 0) {
+								// the only member is the logged in user
+								if (
+									members.length === 1 &&
+									members[0].id === user?.id
+								) {
+									return "Create";
+								}
+								// some members have 0 amount
+								if (members.some((m) => m.amount === 0)) {
+									return "Enter Amount for all members";
+								}
+								// if the total amount is not equal to sum of members split
+								if (
+									members
+										.map((user) => user.amount)
+										.reduce((a, b) => a + b, 0) !==
+									payload.amount
+								) {
+									return "Enter Amount for all members";
+								}
+							}
+							return "Create";
+						})()}
+						disabled={(() => {
+							if (isAdding) return true;
+							if (payload.amount <= 0) return true;
+							if (members.length > 0) {
+								if (
+									members.length === 1 &&
+									members[0].id === user?.id
+								) {
+									return false;
+								}
+								// some members have 0 amount
+								if (members.some((m) => m.amount === 0)) {
+									return true;
+								}
+								// if the total amount is not equal to sum of members split
+								if (
+									members
+										.map((user) => user.amount)
+										.reduce((a, b) => a + b, 0) !==
+									payload.amount
+								) {
+									return true;
+								}
+							}
+						})()}
+					>
+						Add Expense for{" "}
+						{Intl.NumberFormat("en-US", {
+							style: "currency",
+							currency: "INR",
+						}).format(payload.amount)}
+					</Button>
 				</div>
 			) : null}
 		</>

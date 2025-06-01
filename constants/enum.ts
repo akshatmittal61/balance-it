@@ -1,5 +1,6 @@
 import {
 	AppTheme,
+	NavigationId,
 	T_API_METHODS,
 	T_EMAIL_TEMPLATE,
 	T_EXPENSE_METHOD,
@@ -68,3 +69,10 @@ export const apiMethods = getEnumeration<T_API_METHODS>([
 ]);
 
 export const appTheme = getEnumeration<AppTheme>(["light", "dark"]);
+
+export const navigationIds = getEnumeration<NavigationId>([
+	"home",
+	"summary",
+	"friends",
+	"calendar",
+]);

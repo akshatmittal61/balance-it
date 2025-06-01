@@ -52,7 +52,7 @@
 		gap: 12px;
 		position: sticky;
 		top: 0;
-		background-color: var(--bgcolor);
+		background-color: var(--theme-bg);
 		z-index: 5;
 	}
 
@@ -95,6 +95,11 @@
 		color: var(--accent-color);
 		@include typography(body, sm, regular);
 
+		@include _theme(dark) {
+			color: var(--white);
+			border-color: var(--white);
+		}
+
 		&--interactive {
 			cursor: pointer;
 		}
@@ -105,6 +110,8 @@
 
 		&--form {
 			input {
+				background-color: transparent;
+
 				&:active,
 				&:focus {
 					border: none;
@@ -145,22 +152,39 @@
 	}
 
 	&-bottom-bar {
-		background-color: var(--white);
+		background-color: var(--theme-bg);
 		width: calc(100% - var(--side-width));
 		position: fixed;
 		bottom: 0;
 		left: var(--side-width);
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-start;
 		align-items: center;
+		flex-direction: column;
+		gap: 16px;
 		border-radius: 32px 32px 0 0;
 		box-shadow: 0px -10px 15px -3px rgba(0, 0, 0, 0.1);
 		padding: 16px 20px;
 		animation: slide-bottom var(--transition-time) linear;
 
+		@include _theme(dark) {
+			box-shadow: 0px -10px 15px -3px rgba(255, 255, 255, 0.1);
+		}
+
 		@include responsive(phone) {
 			width: 100%;
 			left: 0;
+		}
+
+		&__options {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		&__cta {
+			width: 100%;
 		}
 
 		&__skeleton {

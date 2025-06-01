@@ -49,6 +49,8 @@
 		gap: 12px;
 		padding: 12px 16px;
 		border-radius: 6px;
+		cursor: pointer;
+		user-select: none;
 
 		&:hover {
 			background-color: var(--back-shadow-light);
@@ -81,6 +83,7 @@
 		flex: 0 0 auto;
 		position: relative;
 		overflow: hidden;
+		user-select: none;
 
 		&-name {
 			max-width: 100%;
@@ -95,6 +98,7 @@
 			top: 10px;
 			right: 10px;
 			background-color: var(--white);
+			color: var(--black);
 			border-radius: 500px;
 			padding: 1px;
 			@include shadow(2);

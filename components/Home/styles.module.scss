@@ -37,6 +37,7 @@
 
 		@include responsive(phone) {
 			width: 100%;
+			padding: 24px;
 			justify-content: center;
 			align-items: center;
 			text-align: center;

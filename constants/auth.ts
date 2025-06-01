@@ -4,4 +4,5 @@ export class AuthConstants {
 	static readonly ACCESS_TOKEN_EXPIRY = 1 * 60;
 	static readonly REFRESH_TOKEN_EXPIRY = 24 * 60 * 60;
 	static readonly OTP_EXPIRY = 5 * 60 * 1000;
+	static readonly COOKIES_EXPIRY = 24 * 60 * 60 * 1000;
 }

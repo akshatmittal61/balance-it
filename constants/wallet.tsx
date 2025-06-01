@@ -100,13 +100,17 @@ export const initialExpensesSummary: ExpensesSummary = {
 export const TAG_DICTIONARY: Record<string, string[]> = {
 	food: [
 		"food",
-		"pizza",
+		"breakfast",
 		"lunch",
 		"dinner",
 		"snack",
 		"tea",
 		"coffee",
 		"restaurant",
+		"pizza",
+		"roll",
+		"sandwich",
+		"momos",
 	],
 	commute: [
 		"uber",
