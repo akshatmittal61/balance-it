@@ -187,28 +187,6 @@
 			width: 100%;
 		}
 
-		&__skeleton {
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			padding: 32px;
-		}
-
-		&__loader {
-			width: 50px;
-			aspect-ratio: 1;
-			border-radius: 50%;
-			background: var(--accent-color);
-			-webkit-mask: radial-gradient(
-				circle closest-side at 50% 40%,
-				#0000 94%,
-				#000
-			);
-			transform-origin: 50% 40%;
-			animation: add-expense-loader 1s infinite linear;
-		}
-
 		@keyframes add-expense-loader {
 			100% {
 				transform: rotate(1turn);
@@ -238,8 +216,12 @@
 		@include responsive(phone) {
 			display: grid;
 			grid-auto-flow: row;
-			grid-template-columns: 1fr 2fr;
-			grid-template-areas: "expense-card-date expense-card-amount" "expense-card-title expense-card-splits";
+			grid-template-columns: 2rem 2fr 1.5fr;
+			gap: 4px;
+			padding: 0.75rem 0.5rem;
+			grid-template-areas:
+				"expense-card-icon expense-card-title expense-card-amount"
+				"expense-card-icon expense-card-date expense-card-splits";
 		}
 
 		&:hover {
@@ -289,6 +271,7 @@
 
 	&-splits {
 		margin-left: auto;
+		grid-area: expense-card-splits;
 	}
 
 	&-info-splits {
@@ -366,6 +349,7 @@
 
 		@include responsive(phone) {
 			grid-area: expense-card-date;
+			font-style: italic;
 		}
 	}
 
@@ -392,6 +376,18 @@
 
 		@include responsive(phone) {
 			grid-area: expense-card-amount;
+		}
+	}
+
+	&-icon {
+		width: 1.125rem;
+		height: 1.125rem;
+		object-fit: contain;
+		grid-area: expense-card-icon;
+
+		@include responsive(phone) {
+			width: 1.5rem;
+			height: 1.5rem;
 		}
 	}
 
@@ -428,9 +424,13 @@
 	&-row {
 		width: 100%;
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-start;
 		align-items: center;
-		padding: 6px 16px;
+		padding: 6px 48px;
+
+		@include responsive(phone) {
+			padding: 6px 16px;
+		}
 	}
 
 	&-divider {

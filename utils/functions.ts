@@ -384,7 +384,22 @@ export const convertToCommonDenominator = (
 	return result;
 };
 
-export const getSearchParam = (uri: string | undefined, param: string) => {
+/**
+ * Tries to extract a search parameter from a given URI. The search parameter
+ * is looked up in the following order:
+ * 1. The URI is parsed as a URL and the search parameter is looked up in the
+ *    URL's searchParams.
+ * 2. If the URI is not a valid URL, the search parameter is looked up in the
+ *    query string part of the URI.
+ * @param {string | undefined} uri The URI to look up the search parameter in.
+ * @param {string} param The name of the search parameter to look up.
+ * @returns {string | null} The value of the search parameter if it exists, or
+ * null if it does not exist.
+ */
+export const getSearchParam = (
+	uri: string | undefined,
+	param: string
+): string | null => {
 	try {
 		if (uri === undefined || uri.length === 0) return null;
 		const url = (() => {

@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { FiChevronDown } from "react-icons/fi";
 import { ExpenseRow } from "../Expenses";
 import styles from "./styles.module.scss";
+import { Responsive } from "@/layouts";
 
 const classes = stylesConfig(styles, "home-body-bucket");
 
@@ -63,23 +64,31 @@ export const HomeBucket: React.FC<HomeBucketProps> = ({
 					/>
 				</span>
 			</div>
-			<div
+			<Responsive.Row
 				className={classes("__content", {
 					"__content--expanded": isExpanded,
 					"__content--collapsed": !isExpanded,
 				})}
 			>
 				{expenses.map((expense) => (
-					<ExpenseRow
+					<Responsive.Col
+						xlg={50}
+						lg={50}
+						md={50}
+						sm={100}
+						xsm={100}
 						key={`group-expense-${expense.id}`}
-						expense={expense}
-						expanded={opened === expense.id}
-						onExpand={() => {
-							onOpen(expense.id);
-						}}
-					/>
+					>
+						<ExpenseRow
+							expense={expense}
+							expanded={opened === expense.id}
+							onExpand={() => {
+								onOpen(expense.id);
+							}}
+						/>
+					</Responsive.Col>
 				))}
-			</div>
+			</Responsive.Row>
 		</div>
 	);
 };

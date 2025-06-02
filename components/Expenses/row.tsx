@@ -1,14 +1,32 @@
-import { expenseMethods, expenseTypes } from "@/constants";
-import { useConfirmationModal } from "@/hooks";
-import { Avatar, Avatars, Pill, Typography } from "@/library";
+import { expenseTypes, TAG_DICTIONARY } from "@/constants";
+import { useConfirmationModal, useDevice } from "@/hooks";
+import { Avatar, Avatars, Typography } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { ExpenseSpread, ISplit } from "@/types";
-import { getUserDetails, Notify, roundOff, stylesConfig } from "@/utils";
+import {
+	getUserDetails,
+	intersection,
+	Notify,
+	roundOff,
+	stylesConfig,
+} from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FiTrash } from "react-icons/fi";
+import {
+	PiBowlFood,
+	PiCar,
+	PiGift,
+	PiHandbag,
+	PiHeartbeat,
+	PiHouse,
+	PiMoney,
+	PiTelevision,
+} from "react-icons/pi";
 import styles from "./styles.module.scss";
+import { Tag } from "./tags";
+import { inferTagsFromTitle } from "./utils";
 
 type ExpenseRowProps = {
 	expense: ExpenseSpread;
@@ -123,6 +141,7 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 }) => {
 	const { user: loggedInUser } = useAuthStore();
 	const { sync, deleteExpense, isDeleting } = useWalletStore();
+	const { device } = useDevice();
 
 	const deleteExpenseHelper = async () => {
 		try {
@@ -148,21 +167,66 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 		isDeleting
 	);
 
+	const getIcon = () => {
+		if (expense.icon) {
+			return (
+				<Image
+					src={expense.icon}
+					alt={expense.title}
+					width={24}
+					height={24}
+				/>
+			);
+		}
+		let matched = intersection(
+			expense.tags || [],
+			Object.keys(TAG_DICTIONARY)
+		);
+		if (matched.length === 0) {
+			matched = inferTagsFromTitle(expense.title);
+		}
+		if (matched.length > 0) {
+			switch (matched[0]) {
+				case "food":
+					return <PiBowlFood className={classes("-icon")} />;
+				case "commute":
+					return <PiCar className={classes("-icon")} />;
+				case "entertainment":
+					return <PiTelevision className={classes("-icon")} />;
+				case "shopping":
+					return <PiHandbag className={classes("-icon")} />;
+				case "health":
+					return <PiHeartbeat className={classes("-icon")} />;
+				case "rent":
+					return <PiHouse className={classes("-icon")} />;
+				case "gift":
+					return <PiGift className={classes("-icon")} />;
+				default:
+					return <PiMoney className={classes("-icon")} />;
+			}
+		}
+		return <PiMoney className={classes("-icon")} />;
+	};
+
 	return (
 		<>
 			<div className={classes("")}>
 				<div className={classes("-main")} onClick={onExpand}>
+					<div className={classes("-icon")}>{getIcon()}</div>
 					<Typography size="sm" className={classes("-date")}>
 						{dayjs(expense.timestamp).format("MMM DD, HH:mm")}
 					</Typography>
-					<Typography size="sm" className={classes("-title")}>
+					<Typography
+						size={device === "mobile" ? "md" : "sm"}
+						className={classes("-title")}
+					>
 						{expense.title}
 					</Typography>
-					{expense.splits &&
-					expense.splits.length > 0 &&
-					!expanded ? (
-						<div className={classes("-splits")}>
-							<Avatars size={24}>
+					<div className={classes("-splits")}>
+						{expense.splits &&
+						expense.splits.length > 0 &&
+						!expanded ? (
+							<Avatars size={device === "mobile" ? 16 : 24}>
 								{expense.splits.map((exp) => ({
 									src: getUserDetails(exp.user).avatar || "",
 									alt:
@@ -171,10 +235,10 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 										(exp.pending + exp.completed),
 								}))}
 							</Avatars>
-						</div>
-					) : null}
+						) : null}
+					</div>
 					<Typography
-						size="s"
+						size={device === "mobile" ? "lg" : "md"}
 						weight="medium"
 						className={classes("-amount")}
 						style={{
@@ -192,16 +256,14 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 							</Typography>
 						) : null}
 						<div className={classes("-transfer")}>
-							{(() => {
-								const type = expenseTypes[expense.type];
-								return (
-									<Pill
-										icon={<type.Icon />}
-										label={type.label}
-										theme={type.theme}
+							<div className={classes("-tags")}>
+								{expense.tags?.map((tag) => (
+									<Tag
+										key={`expense-${expense.id}-tag-${tag}`}
+										tag={tag}
 									/>
-								);
-							})()}
+								))}
+							</div>
 							<div className={classes("-actions")}>
 								{expense.author.id === loggedInUser?.id ? (
 									<button
@@ -214,27 +276,6 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 									</button>
 								) : null}
 							</div>
-						</div>
-						<div className={classes("-extra_info")}>
-							<div className={classes("-tags")}>
-								{expense.tags?.map((tag) => (
-									<Pill
-										key={`expense-${expense.id}-tag-${tag}`}
-										dot={false}
-										label={tag}
-										theme="metal"
-									/>
-								))}
-							</div>
-							{expense.method ? (
-								<Image
-									src={expenseMethods[expense.method].logo}
-									alt={expenseMethods[expense.method].label}
-									width={24}
-									height={24}
-									className={classes("-method-logo")}
-								/>
-							) : null}
 						</div>
 						{expense.splits && expense.splits.length > 0 ? (
 							<div className={classes("-info-splits")}>
