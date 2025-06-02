@@ -226,7 +226,10 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 						{expense.splits &&
 						expense.splits.length > 0 &&
 						!expanded ? (
-							<Avatars size={device === "mobile" ? 16 : 24}>
+							<Avatars
+								limit={2}
+								size={device === "mobile" ? 16 : 24}
+							>
 								{expense.splits.map((exp) => ({
 									src: getUserDetails(exp.user).avatar || "",
 									alt:
