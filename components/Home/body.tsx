@@ -1,7 +1,7 @@
-import { ExpenseRow } from "@/components";
 import { useWalletStore } from "@/store";
-import { stylesConfig } from "@/utils";
+import { stylesConfig, WalletUtils } from "@/utils";
 import React, { useState } from "react";
+import { HomeBucket } from "./bucket";
 import styles from "./styles.module.scss";
 
 type BodyProps = {};
@@ -13,16 +13,16 @@ export const Body: React.FC<BodyProps> = () => {
 	const [expandedExpense, setExpandedExpense] = useState<string | null>(null);
 	return (
 		<div className={classes("")}>
-			{expenses.map((expense) => (
-				<ExpenseRow
-					key={`group-expense-${expense.id}`}
-					expense={expense}
-					expanded={expandedExpense === expense.id}
-					onExpand={() => {
-						if (expandedExpense === expense.id) {
+			{WalletUtils.sortExpensesInMonths(expenses).map((bucket) => (
+				<HomeBucket
+					key={`home-bucket-${bucket.month}-${bucket.year}`}
+					{...bucket}
+					opened={expandedExpense}
+					onOpen={(id) => {
+						if (expandedExpense === id) {
 							setExpandedExpense(null);
 						} else {
-							setExpandedExpense(expense.id);
+							setExpandedExpense(id);
 						}
 					}}
 				/>

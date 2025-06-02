@@ -115,9 +115,54 @@
 
 .home-body {
 	width: 100%;
-	padding: 0 1rem;
 
-	& > *:not(:last-child) {
-		border-bottom: 1px solid var(--back-shadow);
+	&-bucket {
+		&__header {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+			padding: 12px;
+			background-color: var(--back-shadow-light);
+		}
+
+		&__meta {
+			display: flex;
+			justify-content: flex-start;
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		&__summary {
+			&--paid {
+				color: var(--material-red);
+			}
+
+			&--received {
+				color: var(--material-green);
+			}
+		}
+
+		&__content {
+			padding: 0 1rem;
+
+			&--expanded {
+				height: auto;
+				opacity: 1;
+				visibility: visible;
+			}
+
+			&--collapsed {
+				height: 0;
+				opacity: 0;
+				visibility: hidden;
+			}
+
+			& > *:not(:last-child) {
+				border-bottom: 1px solid var(--back-shadow);
+			}
+		}
 	}
 }

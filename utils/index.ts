@@ -6,3 +6,4 @@ export * from "./profiler";
 export * from "./safety";
 export * from "./string";
 export * from "./validators";
+export * from "./wallet";
