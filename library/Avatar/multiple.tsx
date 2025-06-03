@@ -2,15 +2,9 @@ import { stylesConfig } from "@/utils";
 import React from "react";
 import { Avatar } from "./single";
 import styles from "./styles.module.scss";
-import { IAvatarProps } from "./types";
+import { IAvatarsProps } from "./types";
 
 const classes = stylesConfig(styles, "avatars");
-
-interface IAvatarsProps extends Omit<IAvatarProps, "src" | "alt" | "children"> {
-	children: Array<{ src: string; alt: string }>;
-	stack?: boolean;
-	limit?: number;
-}
 
 export const Avatars: React.FC<IAvatarsProps> = ({
 	children,
