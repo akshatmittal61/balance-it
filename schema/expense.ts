@@ -27,7 +27,17 @@ export const ExpenseSchema = {
 		required: false,
 	},
 	tags: {
-		type: [String],
+		type: [
+			{
+				type: String,
+				trim: true,
+				lowercase: true,
+				validate: {
+					validator: (tag: string) => tag.length > 0,
+					message: "Tag cannot be empty",
+				},
+			},
+		],
 		required: false,
 		default: [],
 	},

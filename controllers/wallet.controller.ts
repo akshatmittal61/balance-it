@@ -2,6 +2,7 @@ import { HTTP } from "@/constants";
 import { Logger } from "@/log";
 import { ApiSuccess } from "@/server";
 import { ExpenseService } from "@/services";
+import { WalletService } from "@/services/wallet.service";
 import { ApiRequest, ApiRequests, ApiResponse, ApiResponses } from "@/types";
 import {
 	genericParse,
@@ -69,5 +70,12 @@ export class WalletController {
 			loggedInUserId: userId,
 		});
 		return new ApiSuccess<ApiResponses.DeleteExpense>(res).send(data);
+	}
+	public static async getFilterOptions(req: ApiRequest, res: ApiResponse) {
+		const userId = genericParse(getNonEmptyString, req.user?.id);
+		const options = await WalletService.getFilterOptions(userId);
+		return new ApiSuccess<ApiResponses.WalletFilterOptions>(res).send(
+			options
+		);
 	}
 }
