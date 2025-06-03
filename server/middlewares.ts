@@ -1,4 +1,4 @@
-import { HTTP, USER_ROLE } from "@/constants";
+import { AuthConstants, HTTP, USER_ROLE } from "@/constants";
 import { Logger } from "@/log";
 import { AuthService } from "@/services";
 import { ApiController, ApiRequest, ApiResponse } from "@/types";
@@ -12,11 +12,11 @@ export class ServerMiddleware {
 				Logger.debug("cookies", req.cookies);
 				const accessToken = genericParse(
 					getNonEmptyString,
-					req.cookies.accessToken
+					req.cookies[AuthConstants.ACCESS_TOKEN]
 				);
 				const refreshToken = genericParse(
 					getNonEmptyString,
-					req.cookies.refreshToken
+					req.cookies[AuthConstants.REFRESH_TOKEN]
 				);
 				Logger.debug("Authenticating user tokens", {
 					accessToken,

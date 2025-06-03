@@ -1,7 +1,20 @@
 import { DatabaseManager } from "@/connections";
-import { HTTP } from "@/constants";
+import { AuthConstants, HTTP } from "@/constants";
 import { ApiFailure, ApiSuccess } from "@/server";
-import { ApiRequest, ApiResponse } from "@/types";
+import { AuthService } from "@/services";
+import { ApiRequest, ApiResponse, Cookie, IUser } from "@/types";
+import { getNonEmptyString, safeParse } from "@/utils";
+
+type HealthPayload = {
+	identity: number;
+	uptime: number;
+	timestamp: string;
+	database: boolean;
+};
+
+type HeartbeatPayload = HealthPayload & {
+	user: IUser | null;
+};
 
 export class ServerController {
 	public static health =
@@ -12,26 +25,67 @@ export class ServerController {
 					.message(HTTP.message.DB_CONNECTION_ERROR)
 					.send();
 			}
-			const payload = {
+			const payload: HealthPayload = {
 				identity: process.pid,
 				uptime: process.uptime(),
 				timestamp: new Date().toISOString(),
 				database: db.isConnected(),
 			};
-			return new ApiSuccess<typeof payload>(res)
+			return new ApiSuccess<HealthPayload>(res)
 				.message(HTTP.message.HEALTHY_API)
 				.send(payload);
 		};
 	public static heartbeat =
-		(db: DatabaseManager) => (_: ApiRequest, res: ApiResponse) => {
-			const payload = {
+		(db: DatabaseManager) => async (req: ApiRequest, res: ApiResponse) => {
+			const payload: HeartbeatPayload = {
 				identity: process.pid,
 				uptime: process.uptime(),
 				timestamp: new Date().toISOString(),
 				database: db.isConnected(),
+				user: null,
 			};
+			const cookies = req.cookies;
+			let updatedCookies: Array<Cookie> = [];
+			if (cookies) {
+				const accessToken = safeParse(
+					getNonEmptyString,
+					cookies?.[AuthConstants.ACCESS_TOKEN]
+				);
+				const refreshToken = safeParse(
+					getNonEmptyString,
+					cookies?.[AuthConstants.REFRESH_TOKEN]
+				);
+				if (accessToken && refreshToken) {
+					const authReponse = await AuthService.getAuthenticatedUser({
+						accessToken,
+						refreshToken,
+					});
+					if (authReponse) {
+						payload.user = authReponse.user;
+						const {
+							accessToken: newAccessToken,
+							refreshToken: newRefreshToken,
+						} = authReponse;
+						updatedCookies = AuthService.getUpdatedCookies(
+							{ accessToken, refreshToken },
+							{
+								accessToken: newAccessToken,
+								refreshToken: newRefreshToken,
+							}
+						);
+					}
+				}
+			}
+			if (updatedCookies.length > 0) {
+				return new ApiSuccess<typeof payload>(res)
+					.message(HTTP.message.HEARTBEAT)
+					.cookies(updatedCookies)
+					.data(payload)
+					.send();
+			}
 			return new ApiSuccess<typeof payload>(res)
 				.message(HTTP.message.HEARTBEAT)
-				.send(payload);
+				.data(payload)
+				.send();
 		};
 }
