@@ -18,6 +18,7 @@ export abstract class BaseRepo<T = any, P = T> {
 	 * @returns The instance of the repository class.
 	 */
 	public static getInstance<TRepo extends BaseRepo<any>>(
+		// eslint-disable-next-line no-unused-vars
 		this: new () => TRepo
 	): TRepo {
 		if (!BaseRepo._instances.has(this)) {
