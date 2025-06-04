@@ -10,7 +10,6 @@ import {
 	Avatar,
 	Avatars,
 	Button,
-	CheckBox,
 	IconButton,
 	Input,
 	Pane,
@@ -22,7 +21,6 @@ import { useAuthStore, useHeader, useWalletStore } from "@/store";
 import { CreateExpense } from "@/types";
 import { getUserDetails, Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { BsChevronCompactUp } from "react-icons/bs";
@@ -276,59 +274,82 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					onClose={() => {
 						setExpandAdditionInfo(false);
 					}}
-					height="50vh"
+					height="60vh"
 					direction={device === "mobile" ? "bottom" : "right"}
 				>
-					<Responsive.Row className={classes("-additional")}>
-						<Responsive.Col
-							xlg={100}
-							lg={100}
-							md={100}
-							sm={100}
-							xsm={100}
-							className={classes("-methods")}
-						>
-							{Object.values(expenseMethods).map((method) => (
-								<CheckBox
-									key={`add-expense-payment-method-${method.id}`}
-									label={
-										<Image
-											src={method.logo}
-											alt={method.label}
-											width={50}
-											height={50}
-											className={classes("-methods-logo")}
-										/>
-									}
-									checked={payload.method === method.id}
-									onChange={() => {
-										setPayload((p) => ({
-											...p,
-											method: method.id,
-										}));
-									}}
-								/>
+					<div className={classes("-additional")}>
+						<Responsive.Row className={classes("-tiles")}>
+							{Object.values(expenseTypes).map((type) => (
+								<Responsive.Col
+									xlg={50}
+									lg={50}
+									md={50}
+									sm={50}
+									xsm={50}
+									key={`add-expense-type-${type.id}`}
+								>
+									<div
+										className={classes("-tile", {
+											"-tile--active":
+												payload.type === type.id,
+										})}
+										onClick={() => {
+											setPayload((p) => ({
+												...p,
+												type: type.id,
+											}));
+										}}
+									>
+										<type.Icon />
+										<Typography
+											size="lg"
+											style={{
+												color: `var(--${type.theme}-700)`,
+											}}
+										>
+											{type.label}
+										</Typography>
+									</div>
+								</Responsive.Col>
 							))}
-						</Responsive.Col>
-						<Responsive.Col
-							xlg={100}
-							lg={100}
-							md={100}
-							sm={100}
-							xsm={100}
-						>
-							<Textarea
-								name="description"
-								label="Note"
-								placeholder="Add a note for your expense"
-								value={payload.description}
-								onChange={(e: any) => {
-									handleChange(e);
-								}}
-								rows={4}
-							/>
-						</Responsive.Col>
-					</Responsive.Row>
+						</Responsive.Row>
+						<Responsive.Row className={classes("-methods")}>
+							{Object.values(expenseMethods).map((m) => (
+								<Responsive.Col
+									xlg={25}
+									lg={25}
+									md={25}
+									sm={25}
+									xsm={25}
+									key={`add-expense-payment-method-${m.id}`}
+								>
+									<div
+										className={classes("-method", {
+											"-method--active":
+												payload.method === m.id,
+										})}
+										onClick={() => {
+											setPayload((p) => ({
+												...p,
+												method: m.id,
+											}));
+										}}
+									>
+										<m.Icon />
+									</div>
+								</Responsive.Col>
+							))}
+						</Responsive.Row>
+						<Textarea
+							name="description"
+							placeholder="Add a note for your expense"
+							value={payload.description}
+							onChange={(e: any) => {
+								handleChange(e);
+							}}
+							rows={2}
+						/>
+					</div>
 				</Pane>
 			) : null}
 			{payload.title.length > 0 && payload.amount > 0 ? (

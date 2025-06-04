@@ -6,6 +6,8 @@ import {
 } from "@/types";
 import React from "react";
 import { IconBaseProps } from "react-icons";
+import { FaGooglePay } from "react-icons/fa6";
+import { PiCreditCard, PiMoney, PiPiggyBank } from "react-icons/pi";
 import {
 	TbArrowLeftFromArc,
 	TbArrowLeftToArc,
@@ -15,26 +17,35 @@ import { frontendBaseUrl } from "./variables";
 
 export const expenseMethods: Record<
 	T_EXPENSE_METHOD,
-	{ id: T_EXPENSE_METHOD; label: string; logo: string }
+	{
+		id: T_EXPENSE_METHOD;
+		label: string;
+		Icon: React.FC<IconBaseProps>;
+		logo: string;
+	}
 > = {
 	UPI: {
 		id: "UPI",
 		label: "UPI",
+		Icon: (props?: IconBaseProps) => <FaGooglePay {...props} />,
 		logo: `${frontendBaseUrl}/vectors/upi-logo.svg`,
 	},
 	CASH: {
 		id: "CASH",
 		label: "Cash",
+		Icon: (props?: IconBaseProps) => <PiMoney {...props} />,
 		logo: `${frontendBaseUrl}/vectors/cash-logo.svg`,
 	},
 	CARD: {
 		id: "CARD",
 		label: "Card",
+		Icon: (props?: IconBaseProps) => <PiCreditCard {...props} />,
 		logo: `${frontendBaseUrl}/images/card-logo.png`,
 	},
 	NETBANKING: {
 		id: "NETBANKING",
 		label: "Netbanking",
+		Icon: (props?: IconBaseProps) => <PiPiggyBank {...props} />,
 		logo: `${frontendBaseUrl}/images/netbanking-logo.png`,
 	},
 };
@@ -50,7 +61,7 @@ export const expenseTypes: Record<
 > = {
 	PAID: {
 		id: "PAID",
-		label: "Paid",
+		label: "Money Sent",
 		Icon: (props?: IconBaseProps) => (
 			<TbArrowLeftFromArc
 				style={{
@@ -64,7 +75,7 @@ export const expenseTypes: Record<
 	},
 	RECEIVED: {
 		id: "RECEIVED",
-		label: "Received",
+		label: "Money Received",
 		Icon: (props?: IconBaseProps) => (
 			<TbArrowLeftToArc
 				style={{
@@ -78,7 +89,7 @@ export const expenseTypes: Record<
 	},
 	SELF: {
 		id: "SELF",
-		label: "Self",
+		label: "Self Transfer",
 		Icon: (props?: IconBaseProps) => (
 			<TbRestore
 				style={{

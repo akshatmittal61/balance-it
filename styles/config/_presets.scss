@@ -3,6 +3,17 @@ $states: ("error", "success", "warning");
 :root,
 :root::before,
 :root::after {
+	--info-50: #e8f4fd;
+	--info-100: #cfe9fc;
+	--info-200: #a3d9f6;
+	--info-300: #73c0f0;
+	--info-400: #4da2eb;
+	--info-500: #3f7ae0;
+	--info-600: #3a6ed8;
+	--info-700: #3461cf;
+	--info-800: #2d54c6;
+	--info-900: #2546bc;
+
 	--error-50: #fff0f1;
 	--error-100: #ffdbde;
 	--error-200: #ffbdc2;

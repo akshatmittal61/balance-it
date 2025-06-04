@@ -63,18 +63,6 @@
 		gap: 0.75rem;
 	}
 
-	&-methods {
-		justify-content: space-between;
-		gap: 1rem;
-		margin: 2rem 0;
-
-		&-logo {
-			width: auto;
-			height: 1.75rem;
-			object-fit: contain;
-		}
-	}
-
 	&-tags {
 		width: 70%;
 		display: flex;
@@ -139,11 +127,76 @@
 	&-additional {
 		width: 100%;
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-start;
 		align-items: center;
+		flex-direction: column;
+		padding: 0 12px;
+		gap: 24px;
+	}
 
-		& > div > div {
-			padding: 12px;
+	&-tiles {
+		& > * {
+			padding: 6px;
+		}
+	}
+
+	&-tile {
+		width: 100%;
+		border: 2px solid var(--grey-200);
+		border-radius: 12px;
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 12px;
+		padding: 12px;
+
+		svg {
+			width: 1.5rem;
+			height: 1.5rem;
+			object-fit: contain;
+		}
+
+		&--active {
+			border-color: var(--accent-color);
+			background-color: var(--accent-color-light);
+
+			@include _theme(dark) {
+				background-color: var(--accent-color-dark);
+			}
+		}
+	}
+
+	&-methods {
+		width: 100%;
+
+		& > * {
+			padding: 6px;
+		}
+	}
+
+	&-method {
+		width: 100%;
+		border: 2px solid var(--grey-200);
+		border-radius: 12px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 12px 0;
+
+		svg {
+			width: 2rem;
+			height: 2rem;
+			object-fit: contain;
+		}
+
+		&--active {
+			border-color: var(--accent-color);
+			background-color: var(--accent-color-light);
+
+			@include _theme(dark) {
+				background-color: var(--accent-color-dark);
+			}
 		}
 	}
 
