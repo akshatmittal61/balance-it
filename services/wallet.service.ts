@@ -1,8 +1,8 @@
-import { WalletRepo } from "@/repo";
+import { walletRepo } from "@/repo";
 
 export class WalletService {
 	public static async getFilterOptions(userId: string) {
-		const filterOptions = WalletRepo.getFilterOptions(userId);
+		const filterOptions = walletRepo.getFilterOptions(userId);
 		return filterOptions;
 	}
 }

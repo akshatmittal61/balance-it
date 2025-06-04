@@ -4,13 +4,6 @@ import { getNonNullValue, getObjectFromMongoResponse } from "@/utils";
 
 export abstract class BaseRepo<T = any, P = T> {
 	protected abstract model: mongoose.Model<T>;
-	// protected abstract static instance: BaseRepo<T, P>;
-	// protected instance: BaseRepo<T, P>;
-	// public abstract getInstance<T, P>(): BaseRepo<T, P>;
-
-	// protected getModel(): mongoose.Model<T> {
-	// 	return this.model;
-	// };
 
 	constructor() {}
 

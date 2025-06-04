@@ -2,19 +2,9 @@ import { ExpenseModel } from "@/models";
 import { Expense, IExpense, ObjectId } from "@/types";
 import { BaseRepo } from "./base";
 
-export class WalletRepo extends BaseRepo<Expense, IExpense> {
+class WalletRepo extends BaseRepo<Expense, IExpense> {
 	model = ExpenseModel;
-	private static instance: WalletRepo;
-	public static getInstance() {
-		if (!this.instance) {
-			this.instance = new WalletRepo();
-		}
-		return this.instance;
-	}
-	private static getModel() {
-		return this.getInstance().model;
-	}
-	public static async getFilterOptions(userId: string) {
+	public async getFilterOptions(userId: string) {
 		// Filter Options
 		// - Price Range (Give max and min expenditure)
 		// - Date Range (Give dates for first and last expense)
@@ -26,7 +16,7 @@ export class WalletRepo extends BaseRepo<Expense, IExpense> {
 
 		const [priceRange, dateRange, tags, types, methods] = await Promise.all(
 			[
-				this.getModel().aggregate([
+				this.model.aggregate([
 					userFilter,
 					{
 						$group: {
@@ -37,7 +27,7 @@ export class WalletRepo extends BaseRepo<Expense, IExpense> {
 					},
 					{ $project: { _id: 0, min: 1, max: 1 } },
 				]),
-				this.getModel().aggregate([
+				this.model.aggregate([
 					userFilter,
 					{
 						$group: {
@@ -48,7 +38,7 @@ export class WalletRepo extends BaseRepo<Expense, IExpense> {
 					},
 					{ $project: { _id: 0, begin: 1, end: 1 } },
 				]),
-				this.getModel().aggregate([
+				this.model.aggregate([
 					userFilter,
 					{ $unwind: "$tags" },
 					{
@@ -59,7 +49,7 @@ export class WalletRepo extends BaseRepo<Expense, IExpense> {
 					},
 					{ $project: { _id: 0, tag: "$_id", count: 1 } },
 				]),
-				this.getModel().aggregate([
+				this.model.aggregate([
 					userFilter,
 					{
 						$group: {
@@ -69,7 +59,7 @@ export class WalletRepo extends BaseRepo<Expense, IExpense> {
 					},
 					{ $project: { _id: 0, type: "$_id", count: 1 } },
 				]),
-				this.getModel().aggregate([
+				this.model.aggregate([
 					userFilter,
 					{
 						$group: {
@@ -91,3 +81,5 @@ export class WalletRepo extends BaseRepo<Expense, IExpense> {
 		};
 	}
 }
+
+export const walletRepo = new WalletRepo();
