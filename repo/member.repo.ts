@@ -81,4 +81,4 @@ class MemberRepo extends BaseRepo<Member, IMember> {
 	}
 }
 
-export const memberRepo = new MemberRepo();
+export const memberRepo = MemberRepo.getInstance<MemberRepo>();

@@ -12,4 +12,4 @@ class UserRepo extends BaseRepo<User, IUser> {
 	}
 }
 
-export const userRepo = new UserRepo();
+export const userRepo = UserRepo.getInstance<UserRepo>();

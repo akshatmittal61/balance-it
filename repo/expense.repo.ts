@@ -305,4 +305,4 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 	}
 }
 
-export const expenseRepo = new ExpenseRepo();
+export const expenseRepo = ExpenseRepo.getInstance<ExpenseRepo>();

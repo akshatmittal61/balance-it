@@ -82,4 +82,4 @@ class WalletRepo extends BaseRepo<Expense, IExpense> {
 	}
 }
 
-export const walletRepo = new WalletRepo();
+export const walletRepo = WalletRepo.getInstance<WalletRepo>();

@@ -6,4 +6,4 @@ class OtpRepo extends BaseRepo<Otp> {
 	protected model = OtpModel;
 }
 
-export const otpRepo = new OtpRepo();
+export const otpRepo = OtpRepo.getInstance<OtpRepo>();

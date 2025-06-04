@@ -5,6 +5,27 @@ import { getNonNullValue, getObjectFromMongoResponse } from "@/utils";
 export abstract class BaseRepo<T = any, P = T> {
 	protected abstract model: mongoose.Model<T>;
 
+	/**
+	 * A static map to hold instances of the repository classes.
+	 * This allows for singleton-like behavior, ensuring that only one
+	 * instance of each repository class is created.
+	 */
+	private static _instances = new Map<Function, any>();
+
+	/**
+	 * Get an instance of the repository class.
+	 * @param this The class to get an instance of.
+	 * @returns The instance of the repository class.
+	 */
+	public static getInstance<TRepo extends BaseRepo<any>>(
+		this: new () => TRepo
+	): TRepo {
+		if (!BaseRepo._instances.has(this)) {
+			BaseRepo._instances.set(this, new this());
+		}
+		return BaseRepo._instances.get(this);
+	}
+
 	constructor() {}
 
 	/**

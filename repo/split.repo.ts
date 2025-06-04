@@ -162,4 +162,4 @@ class SplitRepo extends BaseRepo<Split, ISplit> {
 	}
 }
 
-export const splitRepo = new SplitRepo();
+export const splitRepo = SplitRepo.getInstance<SplitRepo>();

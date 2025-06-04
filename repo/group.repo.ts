@@ -76,4 +76,4 @@ class GroupRepo extends BaseRepo<Group, IGroup> {
 	}
 }
 
-export const groupRepo = new GroupRepo();
+export const groupRepo = GroupRepo.getInstance<GroupRepo>();

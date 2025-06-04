@@ -83,4 +83,4 @@ class AuthRepo extends BaseRepo<AuthMapping, IAuthMapping> {
 	}
 }
 
-export const authRepo = new AuthRepo();
+export const authRepo = AuthRepo.getInstance<AuthRepo>();
