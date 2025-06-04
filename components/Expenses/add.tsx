@@ -27,6 +27,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { BsChevronCompactUp } from "react-icons/bs";
 import { FiCalendar, FiUsers } from "react-icons/fi";
+import { DoneAnimation } from "./done";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddTag, Tag } from "./tags";
@@ -41,6 +42,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	const { isAdding, createExpense } = useWalletStore();
 	const { device } = useDevice();
 	const [expandAdditionInfo, setExpandAdditionInfo] = useState(false);
+	const [isAdded, setIsAdded] = useState(false);
 	const [manageSplits, setManageSplits] = useState<boolean>(false);
 	const [members, setMembers] = useState<Array<ExpenseUser>>(
 		user ? [{ ...user, amount: 0, value: 0 }] : []
@@ -109,6 +111,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		}
 		try {
 			await createExpense(payload);
+			setIsAdded(true);
 			router.push(routes.HOME);
 			handleReset();
 		} catch (error) {
@@ -135,6 +138,10 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			tags: Array.from(new Set([...(prev.tags || []), ...tags])),
 		}));
 	}, [debouncedTitle]);
+
+	if (isAdded) {
+		return <DoneAnimation />;
+	}
 
 	return (
 		<>
