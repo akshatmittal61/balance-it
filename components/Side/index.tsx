@@ -1,4 +1,4 @@
-import { appTheme, routes } from "@/constants";
+import { appTheme, redirectToLogin, routes } from "@/constants";
 import { useOnClickOutside } from "@/hooks";
 import { Avatar, Typography } from "@/library";
 import { useAuthStore, useUiStore, useWalletStore } from "@/store";
@@ -46,7 +46,8 @@ export const SideBar: React.FC<ISideBarProps> = () => {
 
 	const logoutUser = async () => {
 		await logout();
-		router.push(routes.LOGIN);
+		const routeToNavigate = redirectToLogin(router.pathname);
+		router.push(routeToNavigate);
 	};
 
 	useEffect(() => {

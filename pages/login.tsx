@@ -77,6 +77,15 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 		}
 	};
 
+	const googleOAuthRedirect = () => {
+		const redirectUrl = router.query.redirect as string;
+		if (redirectUrl) {
+			router.push(`/__/oauth/google?redirect=${redirectUrl}`);
+		} else {
+			router.push("/__/oauth/google");
+		}
+	};
+
 	useEffect(() => {
 		if (user) {
 			if (!user.name) {
@@ -110,9 +119,7 @@ const LoginPage: React.FC<LoginPageProps> = (props) => {
 								<Typography size="md">OR</Typography>
 							</span>
 							<Components.GoogleOAuthButton
-								onClick={() => {
-									router.push("/__/oauth/google");
-								}}
+								onClick={googleOAuthRedirect}
 							/>
 						</>
 					) : authFrame === "otp-verification" ? (

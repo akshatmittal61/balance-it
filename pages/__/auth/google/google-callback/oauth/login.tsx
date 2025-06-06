@@ -4,6 +4,7 @@ import { Logger } from "@/log";
 import { useAuthStore } from "@/store";
 import styles from "@/styles/pages/Auth.module.scss";
 import { genericParse, getNonEmptyString, Notify, stylesConfig } from "@/utils";
+import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -19,7 +20,8 @@ const GoogleOAuthRedirectedPage: GoogleOAuthRedirectedPageProps = (props) => {
 		try {
 			const res = await AuthApi.continueOAuthWithGoogle(props.token);
 			setUser(res.data);
-			router.push(routes.HOME);
+			let redirectUrl = (router.query.redirect as string) || routes.HOME;
+			router.push(redirectUrl);
 		} catch {
 			Notify.error("Something went wrong, please try again");
 			router.push(routes.LOGIN);
@@ -45,9 +47,18 @@ const GoogleOAuthRedirectedPage: GoogleOAuthRedirectedPageProps = (props) => {
 
 export default GoogleOAuthRedirectedPage;
 
-export const getServerSideProps = async (context: any) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { query } = context;
 	try {
+		const cookies = context.req.cookies;
+		if (cookies.redirect) {
+			query.redirect = cookies.redirect;
+			// remove this cookie after reading it
+			context.res.setHeader(
+				"Set-Cookie",
+				"redirect=; Path=/; HttpOnly; SameSite=Lax; Max-Age=-1"
+			);
+		}
 		const code = genericParse(getNonEmptyString, query.code);
 		Logger.debug("code", code);
 		const verificationRes = await AuthApi.verifyOAuthSignIn(code);
