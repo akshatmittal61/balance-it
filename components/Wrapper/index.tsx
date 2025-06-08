@@ -1,4 +1,4 @@
-import { Header, Loader, Seo, SideBar } from "@/components";
+import { Header, Seo, SideBar } from "@/components";
 import {
 	AppSeo,
 	protectedRoutes,
@@ -6,7 +6,7 @@ import {
 	routesSupportingContainer,
 } from "@/constants";
 import { useDevice } from "@/hooks";
-import { FabButton } from "@/library";
+import { FabButton, Loader } from "@/library";
 import { useAuthStore, useUiStore } from "@/store";
 import { IUser } from "@/types";
 import { stylesConfig } from "@/utils";

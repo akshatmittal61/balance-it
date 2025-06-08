@@ -4,7 +4,6 @@ export * from "./Error";
 export * from "./Expenses";
 export * from "./Header";
 export * as Home from "./Home";
-export * as Loader from "./Loader";
 export * from "./Members";
 export * from "./Seo";
 export * from "./Side";

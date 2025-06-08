@@ -5,6 +5,7 @@ export * from "./Button/icon";
 export * from "./Checkbox";
 export * from "./icons";
 export * from "./Input";
+export * as Loader from "./Loader";
 export * from "./Pane";
 export * from "./Pill";
 export * from "./Popup";
