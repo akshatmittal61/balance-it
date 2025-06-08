@@ -17,4 +17,4 @@ export type GetUserFriends = null;
 
 // Wallet
 export type { CreateExpense } from "../client";
-export type { WalletDisplayOptions } from "../wallet";
+export type { WalletDashboardOptions } from "../wallet";

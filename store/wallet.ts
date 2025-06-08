@@ -1,7 +1,16 @@
 import { WalletApi } from "@/api";
-import { initialExpensesSummary } from "@/constants";
+import {
+	initialExpensesSummary,
+	initialWalletDashboardOptions,
+} from "@/constants";
 import { useHttpClient } from "@/hooks";
-import { CreateExpense, ExpenseSpread, ExpensesSummary, Split } from "@/types";
+import {
+	CreateExpense,
+	ExpenseSpread,
+	ExpensesSummary,
+	WalletDashboardOptions,
+	WalletFilterOptions,
+} from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
@@ -10,7 +19,10 @@ type State = {
 	expenses: Array<ExpenseSpread>;
 	summary: ExpensesSummary;
 	tags: Array<string>;
-	splits: Array<Split>;
+	filterOptions: WalletFilterOptions | null;
+	filters: WalletDashboardOptions["filters"];
+	sort: WalletDashboardOptions["sort"];
+	pagination: WalletDashboardOptions["pagination"];
 };
 
 type Getter<T extends keyof State> = () => State[T];
@@ -20,9 +32,16 @@ type Action = {
 	getExpenses: Getter<"expenses">;
 	getSummary: Getter<"summary">;
 	getTags: Getter<"tags">;
+	getFilterOptions: Getter<"filterOptions">;
+	getFilters: Getter<"filters">;
+	getSort: Getter<"sort">;
+	getPagination: Getter<"pagination">;
 	setExpenses: Setter<"expenses">;
 	setSummary: Setter<"summary">;
-	setSplits: Setter<"splits">;
+	setFilterOptions: Setter<"filterOptions">;
+	setFilters: Setter<"filters">;
+	setSort: Setter<"sort">;
+	setPagination: Setter<"pagination">;
 };
 
 type Store = State & Action;
@@ -32,12 +51,17 @@ const store = create<Store>((set, get) => {
 		expenses: [],
 		summary: initialExpensesSummary,
 		tags: [],
-		splits: [],
-		getSplits: () => get().splits,
-		setSplits: (splits) => set({ splits }),
+		filterOptions: null,
+		filters: initialWalletDashboardOptions.filters,
+		sort: initialWalletDashboardOptions.sort,
+		pagination: initialWalletDashboardOptions.pagination,
 		getExpenses: () => get().expenses,
 		getSummary: () => get().summary,
 		getTags: () => get().tags,
+		getFilterOptions: () => get().filterOptions,
+		getFilters: () => get().filters,
+		getSort: () => get().sort,
+		getPagination: () => get().pagination,
 		setExpenses: (expenses) => {
 			const allTags = expenses.reduce((acc, expense) => {
 				return [...acc, ...(expense.tags || [])];
@@ -46,6 +70,10 @@ const store = create<Store>((set, get) => {
 			set({ expenses, tags: uniqueTags.sort() });
 		},
 		setSummary: (summary) => set({ summary }),
+		setFilterOptions: (filterOptions) => set({ filterOptions }),
+		setFilters: (filters) => set({ filters }),
+		setSort: (sort) => set({ sort }),
+		setPagination: (pagination) => set({ pagination }),
 	};
 });
 
@@ -75,15 +103,19 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 	const sync = async () => {
 		try {
 			setIsLoading(true);
-			const [expenses, summary] = await Promise.all([
-				WalletApi.getUserExpenses(),
-				WalletApi.getExpensesSummary(),
+			const [expensesRes, filterOptionsRes] = await Promise.all([
+				WalletApi.getUserExpenses({
+					filters: store.getFilters(),
+					sort: store.getSort(),
+					pagination: store.getPagination(),
+				}),
+				WalletApi.getFilterOptions(),
 			]);
-			store.setExpenses(expenses.data);
-			store.setSummary(summary.data);
+			store.setExpenses(expensesRes.data.data);
+			store.setFilterOptions(filterOptionsRes.data);
 		} catch {
 			store.setExpenses([]);
-			store.setSummary(initialExpensesSummary);
+			store.setFilterOptions(null);
 		} finally {
 			setIsLoading(false);
 		}
@@ -92,6 +124,7 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 	const createExpense = async (expense: CreateExpense) => {
 		const created = await addApi(WalletApi.createExpense, expense);
 		store.setExpenses([created, ...store.expenses]);
+		sync();
 	};
 
 	const deleteExpense = async (id: string) => {
@@ -99,6 +132,24 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		store.setExpenses(
 			store.expenses.filter((expense) => expense.id !== id)
 		);
+		sync();
+	};
+
+	const setFilters = (filters: WalletDashboardOptions["filters"]) => {
+		store.setFilters(filters);
+		sync();
+	};
+
+	const setSort = (sort: WalletDashboardOptions["sort"]) => {
+		store.setSort(sort);
+		sync();
+	};
+
+	const setPagination = (
+		pagination: WalletDashboardOptions["pagination"]
+	) => {
+		store.setPagination(pagination);
+		sync();
 	};
 
 	useEffect(() => {
@@ -116,5 +167,8 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		sync,
 		createExpense,
 		deleteExpense,
+		setFilters,
+		setSort,
+		setPagination,
 	};
 };

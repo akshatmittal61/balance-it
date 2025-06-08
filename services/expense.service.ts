@@ -57,10 +57,10 @@ export class ExpenseService {
 		received: number;
 	}> {
 		const expenses = await WalletService.getUserExpenses(userId, {});
-		const totalPaidAmount = expenses
+		const totalPaidAmount = expenses.data
 			.filter((exp) => exp.type === EXPENSE_TYPE.PAID)
 			.reduce((acc, exp) => acc + exp.amount, 0);
-		const totalReceivedAmount = expenses
+		const totalReceivedAmount = expenses.data
 			.filter((exp) => exp.type === EXPENSE_TYPE.RECEIVED)
 			.reduce((acc, exp) => acc + exp.amount, 0);
 		return {

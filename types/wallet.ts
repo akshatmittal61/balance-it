@@ -28,7 +28,7 @@ export type WalletFilterOptions = {
 	methods: Array<{ method: string; count: number }>;
 };
 
-export type WalletDisplayOptions = {
+export type WalletDashboardOptions = {
 	filters?: Pick<WalletFilterOptions, "amount" | "timestamp" | "tags">;
 	sort?: {
 		field: "timestamp" | "amount";

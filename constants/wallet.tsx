@@ -3,6 +3,7 @@ import {
 	T_COMPONENT_THEME,
 	T_EXPENSE_METHOD,
 	T_EXPENSE_TYPE,
+	WalletDashboardOptions,
 } from "@/types";
 import React from "react";
 import { IconBaseProps } from "react-icons";
@@ -140,4 +141,15 @@ export const TAG_DICTIONARY: Record<string, string[]> = {
 	health: ["medicine", "hospital", "doctor", "checkup"],
 	rent: ["rent", "room", "apartment", "flat"],
 	gift: ["gift", "present", "birthday", "anniversary"],
+};
+
+export const initialWalletDashboardOptions: WalletDashboardOptions = {
+	sort: {
+		field: "timestamp",
+		order: -1, // Default to descending order of payment date
+	},
+	pagination: {
+		page: 1,
+		limit: 100, // Default to showing 100 expenses per page
+	},
 };

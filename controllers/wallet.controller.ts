@@ -14,7 +14,7 @@ import {
 
 export class WalletController {
 	public static async getExpensesForUser(
-		req: ApiRequest<ApiRequests.WalletDisplayOptions>,
+		req: ApiRequest<ApiRequests.WalletDashboardOptions>,
 		res: ApiResponse
 	) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);

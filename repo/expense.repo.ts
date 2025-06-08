@@ -11,7 +11,7 @@ import {
 	IUser,
 	ObjectId,
 	UpdateQuery,
-	WalletDisplayOptions,
+	WalletDashboardOptions,
 } from "@/types";
 import { getNonNullValue, getObjectFromMongoResponse } from "@/utils";
 import { BaseRepo } from "./base";
@@ -127,8 +127,8 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 	public async findByIdWithSplits(id: string): Promise<ExpenseSpread | null> {
 		try {
 			const res = await this.findWithSplits({ _id: new ObjectId(id) });
-			if (res.length === 0) return null;
-			return this.parseSpread(res[0]);
+			if (res.data.length === 0) return null;
+			return this.parseSpread(res.data[0]);
 		} catch (error: any) {
 			if (error.kind === "ObjectId") return null;
 			throw error;
@@ -136,8 +136,12 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 	}
 	public async findWithSplits(
 		query: FilterQuery<Expense> = {},
-		options?: WalletDisplayOptions
-	): Promise<Array<ExpenseSpread>> {
+		options?: WalletDashboardOptions
+	): Promise<{
+		data: Array<ExpenseSpread>;
+		totalRecords: number;
+		totalPages: number;
+	}> {
 		try {
 			const {
 				filters,
@@ -173,6 +177,10 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 			}
 
 			const skip = (pagination.page - 1) * pagination.limit;
+
+			// Get total count first
+			const totalRecords = await this.model.countDocuments(matchStage);
+			const totalPages = Math.ceil(totalRecords / pagination.limit);
 
 			Logger.debug(
 				"Finding expenses",
@@ -340,9 +348,11 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 				{ $skip: skip },
 				{ $limit: pagination.limit },
 			]);
-			return expensesWithSplits;
+			return { data: expensesWithSplits, totalRecords, totalPages };
 		} catch (error: any) {
-			if (error.kind === "ObjectId") return [];
+			if (error.kind === "ObjectId") {
+				return { data: [], totalRecords: 0, totalPages: 0 };
+			}
 			throw error;
 		}
 	}
