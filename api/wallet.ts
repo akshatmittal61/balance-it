@@ -3,7 +3,7 @@ import { ApiRequests, ApiRes, ApiResponses, CreateExpense } from "@/types";
 
 export class WalletApi {
 	public static async getUserExpenses(headers?: any) {
-		const res = await http.get<ApiRes<ApiResponses.GetUserExpenses>>(
+		const res = await http.post<ApiRes<ApiResponses.GetUserExpenses>>(
 			"/wallet/expenses",
 			{ headers }
 		);
@@ -27,7 +27,7 @@ export class WalletApi {
 		const res = await http.post<
 			ApiRes<ApiResponses.CreateExpense>,
 			ApiRequests.CreateExpense
-		>("/wallet/expenses", payload, { headers });
+		>("/wallet/expense", payload, { headers });
 		return res.data;
 	}
 	public static async deleteExpense(expenseId: string, headers?: any) {

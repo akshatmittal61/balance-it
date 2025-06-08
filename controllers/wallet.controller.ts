@@ -13,9 +13,12 @@ import {
 } from "@/utils";
 
 export class WalletController {
-	public static async getExpensesForUser(req: ApiRequest, res: ApiResponse) {
+	public static async getExpensesForUser(
+		req: ApiRequest<ApiRequests.WalletDisplayOptions>,
+		res: ApiResponse
+	) {
 		const userId = genericParse(getNonEmptyString, req.user?.id);
-		const expenses = await ExpenseService.getUserExpenses(userId);
+		const expenses = await WalletService.getUserExpenses(userId, req.body);
 		return new ApiSuccess<ApiResponses.GetUserExpenses>(res).send(expenses);
 	}
 	public static async getExpenseById(req: ApiRequest, res: ApiResponse) {

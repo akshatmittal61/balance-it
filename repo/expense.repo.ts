@@ -1,3 +1,4 @@
+import { Logger } from "@/log";
 import { ExpenseModel } from "@/models";
 import {
 	CreateModel,
@@ -10,6 +11,7 @@ import {
 	IUser,
 	ObjectId,
 	UpdateQuery,
+	WalletDisplayOptions,
 } from "@/types";
 import { getNonNullValue, getObjectFromMongoResponse } from "@/utils";
 import { BaseRepo } from "./base";
@@ -133,13 +135,56 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 		}
 	}
 	public async findWithSplits(
-		query: FilterQuery<Expense>
+		query: FilterQuery<Expense> = {},
+		options?: WalletDisplayOptions
 	): Promise<Array<ExpenseSpread>> {
 		try {
+			const {
+				filters,
+				sort = { field: "timestamp", order: -1 },
+				pagination = { page: 1, limit: 100 },
+			} = options || {};
+
+			const matchStage: FilterQuery<Expense> = { ...query };
+
+			// Handle filters and pagination
+			if (filters) {
+				if (filters.amount) {
+					matchStage.amount = {};
+					if (filters.amount.min != null)
+						matchStage.amount.$gte = filters.amount.min;
+					if (filters.amount.max != null)
+						matchStage.amount.$lte = filters.amount.max;
+				}
+				if (filters.timestamp) {
+					matchStage.timestamp = {};
+					if (filters.timestamp.begin)
+						matchStage.timestamp.$gte = new Date(
+							filters.timestamp.begin
+						);
+					if (filters.timestamp.end)
+						matchStage.timestamp.$lte = new Date(
+							filters.timestamp.end
+						);
+				}
+				if (filters.tags?.length) {
+					matchStage.tags = { $in: filters.tags };
+				}
+			}
+
+			const skip = (pagination.page - 1) * pagination.limit;
+
+			Logger.debug(
+				"Finding expenses",
+				query,
+				matchStage,
+				sort,
+				pagination,
+				skip
+			);
+
 			const expensesWithSplits = await this.model.aggregate([
-				{
-					$match: query,
-				},
+				{ $match: matchStage },
 				{
 					$lookup: {
 						from: "users",
@@ -148,11 +193,7 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 						as: "author",
 					},
 				},
-				{
-					$unwind: {
-						path: "$author",
-					},
-				},
+				{ $unwind: "$author" },
 				{
 					$project: {
 						_id: 1,
@@ -161,11 +202,11 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 						amount: 1,
 						author: {
 							id: "$author._id",
-							name: 1,
-							email: 1,
-							phone: 1,
-							avatar: 1,
-							status: 1,
+							name: "$author.name",
+							email: "$author.email",
+							phone: "$author.phone",
+							avatar: "$author.avatar",
+							status: "$author.status",
 						},
 						timestamp: 1,
 						description: 1,
@@ -295,7 +336,9 @@ class ExpenseRepo extends BaseRepo<Expense, IExpense> {
 						},
 					},
 				},
-				{ $sort: { timestamp: -1 } },
+				{ $sort: { [sort.field]: sort.order, _id: -1 } },
+				{ $skip: skip },
+				{ $limit: pagination.limit },
 			]);
 			return expensesWithSplits;
 		} catch (error: any) {

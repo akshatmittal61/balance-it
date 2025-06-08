@@ -73,8 +73,8 @@ class WalletRepo extends BaseRepo<Expense, IExpense> {
 		);
 
 		return {
-			priceRange: priceRange[0],
-			dateRange: dateRange[0],
+			amount: priceRange[0],
+			timestamp: dateRange[0],
 			tags,
 			types,
 			methods,

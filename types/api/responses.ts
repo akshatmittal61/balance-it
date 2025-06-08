@@ -1,4 +1,10 @@
-import { ExpenseSpread, ExpensesSummary, Friend, IUser } from "../client";
+import {
+	ExpenseSpread,
+	ExpensesSummary,
+	Friend,
+	IUser,
+	WalletFilterOptions,
+} from "../client";
 
 // Auth
 export type VerifyUser = IUser;
@@ -24,16 +30,5 @@ export type GetExpensesSummary = ExpensesSummary;
 export type GetExpenseById = ExpenseSpread;
 export type CreateExpense = ExpenseSpread;
 export type DeleteExpense = boolean;
-export type WalletFilterOptions = {
-	priceRange: {
-		min: number;
-		max: number;
-	};
-	dateRange: {
-		begin: string;
-		end: string;
-	};
-	tags: Array<{ tag: string; count: number }>;
-	types: Array<{ type: string; count: number }>;
-	methods: Array<{ method: string; count: number }>;
-};
+
+export type { WalletFilterOptions };

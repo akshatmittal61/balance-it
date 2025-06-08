@@ -1,10 +1,9 @@
-import { ApiRoute } from "@/server";
 import { WalletController } from "@/controllers";
+import { ApiRoute } from "@/server";
 
 const apiRoute = new ApiRoute(
 	{
-		GET: WalletController.getExpensesForUser,
-		POST: WalletController.createExpense,
+		POST: WalletController.getExpensesForUser,
 	},
 	{ db: true, auth: true }
 );

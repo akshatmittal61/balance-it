@@ -35,8 +35,3 @@ export type CreateExpense = Omit<CreateModel<Expense>, "author" | "splits"> & {
 	author: string;
 	splits?: Array<{ user: string; amount: number }>;
 };
-
-export type ExpensesSummary = {
-	paid: number;
-	received: number;
-};

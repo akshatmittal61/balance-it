@@ -14,23 +14,15 @@ import {
 	Expense,
 	ExpenseSpread,
 	IExpense,
-	ObjectId,
 	Split,
 	T_EXPENSE_TYPE,
 	UpdateQuery,
 } from "@/types";
 import { getNonNullValue } from "@/utils";
 import { UserService } from "./user.service";
+import { WalletService } from "./wallet.service";
 
 export class ExpenseService {
-	public static async getUserExpenses(
-		userId: string
-	): Promise<Array<ExpenseSpread>> {
-		const expenses = await expenseRepo.findWithSplits({
-			author: new ObjectId(userId),
-		});
-		return expenses || [];
-	}
 	public static async getGroupExpenses(
 		groupId: string
 	): Promise<Array<IExpense>> {
@@ -64,7 +56,7 @@ export class ExpenseService {
 		paid: number;
 		received: number;
 	}> {
-		const expenses = await ExpenseService.getUserExpenses(userId);
+		const expenses = await WalletService.getUserExpenses(userId, {});
 		const totalPaidAmount = expenses
 			.filter((exp) => exp.type === EXPENSE_TYPE.PAID)
 			.reduce((acc, exp) => acc + exp.amount, 0);
