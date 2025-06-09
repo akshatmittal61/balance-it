@@ -1,3 +1,4 @@
+export * from "./ActionBar";
 export * as Auth from "./Auth";
 export * from "./Confirmation";
 export * from "./Error";

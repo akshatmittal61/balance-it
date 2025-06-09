@@ -1,19 +1,17 @@
-import { Header, Seo, SideBar } from "@/components";
+import { ActionBar, Header, Seo, SideBar } from "@/components";
 import {
 	AppSeo,
 	protectedRoutes,
-	routes,
 	routesSupportingContainer,
 } from "@/constants";
 import { useDevice } from "@/hooks";
-import { FabButton, Loader } from "@/library";
+import { Loader } from "@/library";
 import { useAuthStore, useUiStore } from "@/store";
 import { IUser } from "@/types";
 import { stylesConfig } from "@/utils";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { FiPlus } from "react-icons/fi";
 import styles from "./styles.module.scss";
 
 interface WrapperProps {
@@ -97,14 +95,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 			>
 				{children}
 			</main>
-			{isLoggedIn &&
-			routesSupportingContainer.includes(router.pathname) &&
-			router.pathname !== routes.ADD_EXPENSE ? (
-				<FabButton
-					icon={<FiPlus />}
-					onClick={() => router.push(routes.ADD_EXPENSE)}
-				/>
-			) : null}
+			<ActionBar />
 			<Toaster position="top-center" />
 		</>
 	);

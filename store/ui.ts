@@ -1,5 +1,5 @@
 import { appTheme, sideBarLinks } from "@/constants";
-import { AppNetworkStatus, AppTheme, Navigation } from "@/types";
+import { ActionBarAtom, AppNetworkStatus, AppTheme, Navigation } from "@/types";
 import { hexToRgb, Notify } from "@/utils";
 import React, { useEffect } from "react";
 import { create } from "zustand";
@@ -14,6 +14,7 @@ type State = {
 	sideBarLinks: Array<Navigation>;
 	headerNavigation: Array<Navigation>;
 	headerContent: React.ReactNode;
+	actionBar: Array<ActionBarAtom>;
 };
 
 type Getter<T extends keyof State> = () => State[T];
@@ -28,6 +29,7 @@ type Action = {
 	getSideBarLinks: Getter<"sideBarLinks">;
 	getHeaderNavigation: Getter<"headerNavigation">;
 	getHeaderContent: Getter<"headerContent">;
+	getActionBar: Getter<"actionBar">;
 	setVh: Setter<"vh">;
 	setTheme: Setter<"theme">;
 	setAccentColor: Setter<"accentColor">;
@@ -36,6 +38,7 @@ type Action = {
 	setSideBarLinks: Setter<"sideBarLinks">;
 	setHeaderNavigation: Setter<"headerNavigation">;
 	setHeaderContent: Setter<"headerContent">;
+	setActionBar: Setter<"actionBar">;
 };
 
 type Store = State & Action;
@@ -51,6 +54,7 @@ const store = create<Store>((set, get) => {
 		sideBarLinks: sideBarLinks,
 		headerNavigation: [],
 		headerContent: null,
+		actionBar: [],
 		// getters
 		getVh: () => get().vh,
 		getTheme: () => get().theme,
@@ -60,6 +64,7 @@ const store = create<Store>((set, get) => {
 		getSideBarLinks: () => get().sideBarLinks,
 		getHeaderNavigation: () => get().headerNavigation,
 		getHeaderContent: () => get().headerContent,
+		getActionBar: () => get().actionBar,
 		// setters
 		setVh: (vh) => set({ vh }),
 		setTheme: (theme) => {
@@ -72,6 +77,7 @@ const store = create<Store>((set, get) => {
 		setSideBarLinks: (sideBarLinks) => set({ sideBarLinks }),
 		setHeaderNavigation: (headerNavigation) => set({ headerNavigation }),
 		setHeaderContent: (headerContent) => set({ headerContent }),
+		setActionBar: (actionBar) => set({ actionBar }),
 	};
 });
 
@@ -200,4 +206,22 @@ export const useHeader = (
 		}; // Reset on unmount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [content, navigation]);
+};
+
+export const useActionBar = (actionBar: Array<ActionBarAtom>) => {
+	const setActionBar = useStore((state) => state.setActionBar);
+	useEffect(() => {
+		if (actionBar && actionBar.length > 0) {
+			setActionBar(
+				actionBar.map((atom) => ({
+					...atom,
+					id: `action-bar-${atom.id}`,
+				}))
+			);
+		}
+		return () => {
+			setActionBar([]); // Reset on unmount
+		}; // Reset on unmount
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [actionBar]);
 };

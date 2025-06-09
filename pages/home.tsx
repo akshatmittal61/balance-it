@@ -1,21 +1,47 @@
 import { Home, Placeholder, Seo } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { withAuthPage } from "@/connections";
-import { AppSeo } from "@/constants";
-import { useAuthStore, useGodownStore, useWalletStore } from "@/store";
+import { AppSeo, routes } from "@/constants";
+import { Typography } from "@/library";
+import {
+	useActionBar,
+	useAuthStore,
+	useGodownStore,
+	useWalletStore,
+} from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
-import { IUser } from "@/types";
+import { ActionBarAtom, IUser } from "@/types";
 import { getUserDetails, stylesConfig } from "@/utils";
 import React from "react";
+import { BsArrowDownUp } from "react-icons/bs";
+import { FiFilter, FiPlus } from "react-icons/fi";
 
 type HomePageProps = { user: IUser };
 
 const classes = stylesConfig(styles, "home");
 
 const HomePage: React.FC<HomePageProps> = () => {
+	const homePageActionBar: Array<ActionBarAtom> = [
+		{
+			id: "sort",
+			icon: <BsArrowDownUp />,
+			drawer: () => <Typography>Wow sort!</Typography>,
+		},
+		{
+			id: "filter",
+			icon: <FiFilter />,
+			drawer: () => <Typography>Wow filter!</Typography>,
+		},
+		{
+			id: "add-expense",
+			icon: <FiPlus />,
+			href: routes.ADD_EXPENSE,
+		},
+	];
 	const { user, isLoggedIn } = useAuthStore();
 	const { expenses, isLoading } = useWalletStore({ syncOnMount: true });
 	useGodownStore({ syncOnMount: true });
+	useActionBar(isLoggedIn ? homePageActionBar : []);
 	return (
 		<>
 			<Seo
