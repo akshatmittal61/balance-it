@@ -44,10 +44,6 @@
 			@include overlay;
 			z-index: 69;
 		}
-
-		&--closing {
-			// animation: slide-bottom-out var(--transition-time) ease-in-out forwards;
-		}
 	}
 }
 

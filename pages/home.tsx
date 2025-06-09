@@ -2,7 +2,6 @@ import { Home, Placeholder, Seo } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { withAuthPage } from "@/connections";
 import { AppSeo, routes } from "@/constants";
-import { Typography } from "@/library";
 import {
 	useActionBar,
 	useAuthStore,
@@ -25,12 +24,12 @@ const HomePage: React.FC<HomePageProps> = () => {
 		{
 			id: "sort",
 			icon: <BsArrowDownUp />,
-			drawer: () => <Typography>Wow sort!</Typography>,
+			drawer: ({ onClose }) => <Home.Sort onClose={onClose} />,
 		},
 		{
 			id: "filter",
 			icon: <FiFilter />,
-			drawer: () => <Typography>Wow filter!</Typography>,
+			drawer: ({ onClose }) => <Home.Filters onClose={onClose} />,
 		},
 		{
 			id: "add-expense",
