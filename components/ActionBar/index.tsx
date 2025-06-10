@@ -13,7 +13,6 @@ export const ActionBar: React.FC<ActionBarProps> = () => {
 	const router = useRouter();
 	const [activeDrawerId, setActiveDrawerId] = useState<string | null>(null);
 	const handleCloseDrawer = () => {
-		console.log("Close Drawer called");
 		setActiveDrawerId(null);
 	};
 

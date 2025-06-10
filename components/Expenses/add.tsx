@@ -4,7 +4,7 @@ import {
 	navigationMap,
 	routes,
 } from "@/constants";
-import { useDebounce, useDevice } from "@/hooks";
+import { useDevice } from "@/hooks";
 import { Responsive } from "@/layouts";
 import {
 	Avatar,
@@ -22,7 +22,7 @@ import { CreateExpense } from "@/types";
 import { getUserDetails, Notify, stylesConfig, WalletUtils } from "@/utils";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { BsChevronCompactUp } from "react-icons/bs";
 import { FiCalendar, FiUsers } from "react-icons/fi";
 import { DoneAnimation } from "./done";
@@ -59,21 +59,37 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		method: "UPI",
 		author: user ? user.id : "",
 	});
-	const [rawTitle, debouncedTitle, setRawTitle] = useDebounce("", 500);
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const name = e.target.name;
 		const value = e.target.value;
 		if (name === "timestamp") {
+			// Convert to ISO
 			setPayload((p) => ({
 				...p,
 				[name]: new Date(value).toISOString(),
 			}));
 		} else if (name === "amount") {
+			// Remove leading zero, maintain integer amount
 			if (value.startsWith("0") && value.length > 1) {
 				setPayload({ ...payload, [name]: +value.slice(1) });
 			} else {
 				setPayload({ ...payload, [name]: +value });
 			}
+		} else if (name === "title") {
+			// Tags auto suggestion
+			const inferredTags = WalletUtils.inferTagsFromTitle(value);
+			const distinctInferredTags = new Set([
+				...(payload.tags || []),
+				...inferredTags,
+			]);
+			setPayload((prev) => ({
+				...prev,
+				title: value,
+				tags:
+					value && value.length > 0
+						? Array.from(distinctInferredTags)
+						: [],
+			}));
 		} else {
 			setPayload((p) => ({ ...p, [name]: value }));
 		}
@@ -118,23 +134,12 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 
 	useHeader(
 		[navigationMap.home],
-		debouncedTitle.length > 0 && payload.amount > 0 ? (
+		payload.title.length > 0 && payload.amount > 0 ? (
 			<Typography size="sm" style={{ fontStyle: "italic" }}>
 				{dayjs(payload.timestamp).format("MMM DD, HH:mm")}
 			</Typography>
 		) : null
 	);
-
-	// Tags auto suggestion
-	useEffect(() => {
-		if (!debouncedTitle) return;
-		const tags = WalletUtils.inferTagsFromTitle(debouncedTitle);
-		setPayload((prev) => ({
-			...prev,
-			title: debouncedTitle,
-			tags: Array.from(new Set([...(prev.tags || []), ...tags])),
-		}));
-	}, [debouncedTitle]);
 
 	if (isAdded) {
 		return <DoneAnimation />;
@@ -201,8 +206,8 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					name="title"
 					type="text"
 					placeholder="Add a note"
-					value={rawTitle}
-					onChange={(e: any) => setRawTitle(e.target.value)}
+					value={payload.title}
+					onChange={handleChange}
 					required
 					ref={titleInputRef}
 					className={classes("-title")}
@@ -216,7 +221,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 					Save
 				</button>
 			</form>
-			{debouncedTitle.length > 0 && payload.amount > 0 ? (
+			{payload.title.length > 0 && payload.amount > 0 ? (
 				<div className={classes("-tags")}>
 					{payload.tags && payload.tags.length > 0
 						? payload.tags.map((tag: string) => (
