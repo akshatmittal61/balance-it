@@ -1,0 +1,59 @@
+@import "@/styles/config/mixins";
+
+.home-sort {
+	&-options {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		flex-direction: column;
+		padding: 12px 0;
+	}
+
+	&-option {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 12px;
+		padding: 12px;
+		cursor: pointer;
+		user-select: none;
+		border-radius: 8px;
+
+		&__icon,
+		&__checkmark {
+			width: 1.5rem;
+			height: 1.5rem;
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+
+			svg {
+				width: 100%;
+				height: 100%;
+			}
+		}
+
+		&__icon {
+			padding: 2px;
+		}
+
+		&:hover {
+			background-color: var(--back-shadow-light);
+		}
+
+		&:active {
+			background-color: var(--back-shadow);
+		}
+
+		&__checkmark {
+			margin-left: auto;
+			color: var(--mac-green);
+		}
+	}
+
+	&-reset {
+		width: 100%;
+	}
+}
