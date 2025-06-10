@@ -10,10 +10,7 @@ export const isSameObject = <T extends object>(obj1: T, obj2: T): boolean => {
 	return true;
 };
 
-export const isSameArray = <T extends Array<any>>(
-	arr1: T[],
-	arr2: T[]
-): boolean => {
+export const isSameArray = <T extends any>(arr1: T[], arr2: T[]): boolean => {
 	if (arr1.length !== arr2.length) {
 		return false;
 	}

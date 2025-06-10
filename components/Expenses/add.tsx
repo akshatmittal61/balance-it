@@ -19,7 +19,7 @@ import {
 import { Logger } from "@/log";
 import { useAuthStore, useHeader, useWalletStore } from "@/store";
 import { CreateExpense } from "@/types";
-import { getUserDetails, Notify, stylesConfig } from "@/utils";
+import { getUserDetails, Notify, stylesConfig, WalletUtils } from "@/utils";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
@@ -30,7 +30,6 @@ import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddTag, Tag } from "./tags";
 import { AddExpenseWizardProps } from "./types";
-import { inferTagsFromTitle } from "./utils";
 
 export const classes = stylesConfig(styles, "expense-wizard");
 
@@ -129,7 +128,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	// Tags auto suggestion
 	useEffect(() => {
 		if (!debouncedTitle) return;
-		const tags = inferTagsFromTitle(debouncedTitle);
+		const tags = WalletUtils.inferTagsFromTitle(debouncedTitle);
 		setPayload((prev) => ({
 			...prev,
 			title: debouncedTitle,

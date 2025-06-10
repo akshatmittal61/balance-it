@@ -12,7 +12,8 @@ export const ActionBar: React.FC<ActionBarProps> = () => {
 	const { actionBar } = useUiStore();
 	const router = useRouter();
 	const [activeDrawerId, setActiveDrawerId] = useState<string | null>(null);
-	const handleCloseDrawer = async () => {
+	const handleCloseDrawer = () => {
+		console.log("Close Drawer called");
 		setActiveDrawerId(null);
 	};
 
@@ -28,7 +29,7 @@ export const ActionBar: React.FC<ActionBarProps> = () => {
 				/>
 			) : null}
 			{activeDrawerId ? (
-				<div className={classes("-drawer")} onClick={handleCloseDrawer}>
+				<div className={classes("-drawer")}>
 					{(() => {
 						const atom = actionBar.find(
 							(atom) => atom.id === activeDrawerId

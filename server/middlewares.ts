@@ -38,7 +38,7 @@ export class ServerMiddleware {
 						.cookies(cookies)
 						.send();
 				}
-				Logger.debug("Authenticated user", authReponse);
+				Logger.debug("Authenticated auth response", authReponse);
 				const {
 					user,
 					accessToken: newAccessToken,
@@ -55,7 +55,7 @@ export class ServerMiddleware {
 					new ApiSuccess(res).cookies(cookies);
 				}
 				req.user = user;
-				Logger.info("Authenticated user", user);
+				Logger.debug("Authenticated user", user);
 				return next(req, res);
 			} catch (error) {
 				Logger.error(error);

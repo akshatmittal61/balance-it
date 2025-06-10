@@ -2,6 +2,7 @@ import { WalletApi } from "@/api";
 import {
 	initialExpensesSummary,
 	initialWalletDashboardOptions,
+	initialWalletFilterOptions,
 } from "@/constants";
 import { useHttpClient } from "@/hooks";
 import {
@@ -19,7 +20,7 @@ type State = {
 	expenses: Array<ExpenseSpread>;
 	summary: ExpensesSummary;
 	tags: Array<string>;
-	filterOptions: WalletFilterOptions | null;
+	filterOptions: WalletFilterOptions;
 	filters: WalletDashboardOptions["filters"];
 	sort: WalletDashboardOptions["sort"];
 	pagination: WalletDashboardOptions["pagination"];
@@ -51,7 +52,7 @@ const store = create<Store>((set, get) => {
 		expenses: [],
 		summary: initialExpensesSummary,
 		tags: [],
-		filterOptions: null,
+		filterOptions: initialWalletFilterOptions,
 		filters: initialWalletDashboardOptions.filters,
 		sort: initialWalletDashboardOptions.sort,
 		pagination: initialWalletDashboardOptions.pagination,
@@ -115,7 +116,6 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 			store.setFilterOptions(filterOptionsRes.data);
 		} catch {
 			store.setExpenses([]);
-			store.setFilterOptions(null);
 		} finally {
 			setIsLoading(false);
 		}

@@ -4,6 +4,7 @@ import {
 	T_EXPENSE_METHOD,
 	T_EXPENSE_TYPE,
 	WalletDashboardOptions,
+	WalletFilterOptions,
 } from "@/types";
 import React from "react";
 import { IconBaseProps } from "react-icons";
@@ -141,6 +142,20 @@ export const TAG_DICTIONARY: Record<string, string[]> = {
 	health: ["medicine", "hospital", "doctor", "checkup"],
 	rent: ["rent", "room", "apartment", "flat"],
 	gift: ["gift", "present", "birthday", "anniversary"],
+};
+
+export const initialWalletFilterOptions: WalletFilterOptions = {
+	amount: {
+		min: 0,
+		max: 0,
+	},
+	timestamp: {
+		begin: "",
+		end: "",
+	},
+	tags: [],
+	types: [],
+	methods: [],
 };
 
 export const initialWalletDashboardOptions: WalletDashboardOptions = {

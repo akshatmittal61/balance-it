@@ -182,4 +182,5 @@
 	background-color: var(--back-shadow);
 	animation: fade-in var(--transition-time) ease-in-out;
 	animation-fill-mode: forwards;
+	filter: blur(2px);
 }

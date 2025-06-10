@@ -29,7 +29,17 @@ export type WalletFilterOptions = {
 };
 
 export type WalletDashboardOptions = {
-	filters?: Pick<WalletFilterOptions, "amount" | "timestamp" | "tags">;
+	filters?: {
+		amount?: {
+			min: number;
+			max: number;
+		};
+		timestamp?: {
+			begin: string;
+			end: string;
+		};
+		tags?: Array<string>;
+	};
 	sort?: {
 		field: "timestamp" | "amount";
 		order: 1 | -1;

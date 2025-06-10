@@ -1,32 +1,20 @@
-import { expenseTypes, TAG_DICTIONARY } from "@/constants";
+import { expenseTypes } from "@/constants";
 import { useConfirmationModal, useDevice } from "@/hooks";
 import { Avatar, Avatars, Typography } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { ExpenseSpread, ISplit } from "@/types";
 import {
 	getUserDetails,
-	intersection,
 	Notify,
 	roundOff,
 	stylesConfig,
+	WalletUtils,
 } from "@/utils";
 import dayjs from "dayjs";
-import Image from "next/image";
 import React, { useState } from "react";
 import { FiTrash } from "react-icons/fi";
-import {
-	PiBowlFood,
-	PiCar,
-	PiGift,
-	PiHandbag,
-	PiHeartbeat,
-	PiHouse,
-	PiMoney,
-	PiTelevision,
-} from "react-icons/pi";
 import styles from "./styles.module.scss";
 import { Tag } from "./tags";
-import { inferTagsFromTitle } from "./utils";
 
 type ExpenseRowProps = {
 	expense: ExpenseSpread;
@@ -40,7 +28,7 @@ type ExpenseRowSplitProps = {
 	onUpdate: () => void;
 };
 
-const classes = stylesConfig(styles, "expense-row");
+export const classes = stylesConfig(styles, "expense-row");
 
 const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 	expense,
@@ -167,52 +155,17 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 		isDeleting
 	);
 
-	const getIcon = () => {
-		if (expense.icon) {
-			return (
-				<Image
-					src={expense.icon}
-					alt={expense.title}
-					width={24}
-					height={24}
-				/>
-			);
-		}
-		let matched = intersection(
-			expense.tags || [],
-			Object.keys(TAG_DICTIONARY)
-		);
-		if (matched.length === 0) {
-			matched = inferTagsFromTitle(expense.title);
-		}
-		if (matched.length > 0) {
-			switch (matched[0]) {
-				case "food":
-					return <PiBowlFood className={classes("-icon")} />;
-				case "commute":
-					return <PiCar className={classes("-icon")} />;
-				case "entertainment":
-					return <PiTelevision className={classes("-icon")} />;
-				case "shopping":
-					return <PiHandbag className={classes("-icon")} />;
-				case "health":
-					return <PiHeartbeat className={classes("-icon")} />;
-				case "rent":
-					return <PiHouse className={classes("-icon")} />;
-				case "gift":
-					return <PiGift className={classes("-icon")} />;
-				default:
-					return <PiMoney className={classes("-icon")} />;
-			}
-		}
-		return <PiMoney className={classes("-icon")} />;
-	};
-
 	return (
 		<>
 			<div className={classes("")}>
 				<div className={classes("-main")} onClick={onExpand}>
-					<div className={classes("-icon")}>{getIcon()}</div>
+					<div className={classes("-icon")}>
+						{WalletUtils.getIcon(
+							expense.tags || [],
+							expense.title,
+							expense.icon
+						)}
+					</div>
 					<Typography size="sm" className={classes("-date")}>
 						{dayjs(expense.timestamp).format("MMM DD, HH:mm")}
 					</Typography>
