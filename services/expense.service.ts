@@ -90,6 +90,12 @@ export class ExpenseService {
 		if (isNaN(body.amount) || body.amount <= 0) {
 			throw new ApiError(HTTP.status.BAD_REQUEST, "Invalid amount");
 		}
+
+		// --- Minimal parsing ---
+		body.title = body.title.trim();
+		body.tags = body.tags?.map((t) => t.trim().toLowerCase()) || [];
+
+		// --- Group Expense ---
 		if (body.group) {
 			// check if the user is a member of the group
 			const foundGroup = await groupRepo.findById(body.group);
@@ -114,6 +120,8 @@ export class ExpenseService {
 				);
 			}
 		}
+
+		// --- Split Expense ---
 		if (splits && splits.length > 0) {
 			Logger.debug("Splits", splits);
 			// check if the amount is distributed correctly

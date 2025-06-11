@@ -157,7 +157,7 @@ export const Filters: React.FC<HomeFiltersProps> = ({ onClose }) => {
 								handleSelectTag(tag);
 							}}
 						>
-							{WalletUtils.getIcon([tag], tag)}
+							{WalletUtils.getIcon([tag], tag, "-tag__icon")}
 							{tag}
 						</span>
 					))}

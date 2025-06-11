@@ -124,6 +124,7 @@ export const TAG_DICTIONARY: Record<string, string[]> = {
 		"roll",
 		"sandwich",
 		"momos",
+		"cake",
 	],
 	commute: [
 		"uber",

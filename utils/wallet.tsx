@@ -1,4 +1,3 @@
-import { classes } from "@/components/Expenses/row";
 import { expenseTypes, TAG_DICTIONARY } from "@/constants";
 import { ExpensesBucket, ExpenseSpread } from "@/types";
 import Image from "next/image";
@@ -11,6 +10,8 @@ import {
 	PiHouse,
 	PiMoney,
 	PiTelevision,
+	PiTrash,
+	PiUsers,
 } from "react-icons/pi";
 import { intersection } from "./functions";
 
@@ -63,7 +64,12 @@ export class WalletUtils {
 		return Array.from(matchedTags);
 	}
 
-	public static getIcon(tags: Array<string>, title: string, icon?: string) {
+	public static getIcon(
+		tags: Array<string>,
+		title: string,
+		className: string,
+		icon?: string
+	) {
 		if (icon) {
 			return <Image src={icon} alt={title} width={24} height={24} />;
 		}
@@ -74,23 +80,28 @@ export class WalletUtils {
 		if (matched.length > 0) {
 			switch (matched[0]) {
 				case "food":
-					return <PiBowlFood className={classes("-icon")} />;
+					return <PiBowlFood className={className} />;
 				case "commute":
-					return <PiCar className={classes("-icon")} />;
+					return <PiCar className={className} />;
 				case "entertainment":
-					return <PiTelevision className={classes("-icon")} />;
+					return <PiTelevision className={className} />;
 				case "shopping":
-					return <PiHandbag className={classes("-icon")} />;
+					return <PiHandbag className={className} />;
 				case "health":
-					return <PiHeartbeat className={classes("-icon")} />;
+					return <PiHeartbeat className={className} />;
 				case "rent":
-					return <PiHouse className={classes("-icon")} />;
+					return <PiHouse className={className} />;
 				case "gift":
-					return <PiGift className={classes("-icon")} />;
+					return <PiGift className={className} />;
+				case "friend":
+				case "family":
+					return <PiUsers className={className} />;
+				case "waste":
+					return <PiTrash className={className} />;
 				default:
-					return <PiMoney className={classes("-icon")} />;
+					return <PiMoney className={className} />;
 			}
 		}
-		return <PiMoney className={classes("-icon")} />;
+		return <PiMoney className={className} />;
 	}
 }

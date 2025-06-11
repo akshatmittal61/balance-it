@@ -17,7 +17,12 @@ import {
 	Typography,
 } from "@/library";
 import { Logger } from "@/log";
-import { useAuthStore, useHeader, useWalletStore } from "@/store";
+import {
+	useAuthStore,
+	useGodownStore,
+	useHeader,
+	useWalletStore,
+} from "@/store";
 import { CreateExpense } from "@/types";
 import { getUserDetails, Notify, stylesConfig, WalletUtils } from "@/utils";
 import dayjs from "dayjs";
@@ -37,6 +42,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 	const router = useRouter();
 	const { user } = useAuthStore();
 	const { isAdding, createExpense } = useWalletStore();
+	const { friends } = useGodownStore();
 	const { device } = useDevice();
 	const [expandAdditionInfo, setExpandAdditionInfo] = useState(false);
 	const [isAdded, setIsAdded] = useState(false);
@@ -78,6 +84,16 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 		} else if (name === "title") {
 			// Tags auto suggestion
 			const inferredTags = WalletUtils.inferTagsFromTitle(value);
+			// if title contains name of a friend, add friend tag
+			const friend = friends.find((f) =>
+				value
+					.split(" ")
+					.map((a) => a.toLowerCase())
+					.includes(f.name ? f.name.split(" ")[0].toLowerCase() : "")
+			);
+			if (friend) {
+				inferredTags.push(friend.email);
+			}
 			const distinctInferredTags = new Set([
 				...(payload.tags || []),
 				...inferredTags,

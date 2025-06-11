@@ -28,7 +28,7 @@ type ExpenseRowSplitProps = {
 	onUpdate: () => void;
 };
 
-export const classes = stylesConfig(styles, "expense-row");
+const classes = stylesConfig(styles, "expense-row");
 
 const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 	expense,
@@ -163,6 +163,7 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 						{WalletUtils.getIcon(
 							expense.tags || [],
 							expense.title,
+							classes("-icon"),
 							expense.icon
 						)}
 					</div>
