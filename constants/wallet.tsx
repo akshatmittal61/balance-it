@@ -168,6 +168,7 @@ export const initialWalletDashboardOptions: WalletDashboardOptions = {
 	},
 	pagination: {
 		page: 1,
-		limit: 100, // Default to showing 100 expenses per page
+		// TODO: Make this dynamic with infinite scroll / paginated control
+		limit: 10000, // Default to showing 10000 expenses per page
 	},
 };
