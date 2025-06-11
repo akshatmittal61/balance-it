@@ -9,7 +9,7 @@
 		justify-content: flex-start;
 		align-items: center;
 		flex-direction: column;
-		gap: 12px;
+		gap: 24px;
 		padding: 12px 0;
 	}
 
@@ -82,9 +82,27 @@
 	&-price-range {
 		width: 100%;
 		display: flex;
-		justify-content: center;
+		justify-content: flex-start;
 		align-items: center;
+		flex-direction: column;
 		gap: 8px;
+
+		&__heading {
+			width: 100%;
+			text-align: left;
+		}
+
+		&__inputs {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8px;
+
+			&--slider {
+				margin-bottom: 12px;
+			}
+		}
 	}
 
 	&-date-range {
@@ -107,20 +125,24 @@
 	}
 
 	&-price-range {
-		justify-content: flex-start;
-		flex-direction: column;
-
 		&__inputs {
-			width: 100%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			gap: 8px;
-
 			input {
 				border: 1px solid var(--back-shadow);
 				border-radius: 8px;
 			}
+		}
+	}
+
+	&-actions {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 8px;
+
+		button {
+			min-width: 50%;
+			flex: 1 1 auto;
 		}
 	}
 }

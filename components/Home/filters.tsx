@@ -1,9 +1,15 @@
 import { initialWalletFilterOptions } from "@/constants";
-import { Button, IconButton, Input, Typography } from "@/library";
+import { Button, IconButton, Input, Slider, Typography } from "@/library";
 import { Logger } from "@/log";
 import { useWalletStore } from "@/store";
 import { WalletDashboardOptions } from "@/types";
-import { isSameArray, isSameObject, stylesConfig, WalletUtils } from "@/utils";
+import {
+	isSameArray,
+	isSameObject,
+	roundOff,
+	stylesConfig,
+	WalletUtils,
+} from "@/utils";
 import dayjs from "dayjs";
 import React, { useRef, useState } from "react";
 import {
@@ -157,82 +163,58 @@ export const Filters: React.FC<HomeFiltersProps> = ({ onClose }) => {
 					))}
 				</div>
 				<hr className={classes("-divider")} />
-				<div className={classes("-date-range")}>
-					<input
-						name="timestamp-begin"
-						id="timestamp-begin"
-						type="datetime-local"
-						placeholder=""
-						value={dayjs(
-							payload?.timestamp?.begin ??
-								filterOptions.timestamp.begin
-						).format("YYYY-MM-DDTHH:mm")}
-						onChange={handleTimestampChange}
-						required
-						ref={tsBeginRef}
-						className="dispn"
-					/>
-					<input
-						name="timestamp-end"
-						id="timestamp-end"
-						type="datetime-local"
-						placeholder=""
-						value={dayjs(
-							payload?.timestamp?.end ??
-								filterOptions.timestamp.end
-						).format("YYYY-MM-DDTHH:mm")}
-						onChange={handleTimestampChange}
-						required
-						ref={tsEndRef}
-						className="dispn"
-					/>
-					<label
-						htmlFor="timestamp-begin"
-						className={classes("-date-range__label")}
-						onClick={(e) => {
-							e.preventDefault();
-							if (tsBeginRef && tsBeginRef.current) {
-								try {
-									tsBeginRef.current.showPicker();
-								} catch {
-									Logger.error("Unable to show picker");
-								}
-							}
-						}}
-					>
-						<IconButton icon={<FiCalendar />} />
-						<Typography>
-							{dayjs(
-								payload?.timestamp?.begin ??
-									filterOptions.timestamp.begin
-							).format("MMM DD, HH:mm")}
-						</Typography>
-					</label>
-					<label
-						htmlFor="timestamp-end"
-						className={classes("-date-range__label")}
-						onClick={(e) => {
-							e.preventDefault();
-							if (tsEndRef && tsEndRef.current) {
-								try {
-									tsEndRef.current.showPicker();
-								} catch {
-									Logger.error("Unable to show picker");
-								}
-							}
-						}}
-					>
-						<IconButton icon={<FiCalendar />} />
-						<Typography>
-							{dayjs(
-								payload?.timestamp?.end ??
-									filterOptions.timestamp.end
-							).format("MMM DD, HH:mm")}
-						</Typography>
-					</label>
-				</div>
-				<hr className={classes("-divider")} />
 				<div className={classes("-price-range")}>
+					<Typography
+						size="lg"
+						className={classes("-price-range__heading")}
+					>
+						Price Range
+					</Typography>
+					<div
+						className={classes(
+							"-price-range__inputs",
+							"-price-range__inputs--slider"
+						)}
+					>
+						<Slider
+							min={
+								filterOptions.amount.min % 10 === 0
+									? filterOptions.amount.min
+									: roundOff(filterOptions.amount.min, 1)
+							}
+							max={
+								filterOptions.amount.max % 10 === 0
+									? filterOptions.amount.max
+									: roundOff(filterOptions.amount.max, 1)
+							}
+							step={
+								((filterOptions.amount.max % 10 === 0
+									? filterOptions.amount.max
+									: roundOff(filterOptions.amount.max, 1)) -
+									(filterOptions.amount.min % 10 === 0
+										? filterOptions.amount.min
+										: roundOff(
+												filterOptions.amount.min,
+												1
+											))) /
+								5
+							}
+							value={{
+								max:
+									payload?.amount?.max ||
+									filterOptions.amount.max,
+								min:
+									payload?.amount?.min ||
+									filterOptions.amount.min,
+							}}
+							setValue={(newVal) => {
+								setPayload({
+									...payload,
+									amount: newVal,
+								});
+							}}
+						/>
+					</div>
 					<div className={classes("-price-range__inputs")}>
 						<Input
 							name="amount-min"
@@ -256,6 +238,90 @@ export const Filters: React.FC<HomeFiltersProps> = ({ onClose }) => {
 						/>
 					</div>
 				</div>
+				<hr className={classes("-divider")} />
+				<div className={classes("-date-range")}>
+					<Typography
+						size="lg"
+						className={classes("-date-range__heading")}
+					>
+						Date Range
+					</Typography>
+					<div className={classes("-date-range__inputs")}>
+						<input
+							name="timestamp-begin"
+							id="timestamp-begin"
+							type="date"
+							placeholder=""
+							value={dayjs(
+								payload?.timestamp?.begin ??
+									filterOptions.timestamp.begin
+							).format("YYYY-MM-DD")}
+							onChange={handleTimestampChange}
+							required
+							ref={tsBeginRef}
+							className="dispn"
+						/>
+						<input
+							name="timestamp-end"
+							id="timestamp-end"
+							type="date"
+							placeholder=""
+							value={dayjs(
+								payload?.timestamp?.end ??
+									filterOptions.timestamp.end
+							).format("YYYY-MM-DD")}
+							onChange={handleTimestampChange}
+							required
+							ref={tsEndRef}
+							className="dispn"
+						/>
+						<label
+							htmlFor="timestamp-begin"
+							className={classes("-date-range__label")}
+							onClick={(e) => {
+								e.preventDefault();
+								if (tsBeginRef && tsBeginRef.current) {
+									try {
+										tsBeginRef.current.showPicker();
+									} catch {
+										Logger.error("Unable to show picker");
+									}
+								}
+							}}
+						>
+							<IconButton icon={<FiCalendar />} />
+							<Typography>
+								{dayjs(
+									payload?.timestamp?.begin ??
+										filterOptions.timestamp.begin
+								).format("MMM DD, YYYY")}
+							</Typography>
+						</label>
+						<label
+							htmlFor="timestamp-end"
+							className={classes("-date-range__label")}
+							onClick={(e) => {
+								e.preventDefault();
+								if (tsEndRef && tsEndRef.current) {
+									try {
+										tsEndRef.current.showPicker();
+									} catch {
+										Logger.error("Unable to show picker");
+									}
+								}
+							}}
+						>
+							<IconButton icon={<FiCalendar />} />
+							<Typography>
+								{dayjs(
+									payload?.timestamp?.end ??
+										filterOptions.timestamp.end
+								).format("MMM DD, YYYY")}
+							</Typography>
+						</label>
+					</div>
+				</div>
+				<hr className={classes("-divider")} />
 			</div>
 			<div className={classes("-actions")}>
 				{/* Show Reset filters if filters are different than initial filters */}

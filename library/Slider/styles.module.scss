@@ -1,0 +1,121 @@
+@import "@/styles/config/mixins";
+@import "@/styles/config/typography";
+
+.slider {
+	width: 100%;
+	height: auto;
+	margin: 20px auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-flow: column;
+	position: relative;
+	flex: 0 0 auto;
+
+	@include responsive(phone) {
+		width: 100%;
+	}
+
+	&-label {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		height: 20px;
+		transform: translateY(-100%);
+		gap: 8px;
+		@include typography($size: lg);
+	}
+
+	&-track {
+		width: 100%;
+		height: 8px;
+		border-radius: 5px;
+		background: #d3d3d3;
+		outline: none;
+		opacity: 0.7;
+		transition: opacity 0.2s;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		transform: translateY(-50%);
+		z-index: 5;
+		overflow: hidden;
+		background: #d3d3d3;
+	}
+
+	&-peek {
+		height: 8px;
+		border-radius: 5px;
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background-color: var(--accent-color);
+		transition: none;
+	}
+
+	&-inputs {
+		width: 100%;
+		height: 8px;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		transform: translateY(-50%);
+		z-index: 10;
+
+		input {
+			width: 100%;
+			height: 8px;
+			appearance: none;
+			background: none;
+			position: absolute;
+			top: 0;
+			left: 0;
+			pointer-events: none;
+
+			&::-webkit-slider-thumb {
+				pointer-events: auto;
+				appearance: none;
+				width: 18px;
+				height: 18px;
+				border-radius: 50%;
+				border: 3px solid var(--accent-color);
+				background-color: var(--accent-color);
+				cursor: pointer;
+			}
+
+			&:disabled::-webkit-slider-thumb {
+				width: 0;
+				height: 0;
+				background: #d3d3d3;
+				cursor: not-allowed;
+			}
+		}
+	}
+
+	&-values {
+		width: 99%;
+		height: 16px;
+		position: relative;
+		top: 20px;
+		display: flex;
+	}
+
+	&-value {
+		position: absolute;
+		transform: translateX(-50%);
+		font-size: 12px;
+		cursor: pointer;
+
+		&::before {
+			content: "";
+			position: absolute;
+			left: 50%;
+			top: -100%;
+			transform: translate(-50%, 2px);
+			width: 2px;
+			height: 10px;
+			background-color: #d3d3d3;
+		}
+	}
+}
