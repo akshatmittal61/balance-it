@@ -44,6 +44,7 @@ export const ActionBar: React.FC<ActionBarProps> = () => {
 					<button
 						className={classes("-button")}
 						key={`${atom.id}-icon`}
+						style={atom.styles}
 						onClick={() => {
 							if ("onClick" in atom) {
 								atom.onClick();

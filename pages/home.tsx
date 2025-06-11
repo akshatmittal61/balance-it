@@ -35,12 +35,30 @@ const HomePage: React.FC<HomePageProps> = () => {
 			id: "add-expense",
 			icon: <FiPlus />,
 			href: routes.ADD_EXPENSE,
+			styles: {
+				boxShadow: "inset 12px 0px 8px -2px rgba(0,0,0,0.1)",
+			},
 		},
 	];
 	const { user, isLoggedIn } = useAuthStore();
-	const { expenses, isLoading } = useWalletStore({ syncOnMount: true });
+	const { expenses, filterOptions, isLoading } = useWalletStore({
+		syncOnMount: true,
+	});
 	useGodownStore({ syncOnMount: true });
-	useActionBar(isLoggedIn ? homePageActionBar : []);
+	useActionBar(
+		homePageActionBar.filter(({ id }) => {
+			if (!isLoggedIn) {
+				return false;
+			}
+			if (id === "filter") {
+				return (
+					filterOptions.amount.min !== 0 ||
+					filterOptions.amount.max !== 0
+				);
+			}
+			return true;
+		})
+	);
 	return (
 		<>
 			<Seo
