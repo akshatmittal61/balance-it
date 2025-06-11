@@ -202,7 +202,13 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 							color: `var(--${expenseTypes[expense.type].theme}-500)`,
 						}}
 					>
-						{expense.amount}
+						{Intl.NumberFormat("en-US", {
+							style: "currency",
+							currency: "INR",
+							minimumFractionDigits: 0,
+						})
+							.format(expense.amount)
+							.replace("₹", "")}
 					</Typography>
 				</div>
 				{expanded ? (

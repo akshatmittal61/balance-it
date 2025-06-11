@@ -143,6 +143,8 @@ export const TAG_DICTIONARY: Record<string, string[]> = {
 	health: ["medicine", "hospital", "doctor", "checkup"],
 	rent: ["rent", "room", "apartment", "flat"],
 	gift: ["gift", "present", "birthday", "anniversary"],
+	salary: ["salary", "wages", "paycheck"],
+	bill: ["bill", "electricity", "water", "gas", "internet", "phone"],
 };
 
 export const initialWalletFilterOptions: WalletFilterOptions = {

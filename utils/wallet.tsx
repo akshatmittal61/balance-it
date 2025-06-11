@@ -8,7 +8,9 @@ import {
 	PiHandbag,
 	PiHeartbeat,
 	PiHouse,
+	PiLaptop,
 	PiMoney,
+	PiReceipt,
 	PiTelevision,
 	PiTrash,
 	PiUsers,
@@ -93,6 +95,10 @@ export class WalletUtils {
 					return <PiHouse className={className} />;
 				case "gift":
 					return <PiGift className={className} />;
+				case "salary":
+					return <PiLaptop className={className} />;
+				case "bill":
+					return <PiReceipt className={className} />;
 				case "friend":
 				case "family":
 					return <PiUsers className={className} />;

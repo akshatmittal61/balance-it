@@ -36,6 +36,8 @@ const HomePage: React.FC<HomePageProps> = () => {
 			icon: <FiPlus />,
 			href: routes.ADD_EXPENSE,
 			styles: {
+				backgroundColor: "var(--accent-color-light)",
+				color: "var(--accent-color-dark)",
 				boxShadow: "inset 12px 0px 8px -2px rgba(0,0,0,0.1)",
 			},
 		},
