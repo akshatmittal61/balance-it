@@ -1,4 +1,4 @@
 export * from "./body";
 export * from "./filters";
-export * from "./hero";
+export * from "./Hero";
 export * from "./sort";
