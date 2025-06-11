@@ -1,11 +1,9 @@
 import { Error } from "@/components";
 import { frontendBaseUrl, routes } from "@/constants";
-import { useAuthStore } from "@/store";
 import { useRouter } from "next/router";
 
 const ServerError = () => {
 	const router = useRouter();
-	const { isLoggedIn } = useAuthStore({ syncOnMount: true });
 	return (
 		<Error
 			title="Oops, something went wrong."
@@ -14,7 +12,7 @@ const ServerError = () => {
 			button={{
 				label: "Let's get you home",
 				action: () => {
-					router.push(isLoggedIn ? routes.HOME : routes.ROOT);
+					router.push(routes.ROOT);
 				},
 			}}
 		/>
