@@ -2,18 +2,22 @@ import { expenseTypes, TAG_DICTIONARY } from "@/constants";
 import { ExpensesBucket, ExpenseSpread } from "@/types";
 import Image from "next/image";
 import {
+	PiBookBookmark,
 	PiBowlFood,
 	PiCar,
+	PiCoins,
+	PiConfetti,
+	PiDevices,
+	PiGameController,
 	PiGift,
 	PiHandbag,
+	PiHash,
 	PiHeartbeat,
 	PiHouse,
-	PiLaptop,
-	PiMoney,
 	PiReceipt,
-	PiTelevision,
 	PiTrash,
 	PiUsers,
+	PiWallet,
 } from "react-icons/pi";
 import { intersection } from "./functions";
 
@@ -82,13 +86,23 @@ export class WalletUtils {
 		if (matched.length > 0) {
 			switch (matched[0]) {
 				case "food":
+				case "drinks":
 					return <PiBowlFood className={className} />;
 				case "commute":
+				case "travel":
 					return <PiCar className={className} />;
 				case "entertainment":
-					return <PiTelevision className={className} />;
+				case "sports":
+				case "games":
+					return <PiGameController className={className} />;
+				case "devices":
+				case "mobile":
+				case "laptop":
+					return <PiDevices className={className} />;
 				case "shopping":
 					return <PiHandbag className={className} />;
+				case "books":
+					return <PiBookBookmark className={className} />;
 				case "health":
 					return <PiHeartbeat className={className} />;
 				case "rent":
@@ -96,18 +110,26 @@ export class WalletUtils {
 				case "gift":
 					return <PiGift className={className} />;
 				case "salary":
-					return <PiLaptop className={className} />;
+				case "income":
+				case "recharge":
+					return <PiWallet className={className} />;
+				case "investment":
+					return <PiCoins className={className} />;
 				case "bill":
+				case "receipt":
 					return <PiReceipt className={className} />;
+				case "party":
+				case "celebration":
+					return <PiConfetti className={className} />;
 				case "friend":
 				case "family":
 					return <PiUsers className={className} />;
 				case "waste":
 					return <PiTrash className={className} />;
 				default:
-					return <PiMoney className={className} />;
+					return <PiHash className={className} />;
 			}
 		}
-		return <PiMoney className={className} />;
+		return <PiHash className={className} />;
 	}
 }
