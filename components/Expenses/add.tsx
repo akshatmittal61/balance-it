@@ -85,14 +85,21 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			// Tags auto suggestion
 			const inferredTags = WalletUtils.inferTagsFromTitle(value);
 			// if title contains name of a friend, add friend tag
-			const friend = friends.find((f) =>
-				value
+			const containsFriendName = friends.some((f) => {
+				const name =
+					f.name && f.name.length > 0
+						? f.name.split(" ")[0].toLowerCase()
+						: "";
+				if (name.length === 0) {
+					return false;
+				}
+				return value
 					.split(" ")
 					.map((a) => a.toLowerCase())
-					.includes(f.name ? f.name.split(" ")[0].toLowerCase() : "")
-			);
-			if (friend) {
-				inferredTags.push(friend.email);
+					.includes(name);
+			});
+			if (containsFriendName) {
+				inferredTags.push("friend");
 			}
 			const distinctInferredTags = new Set([
 				...(payload.tags || []),
