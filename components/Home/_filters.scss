@@ -103,6 +103,12 @@
 				margin-bottom: 12px;
 			}
 		}
+
+		&__label {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
 	}
 
 	&-date-range {

@@ -37,7 +37,6 @@ export const AuthContent: React.FC<IAuthContentProps> = ({
 				name="email"
 				type="email"
 				required
-				autoFocus
 			/>
 			<Button
 				icon={<IoMailOutline />}

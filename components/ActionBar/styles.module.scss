@@ -28,6 +28,7 @@
 	&-drawer {
 		width: calc(100% - 1rem);
 		min-height: 10rem;
+		max-height: calc(100vh - 7rem);
 		position: fixed;
 		bottom: 6rem;
 		left: 0;
@@ -36,6 +37,7 @@
 		padding: 1rem;
 		margin: 0 0.5rem;
 		background-color: var(--theme-bg);
+		overflow-y: auto;
 		animation: slide-fade-bottom var(--transition-time) ease-in-out forwards;
 		@include shadow(4);
 
