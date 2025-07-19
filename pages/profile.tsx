@@ -1,9 +1,9 @@
 import { Seo } from "@/components";
 import { withAuthPage } from "@/connections";
-import { AppSeo, routes } from "@/constants";
+import { AppSeo, navigationMap, routes } from "@/constants";
 import { Responsive } from "@/layouts";
 import { Avatar, Button, Input, Typography } from "@/library";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useHeader } from "@/store";
 import styles from "@/styles/pages/Profile.module.scss";
 import { IUser } from "@/types";
 import { getUserDetails, Notify, stylesConfig } from "@/utils";
@@ -51,6 +51,8 @@ const ProfilePage: React.FC<ProfilePageProps> = () => {
 			});
 		}
 	}, [user]);
+
+	useHeader([navigationMap.home]);
 
 	return (
 		<>

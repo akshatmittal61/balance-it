@@ -98,9 +98,11 @@ export class AuthService {
 			Logger.debug("Found user", user);
 			const newAccessToken =
 				AuthService.generateAccessToken(authMappingId);
+			const newRefreshToken =
+				AuthService.generateRefreshToken(authMappingId);
 			const tokens: Tokens = {
 				accessToken: newAccessToken,
-				refreshToken,
+				refreshToken: newRefreshToken,
 			};
 			const cookies = AuthService.getCookies(tokens);
 			return {
