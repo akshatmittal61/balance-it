@@ -106,7 +106,7 @@ const InviteMember: React.FC<InviteMemberProps> = ({ onInvited, email }) => {
 	);
 };
 
-const MembersPlaceholder: React.FC<IMembersPlaceholderProps> = ({
+export const MembersPlaceholder: React.FC<IMembersPlaceholderProps> = ({
 	loading,
 	searchStr,
 	onInvited,
@@ -149,5 +149,3 @@ const MembersPlaceholder: React.FC<IMembersPlaceholderProps> = ({
 		/>
 	);
 };
-
-export default MembersPlaceholder;

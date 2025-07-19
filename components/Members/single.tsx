@@ -9,17 +9,24 @@ import styles from "./styles.module.scss";
 type MemberProps = {
 	user: IUser;
 	isSelected?: boolean;
+	interactive?: boolean;
 	onSelect?: () => void;
 };
 
 export const MemberRow: React.FC<MemberProps> = ({
 	user,
 	isSelected,
+	interactive = true,
 	onSelect,
 }) => {
 	const classes = stylesConfig(styles, "members-row");
 	return (
-		<div className={classes("")} onClick={onSelect}>
+		<div
+			className={classes("", {
+				"--interactive": interactive,
+			})}
+			onClick={onSelect}
+		>
 			<Avatar
 				src={getUserDetails(user).avatar || ""}
 				alt={getUserDetails(user).name || ""}

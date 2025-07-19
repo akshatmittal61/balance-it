@@ -13,7 +13,10 @@ type BulkEditorProps = {
 
 const classes = stylesConfig(styles, "members-bulk-editor");
 
-const BulkEditor: React.FC<BulkEditorProps> = ({ members, setMembers }) => {
+export const BulkEditor: React.FC<BulkEditorProps> = ({
+	members,
+	setMembers,
+}) => {
 	const [editorEmails, debouncedEditorEmails, setEditorEmails] =
 		useDebounce<string>(members.map((user) => user.email).join(", "), 1000);
 	const { call } = useHttpClient<ApiResponses.BulkUserSearch>();
@@ -48,5 +51,3 @@ const BulkEditor: React.FC<BulkEditorProps> = ({ members, setMembers }) => {
 		</div>
 	);
 };
-
-export default BulkEditor;

@@ -3,6 +3,7 @@ export * as Auth from "./Auth";
 export * from "./Confirmation";
 export * from "./Error";
 export * from "./Expenses";
+export * from "./Friends";
 export * from "./Header";
 export * as Home from "./Home";
 export * from "./Members";

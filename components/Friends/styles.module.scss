@@ -1,0 +1,38 @@
+@import "@/styles/config/mixins";
+
+.friend {
+	&-row {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 16px;
+		border-radius: 6px;
+		user-select: none;
+
+		&--interactive {
+			cursor: pointer;
+			transition: background-color 0.2s ease-in-out;
+
+			&:hover {
+				background-color: var(--back-shadow-light);
+			}
+		}
+
+		&__details {
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		&__icon {
+			margin-left: auto;
+			width: 2rem;
+			height: 2rem;
+			fill: var(--material-green);
+		}
+	}
+}

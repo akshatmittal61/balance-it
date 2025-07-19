@@ -6,8 +6,8 @@ import { IUser } from "@/types";
 import { stylesConfig } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { FiMail, FiSearch, FiUsers } from "react-icons/fi";
-import BulkEditor from "./bulk-editor";
-import MembersPlaceholder from "./placeholder";
+import { BulkEditor } from "./bulk-editor";
+import { MembersPlaceholder } from "./placeholder";
 import { MemberIcon, MemberRow } from "./single";
 import styles from "./styles.module.scss";
 
