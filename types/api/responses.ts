@@ -29,5 +29,5 @@ export type GetExpensesSummary = ExpensesSummary;
 export type GetExpenseById = ExpenseSpread;
 export type CreateExpense = ExpenseSpread;
 export type DeleteExpense = boolean;
-
 export type { WalletFilterOptions };
+export type SettleSplitInExpense = ExpenseSpread;

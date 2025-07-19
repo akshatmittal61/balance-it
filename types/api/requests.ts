@@ -18,3 +18,8 @@ export type GetUserFriends = null;
 // Wallet
 export type { CreateExpense } from "../client";
 export type { WalletDashboardOptions } from "../wallet";
+export type SettleSplitInExpense = {
+	expense: string;
+	split: string;
+	// amount: number;
+};

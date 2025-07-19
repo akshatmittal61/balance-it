@@ -88,9 +88,11 @@ type ReturnType = Store & {
 	isLoading: boolean;
 	isAdding: boolean;
 	isDeleting: boolean;
+	isSettling: boolean;
 	sync: () => void;
 	createExpense: (_: CreateExpense) => Promise<void>;
 	deleteExpense: (_: string) => Promise<void>;
+	settleSplitInExpense: (_: string, __: string) => Promise<void>;
 };
 
 type WalletStoreHook = (_?: Options) => ReturnType;
@@ -100,6 +102,8 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const { loading: isAdding, call: addApi } = useHttpClient<ExpenseSpread>();
 	const { loading: isDeleting, call: deleteApi } = useHttpClient<boolean>();
+	const { loading: isSettling, call: settleSplitInExpenseApi } =
+		useHttpClient<ExpenseSpread>();
 
 	const sync = async () => {
 		try {
@@ -135,6 +139,22 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		sync();
 	};
 
+	const settleSplitInExpense = async (expenseId: string, splitId: string) => {
+		const updatedExpense = await settleSplitInExpenseApi(
+			WalletApi.settleSplitInExpense,
+			expenseId,
+			splitId
+		);
+		store.setExpenses(
+			store.expenses.map((expense) => {
+				if (expense.id === expenseId) {
+					return updatedExpense;
+				}
+				return expense;
+			})
+		);
+	};
+
 	const setFilters = (filters: WalletDashboardOptions["filters"]) => {
 		store.setFilters(filters);
 		sync();
@@ -164,9 +184,11 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		isLoading,
 		isAdding,
 		isDeleting,
+		isSettling,
 		sync,
 		createExpense,
 		deleteExpense,
+		settleSplitInExpense,
 		setFilters,
 		setSort,
 		setPagination,

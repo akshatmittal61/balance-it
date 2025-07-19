@@ -160,6 +160,19 @@ class SplitRepo extends BaseRepo<Split, ISplit> {
 		const res = await this.model.deleteMany(query);
 		return res.deletedCount;
 	}
+	public async settleOneSplit(
+		splitId: string,
+		amount: number
+	): Promise<ISplit | null> {
+		const update: UpdateQuery<Split> = {
+			$inc: {
+				pending: -amount,
+				completed: amount,
+			},
+		};
+		const updatedSplit = await this.update({ id: splitId }, update);
+		return updatedSplit;
+	}
 }
 
 export const splitRepo = SplitRepo.getInstance<SplitRepo>();

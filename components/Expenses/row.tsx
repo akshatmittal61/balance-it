@@ -11,7 +11,7 @@ import {
 	WalletUtils,
 } from "@/utils";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React from "react";
 import { FiTrash } from "react-icons/fi";
 import styles from "./styles.module.scss";
 import { Tag } from "./tags";
@@ -36,29 +36,17 @@ const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 	onUpdate,
 }) => {
 	const { user: loggedInUser } = useAuthStore();
+	const { settleSplitInExpense, isSettling } = useWalletStore();
 	const { pending, completed, user } = split;
-	const [settling, setSettling] = useState(false);
 	const settleMember = async () => {
-		try {
-			setSettling(true);
-			/* const updatedMembersRes = await MemberApi.settleMemberInExpense({
-				groupId: expense.group.id,
-				expenseId: expense.id,
-				memberId: id,
-			});
-			onUpdateMembers(updatedMembersRes.data); */
-			onUpdate();
-		} catch (error) {
-			Notify.error(error);
-		} finally {
-			setSettling(false);
-		}
+		await settleSplitInExpense(expense.id, split.id);
+		onUpdate();
 	};
 	return (
 		<div
 			className={classes("-split", {
 				"-split--owed": pending > 0,
-				"-split--settling": settling,
+				"-split--settling": isSettling,
 				"-split--settled":
 					pending === 0 || expense.author.id === user.id,
 			})}
@@ -93,7 +81,7 @@ const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 			})()}
 			{expense.author.id === loggedInUser?.id ? (
 				<button
-					disabled={pending === 0 || settling}
+					disabled={pending === 0 || isSettling}
 					className={classes("-split-btn", {
 						"-split-btn--settled": pending === 0,
 					})}
@@ -101,7 +89,7 @@ const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
 				>
 					{pending === 0 ? (
 						"Settled"
-					) : settling ? (
+					) : isSettling ? (
 						<span className={classes("-split-btn--loader")} />
 					) : (
 						"Settle"

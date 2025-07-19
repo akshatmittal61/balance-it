@@ -81,4 +81,19 @@ export class WalletController {
 			options
 		);
 	}
+	public static async settleSplitInExpense(
+		req: ApiRequest<ApiRequests.SettleSplitInExpense>,
+		res: ApiResponse
+	) {
+		const userId = genericParse(getNonEmptyString, req.user?.id);
+		const { expense: expenseId, split: splitId } = req.body;
+		await WalletService.settleSplitInExpense(userId, expenseId, splitId);
+		const expense = await ExpenseService.getExpenseForUser(
+			expenseId,
+			userId
+		);
+		return new ApiSuccess<ApiResponses.SettleSplitInExpense>(res).send(
+			expense
+		);
+	}
 }
