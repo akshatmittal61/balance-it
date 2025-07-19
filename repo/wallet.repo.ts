@@ -47,6 +47,7 @@ class WalletRepo extends BaseRepo<Expense, IExpense> {
 							count: { $sum: 1 },
 						},
 					},
+					{ $sort: { _id: 1 } },
 					{ $project: { _id: 0, tag: "$_id", count: 1 } },
 				]),
 				this.model.aggregate([

@@ -122,6 +122,7 @@ export class WalletUtils {
 				case "celebration":
 					return <PiConfetti className={className} />;
 				case "friend":
+				case "friends":
 				case "family":
 					return <PiUsers className={className} />;
 				case "waste":

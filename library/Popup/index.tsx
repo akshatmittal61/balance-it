@@ -29,11 +29,17 @@ export const Popup: React.FC<PopupProps> = ({
 	const [isClosing, setIsClosing] = useState(false);
 	const popupRef = useRef<HTMLDivElement>(null);
 
-	const handleClose = () => {
-		setIsClosing(true);
-		setTimeout(() => {
-			if (!loading) onClose && onClose();
-		}, 300);
+	const startClosing = () => {
+		if (!loading) setIsClosing(true);
+	};
+
+	const closePane = () => {
+		if (isClosing) {
+			if (onClose) {
+				onClose();
+			}
+			setIsClosing(false);
+		}
 	};
 
 	useEffect(() => {
@@ -48,6 +54,12 @@ export const Popup: React.FC<PopupProps> = ({
 						"--closing": isClosing,
 					}) + ` ${className}`
 				}
+				role="dialog"
+				aria-modal="true"
+				aria-label={title}
+				aria-busy={loading}
+				aria-hidden={isClosing}
+				onAnimationEnd={closePane}
 				style={{
 					width: `min(95vw, ${width})`,
 					height: `min(95vh, ${height})`,
@@ -58,7 +70,7 @@ export const Popup: React.FC<PopupProps> = ({
 				tabIndex={-1}
 				onKeyDown={(e) => {
 					if (e.key === "Escape") {
-						handleClose();
+						startClosing();
 					}
 				}}
 				{...props}
@@ -87,7 +99,7 @@ export const Popup: React.FC<PopupProps> = ({
 							) : null}
 							<button
 								className={classes("-header-close")}
-								onClick={handleClose}
+								onClick={startClosing}
 							>
 								<FiX />
 							</button>
@@ -132,7 +144,7 @@ export const Popup: React.FC<PopupProps> = ({
 					</div>
 				) : null}
 			</div>
-			<div className={classes("-overlay")} onClick={handleClose}></div>
+			<div className={classes("-overlay")} onClick={startClosing}></div>
 		</>
 	);
 };

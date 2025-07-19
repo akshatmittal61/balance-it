@@ -28,11 +28,17 @@ export const Pane: React.FC<PaneProps> = ({
 	const [isClosing, setIsClosing] = useState(false);
 	const paneRef = useRef<HTMLDivElement>(null);
 
-	const handleClose = () => {
-		setIsClosing(true);
-		setTimeout(() => {
-			if (!loading) onClose && onClose();
-		}, 300);
+	const startClosing = () => {
+		if (!loading) setIsClosing(true);
+	};
+
+	const closePane = () => {
+		if (isClosing) {
+			if (onClose) {
+				onClose();
+			}
+			setIsClosing(false);
+		}
 	};
 
 	useEffect(() => {
@@ -47,6 +53,12 @@ export const Pane: React.FC<PaneProps> = ({
 						"--closing": isClosing,
 					}) + ` ${className}`
 				}
+				role="dialog"
+				aria-modal="true"
+				aria-label={title}
+				aria-busy={loading}
+				aria-hidden={isClosing}
+				onAnimationEnd={closePane}
 				style={{
 					width:
 						direction === "left" || direction === "right"
@@ -63,7 +75,7 @@ export const Pane: React.FC<PaneProps> = ({
 				tabIndex={-1}
 				onKeyDown={(e) => {
 					if (e.key === "Escape") {
-						handleClose();
+						startClosing();
 					}
 				}}
 				{...props}
@@ -94,7 +106,7 @@ export const Pane: React.FC<PaneProps> = ({
 							) : null}
 							<button
 								className={classes("-header-close")}
-								onClick={handleClose}
+								onClick={startClosing}
 							>
 								<FiX />
 							</button>
@@ -105,7 +117,7 @@ export const Pane: React.FC<PaneProps> = ({
 					<div className={classes("-body")}>{children}</div>
 				) : null}
 			</div>
-			<div className={classes("-overlay")} onClick={handleClose}></div>
+			<div className={classes("-overlay")} onClick={startClosing}></div>
 		</>
 	);
 };
