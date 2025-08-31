@@ -144,13 +144,7 @@ export class ApiRoute {
 			const startTime = Date.now();
 			try {
 				if (this.useDatabase) {
-					this.dbContainer.db.connect();
-					/* if (this.dbContainer.db.isConnected() === false) {
-						return new ApiFailure(res)
-							.status(HTTP.status.SERVICE_UNAVAILABLE)
-							.message("Database not initialized")
-							.send();
-					} */
+					await this.dbContainer.db.connect();
 				}
 
 				const { method } = req;
